@@ -33,6 +33,26 @@ void test_subtract_flag(void)
     CU_ASSERT_EQUAL(subtract_flag(&cpu), 0);
 }
 
+void test_half_carry_flag(void)
+{
+    CPU cpu;
+    cpu.registers.F = 0b00100000;
+    CU_ASSERT_EQUAL(half_carry_flag(&cpu), 1);
+
+    cpu.registers.F = 0b11011111;
+    CU_ASSERT_EQUAL(half_carry_flag(&cpu), 0);
+}
+
+void test_carry_flag(void)
+{
+    CPU cpu;
+    cpu.registers.F = 0b00010000;
+    CU_ASSERT_EQUAL(carry_flag(&cpu), 1);
+
+    cpu.registers.F = 0b11101111;
+    CU_ASSERT_EQUAL(carry_flag(&cpu), 0);
+}
+
 int main(void)
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -55,6 +75,12 @@ int main(void)
         ) == NULL ||
         CU_add_test(
             test_suite, "CPU | subtract flag fetches 2nd bit", test_subtract_flag
+        ) == NULL ||
+        CU_add_test(
+            test_suite, "CPU | half carry flag fetches 3rd bit", test_half_carry_flag
+        ) == NULL ||
+        CU_add_test(
+            test_suite, "CPU | carry flag fetches 4th bit", test_carry_flag
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();
