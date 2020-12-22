@@ -13,6 +13,26 @@ void test_registers(void)
     CU_ASSERT_EQUAL(cpu.registers.BC, 0xabcd);
 }
 
+void test_zero_flag(void)
+{
+    CPU cpu;
+    cpu.registers.F = 0b10000000;
+    CU_ASSERT_EQUAL(zero_flag(&cpu), 1);
+
+    cpu.registers.F = 0b01111111;
+    CU_ASSERT_EQUAL(zero_flag(&cpu), 0);
+}
+
+void test_subtract_flag(void)
+{
+    CPU cpu;
+    cpu.registers.F = 0b01000000;
+    CU_ASSERT_EQUAL(subtract_flag(&cpu), 1);
+
+    cpu.registers.F = 0b10111111;
+    CU_ASSERT_EQUAL(subtract_flag(&cpu), 0);
+}
+
 int main(void)
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -29,6 +49,12 @@ int main(void)
 
     if (CU_add_test(
             test_suite, "CPU | registers respect endianness", test_registers
+        ) == NULL ||
+        CU_add_test(
+            test_suite, "CPU | zero flag fetches 1st bit", test_zero_flag
+        ) == NULL ||
+        CU_add_test(
+            test_suite, "CPU | subtract flag fetches 2nd bit", test_subtract_flag
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();

@@ -74,4 +74,14 @@ typedef struct CPU {
     Registers registers;
 } CPU;
 
-CPU * init_cpu(void);
+typedef enum {
+    ZERO_FLAG_POSITION = 7,
+    SUBTRACT_FLAG_POSITION = 6,
+    HALF_CARRY_FLAG_POSITION = 5,
+    CARRY_FLAG_POSITION = 4
+} FLAG_POSITION;
+
+uint8_t zero_flag(CPU *);
+uint8_t subtract_flag(CPU *);
+uint8_t half_carry_flag(CPU *);
+uint8_t carry_flag(CPU *);

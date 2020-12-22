@@ -20,7 +20,7 @@ CFLAGS +=  -Wstrict-prototypes
 CFLAGS +=  -Wundef
 CFLAGS +=  -Wold-style-definition
 
-_OBJ = main.o
+_OBJ = cpu.o main.o
 OBJ = $(patsubst %,$(BUILD_DIR)%,$(_OBJ))
 
 $(TARGET): $(OBJ)
@@ -63,7 +63,7 @@ $(TEST_RESULTS)test_results.txt: $(TEST_OBJ)
 		./$$test >> $(TEST_RESULTS)test_results.txt ; done
 
 $(TEST_BUILD_DIR)cpu_test.o: $(TEST_DIR)cpu_test.c
-	$(CC) $< -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
+	$(CC) $< $(SOURCE_DIR)cpu.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
 
 
 # ---------------------------------------------------------
