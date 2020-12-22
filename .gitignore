@@ -1,0 +1,7 @@
+# Build Artifacts
+gbd-01
+build/
+
+# macOS
+.DS_Store
+
