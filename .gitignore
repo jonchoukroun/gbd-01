@@ -2,6 +2,9 @@
 gbd-01
 build/
 
+# Tests
+test/results/
+
 # macOS
 .DS_Store
 
