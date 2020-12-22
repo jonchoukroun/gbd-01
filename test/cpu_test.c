@@ -13,44 +13,69 @@ void test_registers(void)
     CU_ASSERT_EQUAL(cpu.registers.BC, 0xabcd);
 }
 
-void test_zero_flag(void)
+void test_get_zero_flag(void)
 {
     CPU cpu;
     cpu.registers.F = 0b10000000;
-    CU_ASSERT_EQUAL(zero_flag(&cpu), 1);
+    CU_ASSERT_EQUAL(get_flag(&cpu, ZERO_FLAG), 1);
 
     cpu.registers.F = 0b01111111;
-    CU_ASSERT_EQUAL(zero_flag(&cpu), 0);
+    CU_ASSERT_EQUAL(get_flag(&cpu, ZERO_FLAG), 0);
 }
 
-void test_subtract_flag(void)
+void test_get_subtract_flag(void)
 {
     CPU cpu;
     cpu.registers.F = 0b01000000;
-    CU_ASSERT_EQUAL(subtract_flag(&cpu), 1);
+    CU_ASSERT_EQUAL(get_flag(&cpu, SUBTRACT_FLAG), 1);
 
     cpu.registers.F = 0b10111111;
-    CU_ASSERT_EQUAL(subtract_flag(&cpu), 0);
+    CU_ASSERT_EQUAL(get_flag(&cpu, SUBTRACT_FLAG), 0);
 }
 
-void test_half_carry_flag(void)
+void test_get_half_carry_flag(void)
 {
     CPU cpu;
     cpu.registers.F = 0b00100000;
-    CU_ASSERT_EQUAL(half_carry_flag(&cpu), 1);
+    CU_ASSERT_EQUAL(get_flag(&cpu, HALF_CARRY_FLAG), 1);
 
     cpu.registers.F = 0b11011111;
-    CU_ASSERT_EQUAL(half_carry_flag(&cpu), 0);
+    CU_ASSERT_EQUAL(get_flag(&cpu, HALF_CARRY_FLAG), 0);
 }
 
-void test_carry_flag(void)
+void test_get_carry_flag(void)
 {
     CPU cpu;
     cpu.registers.F = 0b00010000;
-    CU_ASSERT_EQUAL(carry_flag(&cpu), 1);
+    CU_ASSERT_EQUAL(get_flag(&cpu, CARRY_FLAG), 1);
 
     cpu.registers.F = 0b11101111;
-    CU_ASSERT_EQUAL(carry_flag(&cpu), 0);
+    CU_ASSERT_EQUAL(get_flag(&cpu, CARRY_FLAG), 0);
+}
+
+void test_set_flag(void)
+{
+    CPU cpu;
+    uint8_t reset = 0b00000000;
+    cpu.registers.F = reset;
+    set_flag(&cpu, CARRY_FLAG);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+
+    cpu.registers.F = reset;
+    set_flag(&cpu, SUBTRACT_FLAG);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
+}
+
+void test_clear_flag(void)
+{
+    CPU cpu;
+    cpu.registers.F = 0b10000000;
+    clear_flag(&cpu, ZERO_FLAG);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+
+    cpu.registers.F = 0b00110000;
+    clear_flag(&cpu, HALF_CARRY_FLAG);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
 }
 
 int main(void)
@@ -71,16 +96,22 @@ int main(void)
             test_suite, "CPU | registers respect endianness", test_registers
         ) == NULL ||
         CU_add_test(
-            test_suite, "CPU | zero flag fetches 1st bit", test_zero_flag
+            test_suite, "CPU | get_flag fetches zero flag bit", test_get_zero_flag
         ) == NULL ||
         CU_add_test(
-            test_suite, "CPU | subtract flag fetches 2nd bit", test_subtract_flag
+            test_suite, "CPU |  get_flag fetches subtract flag bit", test_get_subtract_flag
         ) == NULL ||
         CU_add_test(
-            test_suite, "CPU | half carry flag fetches 3rd bit", test_half_carry_flag
+            test_suite, "CPU | get_flag fetches half carry flag bit", test_get_half_carry_flag
         ) == NULL ||
         CU_add_test(
-            test_suite, "CPU | carry flag fetches 4th bit", test_carry_flag
+            test_suite, "CPU | get_flag fetches carry bit", test_get_carry_flag
+        ) == NULL ||
+        CU_add_test(
+            test_suite, "CPU | set_flag sets bit at correct flag position", test_set_flag
+        ) == NULL ||
+        CU_add_test(
+            test_suite, "CPU | clear_flag clears bit at correct flag position", test_clear_flag
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();
