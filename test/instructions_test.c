@@ -8,7 +8,7 @@ void test_add(void)
     uint8_t source_value = 0x3;
     cpu.registers.A = 0x2;
     cpu.registers.B = source_value;
-    add(&cpu, 0x1234);
+    add(&cpu, 0x00);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x5);
     CU_ASSERT_EQUAL(cpu.registers.B, source_value);
 }
@@ -17,13 +17,13 @@ void test_add_zero_flag(void)
 {
     CPU cpu;
     cpu.registers.A = 0x1;
-    cpu.registers.B = 0x3;
-    add(&cpu, 0x1234);
+    cpu.registers.C = 0x3;
+    add(&cpu, 0x01);
     CU_ASSERT_EQUAL(get_flag(&cpu, ZERO_FLAG), 0);
 
     cpu.registers.A = 0;
-    cpu.registers.B = 0;
-    add(&cpu, 0x1234);
+    cpu.registers.D = 0;
+    add(&cpu, 0x02);
     CU_ASSERT_EQUAL(get_flag(&cpu, ZERO_FLAG), 1);
 }
 
@@ -31,12 +31,12 @@ void test_add_subtract_flag(void)
 {
     CPU cpu;
     cpu.registers.A = 0x4;
-    cpu.registers.B = 0x5;
-    add(&cpu, 0x1234);
+    cpu.registers.E = 0x5;
+    add(&cpu, 0x03);
     CU_ASSERT_EQUAL(get_flag(&cpu, SUBTRACT_FLAG), 0);
 
     set_flag(&cpu, SUBTRACT_FLAG);
-    add(&cpu, 0x1234);
+    add(&cpu, 0x03);
     CU_ASSERT_EQUAL(get_flag(&cpu, SUBTRACT_FLAG), 0);
 }
 
@@ -45,14 +45,14 @@ void test_add_half_carry_flag(void)
     CPU cpu;
     cpu.registers.A = 0xf;
     cpu.registers.B = 0x1;
-    add(&cpu, 0x1234);
+    add(&cpu, 0x00);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x10);
     CU_ASSERT_EQUAL(get_flag(&cpu, HALF_CARRY_FLAG), 1);
 
     cpu.registers.A = 0x3;
-    cpu.registers.B = 0x1;
+    cpu.registers.L = 0x1;
     clear_flag(&cpu, HALF_CARRY_FLAG);
-    add(&cpu, 0x1234);
+    add(&cpu, 0x05);
     CU_ASSERT_EQUAL(get_flag(&cpu, HALF_CARRY_FLAG), 0);
 }
 
@@ -60,12 +60,12 @@ void test_add_carry_flag(void)
 {
     CPU cpu;
     cpu.registers.A = 0x3;
-    cpu.registers.B = 0x8;
-    add(&cpu, 0x1234);
+    cpu.registers.H = 0x8;
+    add(&cpu, 0x04);
     CU_ASSERT_EQUAL(get_flag(&cpu, CARRY_FLAG), 0);
 
     cpu.registers.A = 0xfe;
-    add(&cpu, 0x1234);
+    add(&cpu, 0x04);
     CU_ASSERT_EQUAL(get_flag(&cpu, CARRY_FLAG), 1);
 }
 

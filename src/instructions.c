@@ -6,32 +6,40 @@ uint8_t low_overflow(uint8_t a, uint8_t b)
     return (a & 0xf) + (b & 0xf) > 0xf;
 }
 
-void add(CPU *cpu, uint16_t opcode)
+void add(CPU *cpu, uint8_t nibble)
 {
-    Registers8 reg = B;
-    uint8_t value;
-    switch (reg)
-    {
-    case B:
+    uint16_t value;
+    switch (nibble) {
+    case 0x0:
         value = cpu->registers.B;
         break;
-    case C:
+    case 0x1:
         value = cpu->registers.C;
         break;
-    case D:
+    case 0x2:
         value = cpu->registers.D;
         break;
-    case H:
+    case 0x3:
+        value = cpu->registers.E;
+        break;
+    case 0x4:
         value = cpu->registers.H;
         break;
-    case L:
+    case 0x5:
         value = cpu->registers.L;
         break;
+    case 0x6:
+        value = cpu->registers.HL;
+        break;
+    case 0x7:
+        value = cpu->registers.A;
+        break;
     default:
-        printf("ADD failed. Invalid register: %x\n", reg);
+        printf("ADD failed. Invalid reg: %x\n", nibble);
         return;
-    }
+    };
     uint16_t result = cpu->registers.A + value;
+
     if (result == 0) set_flag(cpu, ZERO_FLAG);
     clear_flag(cpu, SUBTRACT_FLAG);
     if (low_overflow(cpu->registers.A, value) == 1) set_flag(cpu, HALF_CARRY_FLAG);

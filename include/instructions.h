@@ -3,6 +3,6 @@
 
 #include "cpu.h"
 
-void add(CPU *, uint16_t);
+void add(CPU *, uint8_t);
 
 #endif
