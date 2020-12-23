@@ -20,7 +20,7 @@ CFLAGS +=  -Wstrict-prototypes
 CFLAGS +=  -Wundef
 CFLAGS +=  -Wold-style-definition
 
-_OBJ = cpu.o main.o
+_OBJ = instructions.o cpu.o main.o
 OBJ = $(patsubst %,$(BUILD_DIR)%,$(_OBJ))
 
 $(TARGET): $(OBJ)
@@ -39,7 +39,7 @@ TEST_RESULTS = test/results/
 
 TEST_LIBS = cunit
 
-_TEST_OBJ = flags_test.o instructions_test.o
+_TEST_OBJ = flags_test.o instructions_test.o cpu_test.o
 TEST_OBJ = $(patsubst %,$(TEST_BUILD_DIR)%,$(_TEST_OBJ))
 
 SUITES_RUN = `grep Suite $(TEST_RESULTS)*.txt | sed "s/Suite: //g"`
@@ -62,8 +62,11 @@ $(TEST_RESULTS)test_results.txt: $(TEST_OBJ)
 	@for test in $(TEST_OBJ) ; do \
 		./$$test >> $(TEST_RESULTS)test_results.txt ; done
 
+$(TEST_BUILD_DIR)cpu_test.o: $(TEST_DIR)cpu_test.c
+	$(CC) $< $(SOURCE_DIR)instructions.c $(SOURCE_DIR)cpu.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
+
 $(TEST_BUILD_DIR)flags_test.o: $(TEST_DIR)flags_test.c
-	$(CC) $< $(SOURCE_DIR)cpu.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
+	$(CC) $< $(SOURCE_DIR)instructions.c $(SOURCE_DIR)cpu.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
 
 $(TEST_BUILD_DIR)instructions_test.o: $(TEST_DIR)instructions_test.c
 	$(CC) $< $(SOURCE_DIR)instructions.c $(SOURCE_DIR)cpu.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
