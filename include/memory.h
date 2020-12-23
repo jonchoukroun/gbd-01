@@ -1,4 +1,8 @@
+#ifndef Memory
+#define Memory
 #include <stdint.h>
+
+#define ADDRESS_BUS_SIZE 0xffff
 
 #define ROM00_START 0x0000
 #define ROM00_END 0x3fff
@@ -35,6 +39,4 @@
 
 #define IE_REGISTER 0xffff
 
-typedef struct Memory {
-    uint16_t *AddressBus;
-} Memory
+#endif
