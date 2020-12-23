@@ -69,6 +69,29 @@ void test_add_carry_flag(void)
     CU_ASSERT_EQUAL(get_flag(&cpu, CARRY_FLAG), 1);
 }
 
+void test_add_carry(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0xa;
+    cpu.registers.B = 0x2;
+    clear_flag(&cpu, CARRY_FLAG);
+    add(&cpu, 0x08);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0xc);
+
+    cpu.registers.A = 0x5;
+    set_flag(&cpu, CARRY_FLAG);
+    add(&cpu, 0x08);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x8);
+    CU_ASSERT_EQUAL(get_flag(&cpu, CARRY_FLAG), 0);
+
+    cpu.registers.A = 0x23;
+    cpu.registers.HL = 0x1234;
+    set_flag(&cpu, CARRY_FLAG);
+    add(&cpu, 0x0e);
+    CU_ASSERT_EQUAL(cpu.registers.A, (0x1258 & 0xff));
+    CU_ASSERT_EQUAL(get_flag(&cpu, CARRY_FLAG), 1);
+}
+
 int main(void)
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -107,6 +130,11 @@ int main(void)
             test_suite,
             "Instructions | ADD sets carry flag if result is greater than 0xff",
             test_add_carry_flag
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Instructions | ADC adds register value and carry flag to A",
+            test_add_carry
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();

@@ -34,6 +34,30 @@ void add(CPU *cpu, uint8_t nibble)
     case 0x7:
         value = cpu->registers.A;
         break;
+    case 0x8:
+        value = cpu->registers.B + get_flag(cpu, CARRY_FLAG);
+        break;
+    case 0x9:
+        value = cpu->registers.C + get_flag(cpu, CARRY_FLAG);
+        break;
+    case 0xa:
+        value = cpu->registers.D + get_flag(cpu, CARRY_FLAG);
+        break;
+    case 0xb:
+        value = cpu->registers.E + get_flag(cpu, CARRY_FLAG);
+        break;
+    case 0xc:
+        value = cpu->registers.H + get_flag(cpu, CARRY_FLAG);
+        break;
+    case 0xd:
+        value = cpu->registers.L + get_flag(cpu, CARRY_FLAG);
+        break;
+    case 0xe:
+        value = cpu->registers.HL + get_flag(cpu, CARRY_FLAG);
+        break;
+    case 0xf:
+        value = cpu->registers.A + get_flag(cpu, CARRY_FLAG);
+        break;
     default:
         printf("ADD failed. Invalid reg: %x\n", nibble);
         return;
