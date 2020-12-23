@@ -2,6 +2,7 @@
 #define Cpu
 
 #include <stdint.h>
+#include "memory.h"
 
 #define REGISTERS_COUNT 4
 
@@ -78,13 +79,15 @@ typedef struct Registers {
             uint8_t H;
         };
     };
-    uint16_t PC;
-    uint16_t SP;
 } Registers;
 #endif
 
 typedef struct CPU {
     Registers registers;
+    uint16_t PC;
+    uint16_t SP;
+    uint16_t memory[ADDRESS_BUS_SIZE];
+    uint8_t cycles;
 } CPU;
 
 typedef enum {
@@ -93,6 +96,9 @@ typedef enum {
     HALF_CARRY_FLAG = 5,
     CARRY_FLAG = 4
 } FlagPosition;
+
+uint16_t fetch(CPU *);
+void execute(CPU *, uint16_t);
 
 uint8_t get_flag(CPU *, FlagPosition);
 void clear_flag(CPU *, FlagPosition);
