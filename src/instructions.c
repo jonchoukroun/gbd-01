@@ -64,10 +64,25 @@ void add(CPU *cpu, uint8_t nibble)
     };
     uint16_t result = cpu->registers.A + value;
 
-    if (result == 0) set_flag(cpu, ZERO_FLAG);
+    if (result == 0) {
+        set_flag(cpu, ZERO_FLAG);
+    } else {
+        clear_flag(cpu, ZERO_FLAG);
+    }
+
     clear_flag(cpu, SUBTRACT_FLAG);
-    if (low_overflow(cpu->registers.A, value) == 1) set_flag(cpu, HALF_CARRY_FLAG);
-    if (result > 0xff) set_flag(cpu, CARRY_FLAG);
+
+    if (low_overflow(cpu->registers.A, value) == 1) {
+        set_flag(cpu, HALF_CARRY_FLAG);
+    } else {
+        clear_flag(cpu, HALF_CARRY_FLAG);
+    }
+
+    if (result > 0xff) {
+        set_flag(cpu, CARRY_FLAG);
+    } else {
+        clear_flag(cpu, CARRY_FLAG);
+    }
 
     cpu->registers.A = result & 0xff;
 }
