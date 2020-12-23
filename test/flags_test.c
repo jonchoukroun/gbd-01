@@ -85,7 +85,7 @@ int main(void)
         return CU_get_error();
     }
 
-    CU_Suite *test_suite = CU_add_suite("CPU unit tests", NULL, NULL);
+    CU_Suite *test_suite = CU_add_suite("Flag functions unit tests", NULL, NULL);
     if (test_suite == NULL) {
         printf("Failed to add test suite\n");
         CU_cleanup_registry();
@@ -93,27 +93,27 @@ int main(void)
     }
 
     if (CU_add_test(
-            test_suite, "CPU | registers respect endianness", test_registers
+            test_suite, "Flags | registers respect endianness", test_registers
         ) == NULL ||
         CU_add_test(
-            test_suite, "CPU | get_flag fetches zero flag bit", test_get_zero_flag
+            test_suite, "Flags | get_flag fetches zero flag bit", test_get_zero_flag
         ) == NULL ||
         CU_add_test(
-            test_suite, "CPU |  get_flag fetches subtract flag bit", test_get_subtract_flag
+            test_suite, "Flags |  get_flag fetches subtract flag bit", test_get_subtract_flag
         ) == NULL ||
         CU_add_test(
-            test_suite, "CPU | get_flag fetches half carry flag bit", test_get_half_carry_flag
+            test_suite, "Flags | get_flag fetches half carry flag bit", test_get_half_carry_flag
         ) == NULL ||
         CU_add_test(
-            test_suite, "CPU | get_flag fetches carry bit", test_get_carry_flag
+            test_suite, "Flags | get_flag fetches carry bit", test_get_carry_flag
         ) == NULL ||
         CU_add_test(
-            test_suite, "CPU | set_flag sets bit at correct flag position", test_set_flag
+            test_suite, "Flags | set_flag sets bit at correct flag position", test_set_flag
         ) == NULL ||
         CU_add_test(
-            test_suite, "CPU | clear_flag clears bit at correct flag position", test_clear_flag
+            test_suite, "Flags | clear_flag clears bit at correct flag position", test_clear_flag
         ) == NULL) {
-        printf("Failed to add test to CPU unit test suite\n");
+        printf("Failed to add test to Flag functions unit test suite\n");
         CU_cleanup_registry();
         return CU_get_error();
     }
