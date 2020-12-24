@@ -24,10 +24,10 @@ void test_execute(void)
     cpu.registers.C = 0xa;
     uint16_t opcode = fetch(&cpu);
     execute(&cpu, opcode);
-    printf(" A %x ", cpu.registers.A);
     CU_ASSERT_EQUAL(cpu.registers.A, 0xb);
     CU_ASSERT_EQUAL(cpu.registers.C, 0xa);
     CU_ASSERT_EQUAL(cpu.PC, 0x1001);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
 int main()

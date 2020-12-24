@@ -14,13 +14,14 @@ uint16_t fetch(CPU *cpu)
 void execute(CPU *cpu, uint16_t opcode)
 {
     cpu->PC++;
+    cpu->t_cycles = 0;
     uint8_t high_nibble = (opcode & 0x0f00) >> 8;
     uint8_t low_nibble = opcode & 0x00ff;
 
     switch (high_nibble) {
     case 0x8:
         add(cpu, low_nibble);
-        cpu->cycles = 4;
+        cpu->t_cycles = 4;
         break;
 
     default:
