@@ -4,11 +4,11 @@
 
 #define ADDRESS_BUS_SIZE 0xffff
 
-#define ROM00_START 0x0000
-#define ROM00_END 0x3fff
+#define ROM0_START 0x0000
+#define ROM0_END 0x3fff
 // TODO: switchable 01-NN if MB
-#define ROM01_START 0x4000
-#define ROM01_END 0x7fff
+#define ROMX_START 0x4000
+#define ROMX_END 0x7fff
 
 #define VRAM_START 0x8000
 #define VRAM_END 0x9fff
