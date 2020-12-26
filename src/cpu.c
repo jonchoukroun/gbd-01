@@ -21,7 +21,6 @@ void execute(CPU *cpu, uint16_t opcode)
     switch (high_nibble) {
     case 0x8:
         add(cpu, low_nibble);
-        cpu->t_cycles = 4;
         break;
 
     default:

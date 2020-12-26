@@ -9,6 +9,7 @@ uint8_t low_overflow(uint8_t a, uint8_t b)
 void add(CPU *cpu, uint8_t nibble)
 {
     uint16_t value;
+    uint8_t t_cycles = 4;
     switch (nibble) {
     case 0x0:
         value = cpu->registers.B;
@@ -30,6 +31,7 @@ void add(CPU *cpu, uint8_t nibble)
         break;
     case 0x6:
         value = cpu->registers.HL;
+        t_cycles = 8;
         break;
     case 0x7:
         value = cpu->registers.A;
@@ -54,6 +56,7 @@ void add(CPU *cpu, uint8_t nibble)
         break;
     case 0xe:
         value = cpu->registers.HL + get_flag(cpu, CARRY_FLAG);
+        t_cycles = 8;
         break;
     case 0xf:
         value = cpu->registers.A + get_flag(cpu, CARRY_FLAG);
@@ -85,4 +88,5 @@ void add(CPU *cpu, uint8_t nibble)
     }
 
     cpu->registers.A = result & 0xff;
+    cpu->t_cycles =  t_cycles;
 }
