@@ -264,43 +264,37 @@ void LD_A_n(CPU *cpu)
 
 void LD_B_n(CPU *cpu)
 {
-    uint8_t n = cpu->memory[cpu->PC - 1];
-    cpu->registers.B = n;
+    cpu->registers.B = cpu->memory[cpu->PC - 1];
     cpu->t_cycles = 8;
 }
 
 void LD_C_n(CPU *cpu)
 {
-    uint8_t n = cpu->memory[cpu->PC - 1];
-    cpu->registers.C = n;
+    cpu->registers.C = cpu->memory[cpu->PC - 1];
     cpu->t_cycles = 8;
 }
 
 void LD_D_n(CPU *cpu)
 {
-    uint8_t n = cpu->memory[cpu->PC - 1];
-    cpu->registers.D = n;
+    cpu->registers.D = cpu->memory[cpu->PC - 1];
     cpu->t_cycles = 8;
 }
 
 void LD_E_n(CPU *cpu)
 {
-    uint8_t n = cpu->memory[cpu->PC - 1];
-    cpu->registers.E = n;
+    cpu->registers.E = cpu->memory[cpu->PC - 1];
     cpu->t_cycles = 8;
 }
 
 void LD_H_n(CPU *cpu)
 {
-    uint8_t n = cpu->memory[cpu->PC - 1];
-    cpu->registers.H = n;
+    cpu->registers.H = cpu->memory[cpu->PC - 1];
     cpu->t_cycles = 8;
 }
 
 void LD_L_n(CPU *cpu)
 {
-    uint8_t n = cpu->memory[cpu->PC - 1];
-    cpu->registers.L = n;
+    cpu->registers.L = cpu->memory[cpu->PC - 1];
     cpu->t_cycles = 8;
 }
 
