@@ -254,6 +254,42 @@ void LD_L_L(CPU *cpu)
     cpu->t_cycles = 4;
 }
 
+// LD r, n
+void LD_A_n(CPU *cpu)
+{
+    printf("LD_A_n not defined\n");
+}
+
+void LD_B_n(CPU *cpu)
+{
+    printf("LD_B_n not defined\n");
+}
+
+void LD_C_n(CPU *cpu)
+{
+    printf("LD_C_n not defined\n");
+}
+
+void LD_D_n(CPU *cpu)
+{
+    printf("LD_D_n not defined\n");
+}
+
+void LD_E_n(CPU *cpu)
+{
+    printf("LD_E_n not defined\n");
+}
+
+void LD_H_n(CPU *cpu)
+{
+    printf("LD_H_n not defined\n");
+}
+
+void LD_L_n(CPU *cpu)
+{
+    printf("LD_L_n not defined\n");
+}
+
 void UNDEF(CPU *cpu)
 {
     printf("Opcode instruction undefined (%x)\n", cpu->memory[cpu->PC--]);
