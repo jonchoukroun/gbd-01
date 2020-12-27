@@ -1,92 +1,255 @@
 #include <stdio.h>
 #include "instructions.h"
 
-uint8_t low_overflow(uint8_t a, uint8_t b)
+// LD r, r*
+void LD_B_A(CPU *cpu)
 {
-    return (a & 0xf) + (b & 0xf) > 0xf;
+    cpu->registers.B = cpu->registers.A;
+    cpu->t_cycles = 4;
 }
 
-void add(CPU *cpu, uint8_t nibble)
+void LD_B_B(CPU *cpu)
 {
-    uint16_t value;
-    uint8_t t_cycles = 4;
-    switch (nibble) {
-    case 0x0:
-        value = cpu->registers.B;
-        break;
-    case 0x1:
-        value = cpu->registers.C;
-        break;
-    case 0x2:
-        value = cpu->registers.D;
-        break;
-    case 0x3:
-        value = cpu->registers.E;
-        break;
-    case 0x4:
-        value = cpu->registers.H;
-        break;
-    case 0x5:
-        value = cpu->registers.L;
-        break;
-    case 0x6:
-        value = cpu->registers.HL;
-        t_cycles = 8;
-        break;
-    case 0x7:
-        value = cpu->registers.A;
-        break;
-    case 0x8:
-        value = cpu->registers.B + get_flag(cpu, CARRY_FLAG);
-        break;
-    case 0x9:
-        value = cpu->registers.C + get_flag(cpu, CARRY_FLAG);
-        break;
-    case 0xa:
-        value = cpu->registers.D + get_flag(cpu, CARRY_FLAG);
-        break;
-    case 0xb:
-        value = cpu->registers.E + get_flag(cpu, CARRY_FLAG);
-        break;
-    case 0xc:
-        value = cpu->registers.H + get_flag(cpu, CARRY_FLAG);
-        break;
-    case 0xd:
-        value = cpu->registers.L + get_flag(cpu, CARRY_FLAG);
-        break;
-    case 0xe:
-        value = cpu->registers.HL + get_flag(cpu, CARRY_FLAG);
-        t_cycles = 8;
-        break;
-    case 0xf:
-        value = cpu->registers.A + get_flag(cpu, CARRY_FLAG);
-        break;
-    default:
-        printf("ADD failed. Invalid reg: %x\n", nibble);
-        return;
-    };
-    uint16_t result = cpu->registers.A + value;
+    cpu->registers.B = cpu->registers.B;
+    cpu->t_cycles = 4;
+}
 
-    if (result == 0) {
-        set_flag(cpu, ZERO_FLAG);
-    } else {
-        clear_flag(cpu, ZERO_FLAG);
-    }
+void LD_B_C(CPU *cpu)
+{
+    cpu->registers.B = cpu->registers.C;
+    cpu->t_cycles = 4;
+}
 
-    clear_flag(cpu, SUBTRACT_FLAG);
+void LD_B_D(CPU *cpu)
+{
+    cpu->registers.B = cpu->registers.D;
+    cpu->t_cycles = 4;
+}
 
-    if (low_overflow(cpu->registers.A, value) == 1) {
-        set_flag(cpu, HALF_CARRY_FLAG);
-    } else {
-        clear_flag(cpu, HALF_CARRY_FLAG);
-    }
+void LD_B_E(CPU *cpu)
+{
+    cpu->registers.B = cpu->registers.E;
+    cpu->t_cycles = 4;
+}
 
-    if (result > 0xff) {
-        set_flag(cpu, CARRY_FLAG);
-    } else {
-        clear_flag(cpu, CARRY_FLAG);
-    }
+void LD_B_H(CPU *cpu)
+{
+    cpu->registers.B = cpu->registers.H;
+    cpu->t_cycles = 4;
+}
 
-    cpu->registers.A = result & 0xff;
-    cpu->t_cycles =  t_cycles;
+void LD_B_L(CPU *cpu)
+{
+    cpu->registers.B = cpu->registers.L;
+    cpu->t_cycles = 4;
+}
+
+void LD_C_A(CPU *cpu)
+{
+    cpu->registers.C = cpu->registers.A;
+    cpu->t_cycles = 4;
+}
+
+void LD_C_B(CPU *cpu)
+{
+    cpu->registers.C = cpu->registers.B;
+    cpu->t_cycles = 4;
+}
+
+void LD_C_C(CPU *cpu)
+{
+    cpu->registers.C = cpu->registers.C;
+    cpu->t_cycles = 4;
+}
+
+void LD_C_D(CPU *cpu)
+{
+    cpu->registers.C = cpu->registers.D;
+    cpu->t_cycles = 4;
+}
+
+void LD_C_E(CPU *cpu)
+{
+    cpu->registers.C = cpu->registers.E;
+    cpu->t_cycles = 4;
+}
+
+void LD_C_H(CPU *cpu)
+{
+    cpu->registers.C = cpu->registers.H;
+    cpu->t_cycles = 4;
+}
+
+void LD_C_L(CPU *cpu)
+{
+    cpu->registers.C = cpu->registers.L;
+    cpu->t_cycles = 4;
+}
+
+void LD_D_A(CPU *cpu)
+{
+    cpu->registers.D = cpu->registers.A;
+    cpu->t_cycles = 4;
+}
+
+void LD_D_B(CPU *cpu)
+{
+    cpu->registers.D = cpu->registers.B;
+    cpu->t_cycles = 4;
+}
+
+void LD_D_C(CPU *cpu)
+{
+    cpu->registers.D = cpu->registers.C;
+    cpu->t_cycles = 4;
+}
+
+void LD_D_D(CPU *cpu)
+{
+    cpu->registers.D = cpu->registers.D;
+    cpu->t_cycles = 4;
+}
+
+void LD_D_E(CPU *cpu)
+{
+    cpu->registers.D = cpu->registers.E;
+    cpu->t_cycles = 4;
+}
+
+void LD_D_H(CPU *cpu)
+{
+    cpu->registers.D = cpu->registers.H;
+    cpu->t_cycles = 4;
+}
+
+void LD_D_L(CPU *cpu)
+{
+    cpu->registers.D = cpu->registers.L;
+    cpu->t_cycles = 4;
+}
+
+void LD_E_A(CPU *cpu)
+{
+    cpu->registers.E = cpu->registers.A;
+    cpu->t_cycles = 4;
+}
+
+void LD_E_B(CPU *cpu)
+{
+    cpu->registers.E = cpu->registers.B;
+    cpu->t_cycles = 4;
+}
+
+void LD_E_C(CPU *cpu)
+{
+    cpu->registers.E = cpu->registers.C;
+    cpu->t_cycles = 4;
+}
+
+void LD_E_D(CPU *cpu)
+{
+    cpu->registers.E = cpu->registers.D;
+    cpu->t_cycles = 4;
+}
+
+void LD_E_E(CPU *cpu)
+{
+    cpu->registers.E = cpu->registers.E;
+    cpu->t_cycles = 4;
+}
+
+void LD_E_H(CPU *cpu)
+{
+    cpu->registers.E = cpu->registers.H;
+    cpu->t_cycles = 4;
+}
+
+void LD_E_L(CPU *cpu)
+{
+    cpu->registers.E = cpu->registers.L;
+    cpu->t_cycles = 4;
+}
+
+void LD_H_A(CPU *cpu)
+{
+    cpu->registers.H = cpu->registers.A;
+    cpu->t_cycles = 4;
+}
+
+void LD_H_B(CPU *cpu)
+{
+    cpu->registers.H = cpu->registers.B;
+    cpu->t_cycles = 4;
+}
+
+void LD_H_C(CPU *cpu)
+{
+    cpu->registers.H = cpu->registers.C;
+    cpu->t_cycles = 4;
+}
+
+void LD_H_D(CPU *cpu)
+{
+    cpu->registers.H = cpu->registers.D;
+    cpu->t_cycles = 4;
+}
+
+void LD_H_E(CPU *cpu)
+{
+    cpu->registers.H = cpu->registers.E;
+    cpu->t_cycles = 4;
+}
+
+void LD_H_H(CPU *cpu)
+{
+    cpu->registers.H = cpu->registers.H;
+    cpu->t_cycles = 4;
+}
+
+void LD_H_L(CPU *cpu)
+{
+    cpu->registers.H = cpu->registers.L;
+    cpu->t_cycles = 4;
+}
+
+void LD_L_A(CPU *cpu)
+{
+    cpu->registers.L = cpu->registers.A;
+    cpu->t_cycles = 4;
+}
+
+void LD_L_B(CPU *cpu)
+{
+    cpu->registers.L = cpu->registers.B;
+    cpu->t_cycles = 4;
+}
+
+void LD_L_C(CPU *cpu)
+{
+    cpu->registers.L = cpu->registers.C;
+    cpu->t_cycles = 4;
+}
+
+void LD_L_D(CPU *cpu)
+{
+    cpu->registers.L = cpu->registers.D;
+    cpu->t_cycles = 4;
+}
+
+void LD_L_E(CPU *cpu)
+{
+    cpu->registers.L = cpu->registers.E;
+    cpu->t_cycles = 4;
+}
+
+void LD_L_H(CPU *cpu)
+{
+    cpu->registers.L = cpu->registers.H;
+    cpu->t_cycles = 4;
+}
+
+void LD_L_L(CPU *cpu)
+{
+    cpu->registers.L = cpu->registers.L;
+    cpu->t_cycles = 4;
 }

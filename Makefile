@@ -39,7 +39,7 @@ TEST_RESULTS = test/results/
 
 TEST_LIBS = cunit
 
-_TEST_OBJ = flags_test.o instructions_test.o cpu_test.o
+_TEST_OBJ = flags_test.o load_ops_test.o cpu_test.o
 TEST_OBJ = $(patsubst %,$(TEST_BUILD_DIR)%,$(_TEST_OBJ))
 
 SUITES_RUN = `grep Suite $(TEST_RESULTS)*.txt | sed "s/Suite: //g"`
@@ -68,7 +68,7 @@ $(TEST_BUILD_DIR)cpu_test.o: $(TEST_DIR)cpu_test.c
 $(TEST_BUILD_DIR)flags_test.o: $(TEST_DIR)flags_test.c
 	$(CC) $< $(SOURCE_DIR)instructions.c $(SOURCE_DIR)cpu.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
 
-$(TEST_BUILD_DIR)instructions_test.o: $(TEST_DIR)instructions_test.c
+$(TEST_BUILD_DIR)load_ops_test.o: $(TEST_DIR)load_ops_test.c
 	$(CC) $< $(SOURCE_DIR)instructions.c $(SOURCE_DIR)cpu.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
 
 
