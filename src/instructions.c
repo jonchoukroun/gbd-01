@@ -346,6 +346,55 @@ void LD_L_HL(CPU *cpu)
     cpu->t_cycles = 8;
 }
 
+// LD (HL), r
+void LD_HL_A(CPU *cpu)
+{
+    cpu->memory[cpu->registers.HL] = cpu->registers.A;
+    cpu->t_cycles = 8;
+}
+
+void LD_HL_B(CPU *cpu)
+{
+    cpu->memory[cpu->registers.HL] = cpu->registers.B;
+    cpu->t_cycles = 8;
+}
+
+void LD_HL_C(CPU *cpu)
+{
+    cpu->memory[cpu->registers.HL] = cpu->registers.C;
+    cpu->t_cycles = 8;
+}
+
+void LD_HL_D(CPU *cpu)
+{
+    cpu->memory[cpu->registers.HL] = cpu->registers.D;
+    cpu->t_cycles = 8;
+}
+
+void LD_HL_E(CPU *cpu)
+{
+    cpu->memory[cpu->registers.HL] = cpu->registers.E;
+    cpu->t_cycles = 8;
+}
+
+void LD_HL_H(CPU *cpu)
+{
+    cpu->memory[cpu->registers.HL] = cpu->registers.H;
+    cpu->t_cycles = 8;
+}
+
+void LD_HL_L(CPU *cpu)
+{
+    cpu->memory[cpu->registers.HL] = cpu->registers.L;
+    cpu->t_cycles = 8;
+}
+
+void LD_HL_n(CPU *cpu)
+{
+    cpu->memory[cpu->registers.HL] = cpu->memory[cpu->PC - 1];
+    cpu->t_cycles = 12;
+}
+
 void UNDEF(CPU *cpu)
 {
     printf("Opcode instruction undefined (%x)\n", cpu->memory[cpu->PC--]);
