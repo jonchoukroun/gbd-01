@@ -257,37 +257,51 @@ void LD_L_L(CPU *cpu)
 // LD r, n
 void LD_A_n(CPU *cpu)
 {
-    printf("LD_A_n not defined\n");
+    uint8_t n = cpu->memory[cpu->PC - 1];
+    cpu->registers.A = n;
+    cpu->t_cycles = 8;
 }
 
 void LD_B_n(CPU *cpu)
 {
-    printf("LD_B_n not defined\n");
+    uint8_t n = cpu->memory[cpu->PC - 1];
+    cpu->registers.B = n;
+    cpu->t_cycles = 8;
 }
 
 void LD_C_n(CPU *cpu)
 {
-    printf("LD_C_n not defined\n");
+    uint8_t n = cpu->memory[cpu->PC - 1];
+    cpu->registers.C = n;
+    cpu->t_cycles = 8;
 }
 
 void LD_D_n(CPU *cpu)
 {
-    printf("LD_D_n not defined\n");
+    uint8_t n = cpu->memory[cpu->PC - 1];
+    cpu->registers.D = n;
+    cpu->t_cycles = 8;
 }
 
 void LD_E_n(CPU *cpu)
 {
-    printf("LD_E_n not defined\n");
+    uint8_t n = cpu->memory[cpu->PC - 1];
+    cpu->registers.E = n;
+    cpu->t_cycles = 8;
 }
 
 void LD_H_n(CPU *cpu)
 {
-    printf("LD_H_n not defined\n");
+    uint8_t n = cpu->memory[cpu->PC - 1];
+    cpu->registers.H = n;
+    cpu->t_cycles = 8;
 }
 
 void LD_L_n(CPU *cpu)
 {
-    printf("LD_L_n not defined\n");
+    uint8_t n = cpu->memory[cpu->PC - 1];
+    cpu->registers.L = n;
+    cpu->t_cycles = 8;
 }
 
 void UNDEF(CPU *cpu)

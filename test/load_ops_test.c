@@ -503,6 +503,83 @@ void test_LD_L_L(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
+void test_LD_A_n(void)
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.memory[cpu.PC - 1] = 0x06af;
+    cpu.registers.A = 0;
+    LD_A_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0xaf);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_LD_B_n(void)
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.memory[cpu.PC - 1] = 0x06af;
+    cpu.registers.B = 0;
+    LD_B_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.B, 0xaf);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_LD_C_n(void)
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.memory[cpu.PC - 1] = 0x06af;
+    cpu.registers.C = 0;
+    LD_C_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.C, 0xaf);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_LD_D_n(void)
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.memory[cpu.PC - 1] = 0x06af;
+    cpu.registers.D = 0;
+    LD_D_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.D, 0xaf);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_LD_E_n(void)
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.memory[cpu.PC - 1] = 0x06af;
+    cpu.registers.E = 0;
+    LD_E_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.E, 0xaf);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_LD_H_n(void)
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.memory[cpu.PC - 1] = 0x06af;
+    cpu.registers.H = 0;
+    LD_H_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.H, 0xaf);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_LD_L_n(void)
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.memory[cpu.PC - 1] = 0x06af;
+    cpu.registers.L = 0;
+    LD_L_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.L, 0xaf);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
 int main(void)
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -691,6 +768,41 @@ int main(void)
             test_suite,
             "LD Instructions | LD_H_L loads register L value into register H and sets cycle",
             test_LD_H_L
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LD_A_n loads immediate value into register be and sets cycles",
+            test_LD_A_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LD_B_n loads immediate value into register be and sets cycles",
+            test_LD_B_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LD_C_n loads immediate value into register be and sets cycles",
+            test_LD_C_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LD_D_n loads immediate value into register be and sets cycles",
+            test_LD_D_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LD_E_n loads immediate value into register be and sets cycles",
+            test_LD_E_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LD_H_n loads immediate value into register be and sets cycles",
+            test_LD_H_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LD_L_n loads immediate value into register be and sets cycles",
+            test_LD_L_n
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();

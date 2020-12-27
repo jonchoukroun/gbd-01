@@ -15,21 +15,6 @@ void test_fetch(void)
     CU_ASSERT_EQUAL(fetch(&cpu), value);
 }
 
-void test_execute(void)
-{
-    CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.memory[0x1000] = 0x0801;
-    cpu.registers.A = 0x1;
-    cpu.registers.C = 0xa;
-    uint16_t opcode = fetch(&cpu);
-    execute(&cpu, opcode);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0xb);
-    CU_ASSERT_EQUAL(cpu.registers.C, 0xa);
-    CU_ASSERT_EQUAL(cpu.PC, 0x1001);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
-}
-
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -46,9 +31,6 @@ int main()
 
     if (CU_add_test(
             test_suite, "CPU | fetch returns 16bit value from memory address", test_fetch
-        ) == NULL ||
-        CU_add_test(
-            test_suite, "CPU | execute updates CPU as expected", test_execute
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();
