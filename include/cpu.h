@@ -4,18 +4,6 @@
 #include <stdint.h>
 #include "memory.h"
 
-#define REGISTERS_COUNT 4
-
-typedef enum Registers8 {
-    A,
-    F,
-    B,
-    C,
-    D,
-    H,
-    L
-} Registers8;
-
 #ifdef __BIG_ENDIAN__
 typedef struct Registers {
     union {
