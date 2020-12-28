@@ -805,6 +805,32 @@ void test_LD_A_DE(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
+void test_LD_BC_A(void)
+{
+    CPU cpu;
+    uint16_t address = 0x4f18;
+    uint8_t value = 0x12;
+    cpu.registers.A = value;
+    cpu.memory[address] = 0;
+    cpu.registers.BC = address;
+    LD_BC_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.BC], value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_LD_DE_A(void)
+{
+    CPU cpu;
+    uint16_t address = 0x4f18;
+    uint8_t value = 0x12;
+    cpu.registers.A = value;
+    cpu.memory[address] = 0;
+    cpu.registers.DE = address;
+    LD_DE_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.DE], value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
 int main(void)
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -1113,6 +1139,16 @@ int main(void)
             test_suite,
             "LD Instructions | LD_A_DE loads byte pointed to by DE register into register A",
             test_LD_A_DE
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LD_BC_A loads value in register A into byte pointed to by register BC",
+            test_LD_BC_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LD_DE_A loads value in register A into byte pointed to by register DE",
+            test_LD_DE_A
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();
