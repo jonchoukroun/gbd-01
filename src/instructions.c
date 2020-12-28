@@ -484,6 +484,38 @@ void LD_HLD_A(CPU *cpu)
     cpu->t_cycles = 8;
 }
 
+// LD rr, nn
+void LD_BC_nn(CPU *cpu)
+{
+    cpu->registers.BC = fetch_opcode(cpu) << 8 | fetch_opcode(cpu);
+    cpu->t_cycles = 12;
+}
+
+void LD_DE_nn(CPU *cpu)
+{
+    cpu->registers.DE = fetch_opcode(cpu) << 8 | fetch_opcode(cpu);
+    cpu->t_cycles = 12;
+}
+
+void LD_HL_nn(CPU *cpu)
+{
+    cpu->registers.HL = fetch_opcode(cpu) << 8 | fetch_opcode(cpu);
+    cpu->t_cycles = 12;
+}
+
+void LD_nn_SP(CPU *cpu)
+{
+    uint16_t address = fetch_opcode(cpu) << 8 | fetch_opcode(cpu);
+    write_word(cpu, cpu->SP, address);
+    cpu->t_cycles = 20;
+}
+
+void LD_SP_HL(CPU *cpu)
+{
+    cpu->SP = cpu->registers.HL;
+    cpu->t_cycles = 8;
+}
+
 void UNDEF(CPU *cpu)
 {
     printf("Opcode instruction undefined (%x)\n", cpu->memory[cpu->PC--]);
