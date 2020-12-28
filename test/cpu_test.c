@@ -2,68 +2,57 @@
 #include <CUnit/Basic.h>
 #include "cpu.h"
 
-void test_fetch(void)
+void test_fetch_opcode(void)
 {
     CPU cpu;
-    cpu.PC = 0x1000;
-    CU_ASSERT_EQUAL(fetch(&cpu), 0);
-
-    uint16_t address = 0x0050;
-    uint16_t value = 0x1234;
-    cpu.memory[address] = value;
-    cpu.PC = address;
-    CU_ASSERT_EQUAL(fetch(&cpu), value);
+    uint16_t PC_start = 0x1000;
+    uint8_t opcode = 0xab;
+    cpu.memory[PC_start] = opcode;
+    cpu.memory[PC_start + 1] = 0xcd;
+    cpu.PC = PC_start;
+    CU_ASSERT_EQUAL(fetch_opcode(&cpu), opcode);
+    CU_ASSERT_EQUAL(cpu.PC, PC_start + 1);
 }
 
 void test_read_byte(void)
 {
     CPU cpu;
     uint8_t byte = 0xf1;
-    uint16_t PC = 0x1001;
-    cpu.PC = PC;
-    cpu.memory[PC - 1] = byte;
-    CU_ASSERT_EQUAL(read_byte(&cpu), byte);
-    CU_ASSERT_EQUAL(cpu.PC, PC);
+    uint16_t address = 0x1005;
+    cpu.memory[address] = byte;
+    CU_ASSERT_EQUAL(read_byte(&cpu, address), byte);
 }
 
 void test_read_word(void)
 {
     CPU cpu;
     uint16_t word = 0xabcd;
-    uint16_t PC = 0x3003;
-    cpu.PC = PC;
-    cpu.memory[PC - 2] = 0xcd;
-    cpu.memory[PC - 1] = 0xab;
-    CU_ASSERT_EQUAL(read_word(&cpu), word);
-    CU_ASSERT_EQUAL(cpu.PC, PC);
+    uint16_t address = 0x3003;
+    cpu.memory[address] = 0xab;
+    cpu.memory[address + 1] = 0xcd;
+    CU_ASSERT_EQUAL(read_word(&cpu, address), word);
 }
 
 void test_write_byte(void)
 {
     CPU cpu;
     uint8_t byte = 0x16;
-    uint16_t PC = 0x4000;
-    cpu.PC = PC;
-    cpu.memory[cpu.PC - 1] = 0;
-    write_byte(&cpu, byte);
-    CU_ASSERT_EQUAL(read_byte(&cpu), byte);
-    CU_ASSERT_EQUAL(cpu.PC, PC);
+    uint16_t address = 0x4000;
+    cpu.memory[address] = 0;
+    write_byte(&cpu, byte, address);
+    CU_ASSERT_EQUAL(read_byte(&cpu, address), byte);
 }
 
 void test_write_word(void)
 {
     CPU cpu;
     uint16_t word = 0x3456;
-    uint16_t PC = 0x1110;
-    cpu.PC = PC;
-    cpu.memory[cpu.PC - 1] = 0;
-    cpu.memory[cpu.PC - 2] = 0;
-    write_word(&cpu, word);
-    CU_ASSERT_EQUAL(read_word(&cpu), word);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.PC - 1], 0x34);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.PC - 2], 0x56);
-    CU_ASSERT_EQUAL(cpu.PC, PC);
-
+    uint16_t address = 0x1110;
+    cpu.memory[address] = 0;
+    cpu.memory[address + 1] = 0;
+    write_word(&cpu, word, address);
+    CU_ASSERT_EQUAL(cpu.memory[address], 0x34);
+    CU_ASSERT_EQUAL(cpu.memory[address + 1], 0x56);
 }
 
 int main()
@@ -82,17 +71,17 @@ int main()
 
     if (CU_add_test(
             test_suite,
-            "CPU | fetch returns 16bit value from memory address",
-            test_fetch
+            "CPU | fetch_opcode returns 8bit value from memory address at PC and increments PC",
+            test_fetch_opcode
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "CPU | read_byte fetches byte in memory at location of previous PC",
+            "CPU | read_byte fetches byte from memory at location",
             test_read_byte
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "CPU | read_word combines adjacent bytes in memory at location of previous 2 PC",
+            "CPU | read_word fetches and combines adjacent bytes from memory",
             test_read_word
         ) == NULL ||
         CU_add_test(
