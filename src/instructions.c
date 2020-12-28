@@ -438,21 +438,21 @@ void LDH_A_C(CPU *cpu)
 void LDH_C_A(CPU *cpu)
 {
     uint16_t address = (0xff << 8) | cpu->registers.C;
-    cpu->memory[address] = cpu->registers.A;
+    write_byte(cpu, cpu->registers.A, address);
     cpu->t_cycles = 8;
 }
 
 void LDH_A_n(CPU *cpu)
 {
-    uint16_t address = (0xff << 8) | (cpu->PC - 1);
+    uint16_t address = (0xff << 8) | fetch_opcode(cpu);
     cpu->registers.A = cpu->memory[address];
     cpu->t_cycles = 12;
 }
 
 void LDH_n_A(CPU *cpu)
 {
-    uint16_t address = (0xff << 8) | (cpu->PC - 1);
-    cpu->memory[address] = cpu->registers.A;
+    uint16_t address = (0xff << 8) | fetch_opcode(cpu);
+    write_byte(cpu, cpu->registers.A, address);
     cpu->t_cycles = 12;
 }
 

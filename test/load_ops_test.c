@@ -897,6 +897,34 @@ void test_LDH_C_A(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
+void test_LDH_A_n(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x2020;
+    uint8_t value = 0x69;
+    cpu.PC = PC;
+    cpu.memory[PC] = 0x12;
+    cpu.memory[0xff12] = value;
+    LDH_A_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+}
+
+void test_LDH_n_A(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x1000;
+    uint8_t value = 0x32;
+    cpu.PC = PC;
+    cpu.memory[PC] = 0x89;
+    cpu.registers.A = value;
+    LDH_n_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.memory[0xff89], value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+}
+
 int main(void)
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -1235,6 +1263,16 @@ int main(void)
             test_suite,
             "LD Instructions | LDH_C_A loads value in register A into byte pointed to by register C",
             test_LDH_C_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LDH_A_n loads byte at extended address from next PC into A",
+            test_LDH_A_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LDH_n_A loads value in register A into byte pointed to by extended address from next PC",
+            test_LDH_n_A
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();

@@ -111,8 +111,8 @@ static const OpcodeInstruction opcode_table[256] = {
 /* b */     &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
 /* c */     &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
 /* d */     &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* e */     &UNDEF,   &UNDEF, &LDH_C_A,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF, &LD_nn_A,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* f */     &UNDEF,   &UNDEF, &LDH_A_C,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF, &LD_A_nn,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
+/* e */   &LDH_n_A,   &UNDEF, &LDH_C_A,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF, &LD_nn_A,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
+/* f */   &LDH_A_n,   &UNDEF, &LDH_A_C,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF, &LD_A_nn,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
 };
 
 #endif
