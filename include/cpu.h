@@ -90,6 +90,8 @@ void execute(CPU *, uint16_t);
 
 uint8_t read_byte(CPU *);
 uint16_t read_word(CPU *);
+void write_byte(CPU *, uint8_t);
+void write_word(CPU *, uint16_t);
 
 uint8_t get_flag(CPU *, FlagPosition);
 void clear_flag(CPU *, FlagPosition);

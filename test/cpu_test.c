@@ -32,10 +32,38 @@ void test_read_word(void)
     uint16_t word = 0xabcd;
     uint16_t PC = 0x3003;
     cpu.PC = PC;
-    cpu.memory[PC - 2] = 0xab;
-    cpu.memory[PC - 1] = 0xcd;
+    cpu.memory[PC - 2] = 0xcd;
+    cpu.memory[PC - 1] = 0xab;
     CU_ASSERT_EQUAL(read_word(&cpu), word);
     CU_ASSERT_EQUAL(cpu.PC, PC);
+}
+
+void test_write_byte(void)
+{
+    CPU cpu;
+    uint8_t byte = 0x16;
+    uint16_t PC = 0x4000;
+    cpu.PC = PC;
+    cpu.memory[cpu.PC - 1] = 0;
+    write_byte(&cpu, byte);
+    CU_ASSERT_EQUAL(read_byte(&cpu), byte);
+    CU_ASSERT_EQUAL(cpu.PC, PC);
+}
+
+void test_write_word(void)
+{
+    CPU cpu;
+    uint16_t word = 0x3456;
+    uint16_t PC = 0x1110;
+    cpu.PC = PC;
+    cpu.memory[cpu.PC - 1] = 0;
+    cpu.memory[cpu.PC - 2] = 0;
+    write_word(&cpu, word);
+    CU_ASSERT_EQUAL(read_word(&cpu), word);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.PC - 1], 0x34);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.PC - 2], 0x56);
+    CU_ASSERT_EQUAL(cpu.PC, PC);
+
 }
 
 int main()
@@ -66,6 +94,16 @@ int main()
             test_suite,
             "CPU | read_word combines adjacent bytes in memory at location of previous 2 PC",
             test_read_word
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "CPU | write_byte writes byte into memory at previous PC",
+            test_write_byte
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "CPU | write_word writes word into adjacent memory locations at previous 2 PC",
+            test_write_word
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();

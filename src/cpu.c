@@ -24,7 +24,20 @@ uint8_t read_byte(CPU *cpu)
 
 uint16_t read_word(CPU *cpu)
 {
-    return cpu->memory[cpu->PC - 2] << 8 | cpu->memory[cpu->PC - 1];
+    return cpu->memory[cpu->PC - 1] << 8 | cpu->memory[cpu->PC - 2];
+}
+
+void write_byte(CPU *cpu, uint8_t byte)
+{
+    cpu->memory[cpu->PC - 1] = byte;
+}
+
+void write_word(CPU *cpu, uint16_t word)
+{
+    uint8_t upper_byte = (word & 0xff00) >> 8;
+    uint8_t lower_byte = word & 0x00ff;
+    cpu->memory[cpu->PC - 1] = upper_byte;
+    cpu->memory[cpu->PC - 2] = lower_byte;
 }
 
 uint8_t get_flag(CPU *cpu, FlagPosition flag)
