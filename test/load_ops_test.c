@@ -506,78 +506,85 @@ void test_LD_L_L(void)
 void test_LD_A_n(void)
 {
     CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.memory[cpu.PC - 1] = 0x06af;
-    cpu.registers.A = 0;
+    uint16_t PC = 0x1000;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
     LD_A_n(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0xaf);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
 void test_LD_B_n(void)
 {
     CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.memory[cpu.PC - 1] = 0x06af;
-    cpu.registers.B = 0;
+    uint16_t PC = 0x1010;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
     LD_B_n(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.B, 0xaf);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.registers.B, value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
 void test_LD_C_n(void)
 {
     CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.memory[cpu.PC - 1] = 0x06af;
-    cpu.registers.C = 0;
+    uint16_t PC = 0x2000;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
     LD_C_n(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.C, 0xaf);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.registers.C, value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
 void test_LD_D_n(void)
 {
     CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.memory[cpu.PC - 1] = 0x06af;
-    cpu.registers.D = 0;
+    uint16_t PC = 0x1000;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
     LD_D_n(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.D, 0xaf);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.registers.D, value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
 void test_LD_E_n(void)
 {
     CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.memory[cpu.PC - 1] = 0x06af;
-    cpu.registers.E = 0;
+    uint16_t PC = 0x1000;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
     LD_E_n(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.E, 0xaf);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.registers.E, value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
 void test_LD_H_n(void)
 {
     CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.memory[cpu.PC - 1] = 0x06af;
-    cpu.registers.H = 0;
+    uint16_t PC = 0x1000;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
     LD_H_n(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.H, 0xaf);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.registers.H, value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
 void test_LD_L_n(void)
 {
     CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.memory[cpu.PC - 1] = 0x06af;
-    cpu.registers.L = 0;
+    uint16_t PC = 0x1000;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
     LD_L_n(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.L, 0xaf);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.registers.L, value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
 void test_LD_A_HL(void)
@@ -771,9 +778,10 @@ void test_LD_HL_n(void)
 {
     CPU cpu;
     uint16_t address = 0x1234;
-    uint8_t value = 0xab;
+    uint8_t value = 0x1e;
+    cpu.memory[address] = value;
     cpu.registers.HL = address;
-    cpu.memory[cpu.PC - 1] = value;
+    cpu.PC = address;
     LD_HL_n(&cpu);
     CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 12);
@@ -828,6 +836,44 @@ void test_LD_DE_A(void)
     cpu.registers.DE = address;
     LD_DE_A(&cpu);
     CU_ASSERT_EQUAL(cpu.memory[cpu.registers.DE], value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_LD_A_nn(void)
+{
+    CPU cpu;
+}
+
+void test_LD_nn_A(void)
+{
+    CPU cpu;
+}
+
+void test_LDH_A_C(void)
+{
+    CPU cpu;
+    uint8_t low_bit = 0x43;
+    uint16_t address = 0xff43;
+    uint8_t value = 0x1a;
+    cpu.registers.C = low_bit;
+    cpu.memory[address] = value;
+    cpu.registers.A = 0;
+    LDH_A_C(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_LDH_C_A(void)
+{
+    CPU cpu;
+    uint8_t low_bit = 0x43;
+    uint16_t address = 0xff43;
+    uint8_t value = 0x1a;
+    cpu.registers.C = low_bit;
+    cpu.registers.A = value;
+    cpu.memory[address] = 0;
+    LDH_C_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.memory[address], value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
@@ -1149,6 +1195,26 @@ int main(void)
             test_suite,
             "LD Instructions | LD_DE_A loads value in register A into byte pointed to by register DE",
             test_LD_DE_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LD_A_nn loads byte pointed to by immediate value into register A",
+            test_LD_A_nn
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LD_nn_A loads value in register A into byte pointed to by immediate value",
+            test_LD_nn_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LDH_A_C loads byte pointed to by register C into register A",
+            test_LDH_A_C
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LDH_C_A loads value in register A into byte pointed to by register C",
+            test_LDH_C_A
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();

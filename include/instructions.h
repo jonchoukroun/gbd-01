@@ -85,6 +85,14 @@ void LD_A_DE(CPU *);
 void LD_BC_A(CPU *);
 void LD_DE_A(CPU *);
 
+void LD_A_nn(CPU *);
+void LD_nn_A(CPU *);
+
+void LDH_A_C(CPU *);
+void LDH_C_A(CPU *);
+void LDH_A_n(CPU *);
+void LDH_n_A(CPU *);
+
 void UNDEF(CPU *);
 
 static const OpcodeInstruction opcode_table[256] = {
@@ -103,8 +111,8 @@ static const OpcodeInstruction opcode_table[256] = {
 /* b */     &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
 /* c */     &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
 /* d */     &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* e */     &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* f */     &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
+/* e */     &UNDEF,   &UNDEF, &LDH_C_A,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF, &LD_nn_A,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
+/* f */     &UNDEF,   &UNDEF, &LDH_A_C,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF, &LD_A_nn,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
 };
 
 #endif

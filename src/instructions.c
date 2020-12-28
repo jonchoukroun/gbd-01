@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "instructions.h"
 
-// LD r, r*
+// LD r, r*: load 2nd register's value into 1st
 void LD_B_A(CPU *cpu)
 {
     cpu->registers.B = cpu->registers.A;
@@ -254,163 +254,204 @@ void LD_L_L(CPU *cpu)
     cpu->t_cycles = 4;
 }
 
-// LD r, n
+// LD r, n: Load byte from next PC into register
 void LD_A_n(CPU *cpu)
 {
-    uint8_t n = cpu->memory[cpu->PC - 1];
-    cpu->registers.A = n;
+    cpu->registers.A = fetch_opcode(cpu);
     cpu->t_cycles = 8;
 }
 
 void LD_B_n(CPU *cpu)
 {
-    cpu->registers.B = cpu->memory[cpu->PC - 1];
+    cpu->registers.B = fetch_opcode(cpu);
     cpu->t_cycles = 8;
 }
 
 void LD_C_n(CPU *cpu)
 {
-    cpu->registers.C = cpu->memory[cpu->PC - 1];
+    cpu->registers.C = fetch_opcode(cpu);
     cpu->t_cycles = 8;
 }
 
 void LD_D_n(CPU *cpu)
 {
-    cpu->registers.D = cpu->memory[cpu->PC - 1];
+    cpu->registers.D = fetch_opcode(cpu);
     cpu->t_cycles = 8;
 }
 
 void LD_E_n(CPU *cpu)
 {
-    cpu->registers.E = cpu->memory[cpu->PC - 1];
+    cpu->registers.E = fetch_opcode(cpu);
     cpu->t_cycles = 8;
 }
 
 void LD_H_n(CPU *cpu)
 {
-    cpu->registers.H = cpu->memory[cpu->PC - 1];
+    cpu->registers.H = fetch_opcode(cpu);
     cpu->t_cycles = 8;
 }
 
 void LD_L_n(CPU *cpu)
 {
-    cpu->registers.L = cpu->memory[cpu->PC - 1];
+    cpu->registers.L = fetch_opcode(cpu);
     cpu->t_cycles = 8;
 }
 
+// LD r, (HL): Load value in memory at address in HL into register
 void LD_A_HL(CPU *cpu)
 {
-    cpu->registers.A = cpu->memory[cpu->registers.HL];
+    cpu->registers.A = read_byte(cpu, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
 void LD_B_HL(CPU *cpu)
 {
-    cpu->registers.B = cpu->memory[cpu->registers.HL];
+    cpu->registers.B = read_byte(cpu, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
 void LD_C_HL(CPU *cpu)
 {
-    cpu->registers.C = cpu->memory[cpu->registers.HL];
+    cpu->registers.C = read_byte(cpu, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
 void LD_D_HL(CPU *cpu)
 {
-    cpu->registers.D = cpu->memory[cpu->registers.HL];
+    cpu->registers.D = read_byte(cpu, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
 void LD_E_HL(CPU *cpu)
 {
-    cpu->registers.E = cpu->memory[cpu->registers.HL];
+    cpu->registers.E = read_byte(cpu, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
 void LD_H_HL(CPU *cpu)
 {
-    cpu->registers.H = cpu->memory[cpu->registers.HL];
+    cpu->registers.H = read_byte(cpu, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
 void LD_L_HL(CPU *cpu)
 {
-    cpu->registers.L = cpu->memory[cpu->registers.HL];
+    cpu->registers.L = read_byte(cpu, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
-// LD (HL), r
+// LD (HL), r: Write value in register to byte at address pointed to by register HL
 void LD_HL_A(CPU *cpu)
 {
-    cpu->memory[cpu->registers.HL] = cpu->registers.A;
+    write_byte(cpu, cpu->registers.A, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
 void LD_HL_B(CPU *cpu)
 {
-    cpu->memory[cpu->registers.HL] = cpu->registers.B;
+    write_byte(cpu, cpu->registers.B, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
 void LD_HL_C(CPU *cpu)
 {
-    cpu->memory[cpu->registers.HL] = cpu->registers.C;
+    write_byte(cpu, cpu->registers.C, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
 void LD_HL_D(CPU *cpu)
 {
-    cpu->memory[cpu->registers.HL] = cpu->registers.D;
+    write_byte(cpu, cpu->registers.D, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
 void LD_HL_E(CPU *cpu)
 {
-    cpu->memory[cpu->registers.HL] = cpu->registers.E;
+    write_byte(cpu, cpu->registers.E, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
 void LD_HL_H(CPU *cpu)
 {
-    cpu->memory[cpu->registers.HL] = cpu->registers.H;
+    write_byte(cpu, cpu->registers.H, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
 void LD_HL_L(CPU *cpu)
 {
-    cpu->memory[cpu->registers.HL] = cpu->registers.L;
+    write_byte(cpu, cpu->registers.L, cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
 void LD_HL_n(CPU *cpu)
 {
-    cpu->memory[cpu->registers.HL] = cpu->memory[cpu->PC - 1];
+    uint8_t byte = fetch_opcode(cpu);
+    write_byte(cpu, byte, cpu->registers.HL);
     cpu->t_cycles = 12;
 }
 
 void LD_A_BC(CPU *cpu)
 {
-    cpu->registers.A = cpu->memory[cpu->registers.BC];
+    cpu->registers.A = read_byte(cpu, cpu->registers.BC);
     cpu->t_cycles = 8;
 }
 
 void LD_A_DE(CPU *cpu)
 {
-    cpu->registers.A = cpu->memory[cpu->registers.DE];
+    cpu->registers.A = read_byte(cpu, cpu->registers.DE);
     cpu->t_cycles = 8;
 }
 
 void LD_BC_A(CPU *cpu)
 {
-    cpu->memory[cpu->registers.BC] = cpu->registers.A;
+    write_byte(cpu, cpu->registers.A, cpu->registers.BC);
     cpu->t_cycles = 8;
 }
 
 void LD_DE_A(CPU *cpu)
 {
-    cpu->memory[cpu->registers.DE] = cpu->registers.A;
+    write_byte(cpu, cpu->registers.A, cpu->registers.DE);
     cpu->t_cycles = 8;
+}
+
+void LD_A_nn(CPU *cpu)
+{
+    cpu->registers.A = read_word(cpu, cpu->PC - 1);
+    cpu->t_cycles = 16;
+}
+
+void LD_nn_A(CPU *cpu)
+{
+    write_word(cpu, cpu->registers.A, cpu->PC - 1);
+    cpu->t_cycles = 16;
+}
+
+void LDH_A_C(CPU *cpu)
+{
+    uint16_t address = (0xff << 8) | cpu->registers.C;
+    cpu->registers.A = cpu->memory[address];
+    cpu->t_cycles = 8;
+}
+
+void LDH_C_A(CPU *cpu)
+{
+    uint16_t address = (0xff << 8) | cpu->registers.C;
+    cpu->memory[address] = cpu->registers.A;
+    cpu->t_cycles = 8;
+}
+
+void LDH_A_n(CPU *cpu)
+{
+    uint16_t address = (0xff << 8) | (cpu->PC - 1);
+    cpu->registers.A = cpu->memory[address];
+    cpu->t_cycles = 12;
+}
+
+void LDH_n_A(CPU *cpu)
+{
+    uint16_t address = (0xff << 8) | (cpu->PC - 1);
+    cpu->memory[address] = cpu->registers.A;
+    cpu->t_cycles = 12;
 }
 
 void UNDEF(CPU *cpu)

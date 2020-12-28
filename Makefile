@@ -63,7 +63,7 @@ $(TEST_RESULTS)test_results.txt: $(TEST_OBJ)
 		./$$test >> $(TEST_RESULTS)test_results.txt ; done
 
 $(TEST_BUILD_DIR)load_ops_test.o: $(TEST_DIR)load_ops_test.c
-	$(CC) $< $(SOURCE_DIR)instructions.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
+	$(CC) $<  $(SOURCE_DIR)cpu.c $(SOURCE_DIR)instructions.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
 
 $(TEST_BUILD_DIR)cpu_test.o: $(TEST_DIR)cpu_test.c
 	$(CC) $< $(SOURCE_DIR)cpu.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
