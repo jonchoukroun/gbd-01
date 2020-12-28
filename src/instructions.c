@@ -456,6 +456,34 @@ void LDH_n_A(CPU *cpu)
     cpu->t_cycles = 12;
 }
 
+void LD_A_HLI(CPU *cpu)
+{
+    cpu->registers.A = read_byte(cpu, cpu->registers.HL);
+    cpu->registers.HL++;
+    cpu->t_cycles = 8;
+}
+
+void LD_A_HLD(CPU *cpu)
+{
+    cpu->registers.A = read_byte(cpu, cpu->registers.HL);
+    cpu->registers.HL--;
+    cpu->t_cycles = 8;
+}
+
+void LD_HLI_A(CPU *cpu)
+{
+    write_byte(cpu, cpu->registers.A, cpu->registers.HL);
+    cpu->registers.HL++;
+    cpu->t_cycles = 8;
+}
+
+void LD_HLD_A(CPU *cpu)
+{
+    write_byte(cpu, cpu->registers.A, cpu->registers.HL);
+    cpu->registers.HL--;
+    cpu->t_cycles = 8;
+}
+
 void UNDEF(CPU *cpu)
 {
     printf("Opcode instruction undefined (%x)\n", cpu->memory[cpu->PC--]);
