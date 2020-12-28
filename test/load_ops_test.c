@@ -779,6 +779,32 @@ void test_LD_HL_n(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 12);
 }
 
+void test_LD_A_BC(void)
+{
+    CPU cpu;
+    uint16_t address = 0xabcd;
+    uint8_t value = 0x0f;
+    cpu.registers.A = 0;
+    cpu.memory[address] = value;
+    cpu.registers.BC = address;
+    LD_A_BC(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_LD_A_DE(void)
+{
+    CPU cpu;
+    uint16_t address = 0xabcd;
+    uint8_t value = 0x0f;
+    cpu.registers.A = 0;
+    cpu.memory[address] = value;
+    cpu.registers.DE = address;
+    LD_A_DE(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
 int main(void)
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -1077,6 +1103,16 @@ int main(void)
             test_suite,
             "LD Instructions | LD_HL_n loads immediate value into address stored in HL",
             test_LD_HL_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LD_A_BC loads byte pointed to by BC register into register A",
+            test_LD_A_BC
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "LD Instructions | LD_A_DE loads byte pointed to by DE register into register A",
+            test_LD_A_DE
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();

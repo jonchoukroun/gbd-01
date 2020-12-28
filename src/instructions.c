@@ -389,6 +389,18 @@ void LD_HL_n(CPU *cpu)
     cpu->t_cycles = 12;
 }
 
+void LD_A_BC(CPU *cpu)
+{
+    cpu->registers.A = cpu->memory[cpu->registers.BC];
+    cpu->t_cycles = 8;
+}
+
+void LD_A_DE(CPU *cpu)
+{
+    cpu->registers.A = cpu->memory[cpu->registers.DE];
+    cpu->t_cycles = 8;
+}
+
 void UNDEF(CPU *cpu)
 {
     printf("Opcode instruction undefined (%x)\n", cpu->memory[cpu->PC--]);
