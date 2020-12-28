@@ -15,6 +15,29 @@ void test_fetch(void)
     CU_ASSERT_EQUAL(fetch(&cpu), value);
 }
 
+void test_read_byte(void)
+{
+    CPU cpu;
+    uint8_t byte = 0xf1;
+    uint16_t PC = 0x1001;
+    cpu.PC = PC;
+    cpu.memory[PC - 1] = byte;
+    CU_ASSERT_EQUAL(read_byte(&cpu), byte);
+    CU_ASSERT_EQUAL(cpu.PC, PC);
+}
+
+void test_read_word(void)
+{
+    CPU cpu;
+    uint16_t word = 0xabcd;
+    uint16_t PC = 0x3003;
+    cpu.PC = PC;
+    cpu.memory[PC - 2] = 0xab;
+    cpu.memory[PC - 1] = 0xcd;
+    CU_ASSERT_EQUAL(read_word(&cpu), word);
+    CU_ASSERT_EQUAL(cpu.PC, PC);
+}
+
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -30,7 +53,19 @@ int main()
     }
 
     if (CU_add_test(
-            test_suite, "CPU | fetch returns 16bit value from memory address", test_fetch
+            test_suite,
+            "CPU | fetch returns 16bit value from memory address",
+            test_fetch
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "CPU | read_byte fetches byte in memory at location of previous PC",
+            test_read_byte
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "CPU | read_word combines adjacent bytes in memory at location of previous 2 PC",
+            test_read_word
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();

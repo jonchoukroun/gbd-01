@@ -17,6 +17,16 @@ void execute(CPU *cpu, uint16_t opcode)
     cpu->t_cycles = 0;
 }
 
+uint8_t read_byte(CPU *cpu)
+{
+    return cpu->memory[cpu->PC - 1];
+}
+
+uint16_t read_word(CPU *cpu)
+{
+    return cpu->memory[cpu->PC - 2] << 8 | cpu->memory[cpu->PC - 1];
+}
+
 uint8_t get_flag(CPU *cpu, FlagPosition flag)
 {
     return (cpu->registers.F >> flag) & 0b1;
