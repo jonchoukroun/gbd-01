@@ -842,11 +842,31 @@ void test_LD_DE_A(void)
 void test_LD_A_nn(void)
 {
     CPU cpu;
+    uint16_t PC = 0x1001;
+    cpu.PC = PC;
+    uint8_t value = 0x23;
+    cpu.memory[PC] = 0xab;
+    cpu.memory[PC + 1] = 0xcd;
+    cpu.memory[0xabcd] = value;
+    LD_A_nn(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 2);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
 }
 
 void test_LD_nn_A(void)
 {
     CPU cpu;
+    uint16_t PC = 0x2010;
+    cpu.PC = PC;
+    uint8_t value = 0xfa;
+    cpu.memory[PC] = 0x12;
+    cpu.memory[PC + 1] = 0x34;
+    cpu.registers.A = value;
+    LD_nn_A(&cpu);
+    CU_ASSERT_EQUAL(read_byte(&cpu, 0x1234), value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 2);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
 }
 
 void test_LDH_A_C(void)

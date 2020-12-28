@@ -416,13 +416,15 @@ void LD_DE_A(CPU *cpu)
 
 void LD_A_nn(CPU *cpu)
 {
-    cpu->registers.A = read_word(cpu, cpu->PC - 1);
+    uint16_t address = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+    cpu->registers.A = read_byte(cpu, address);
     cpu->t_cycles = 16;
 }
 
 void LD_nn_A(CPU *cpu)
 {
-    write_word(cpu, cpu->registers.A, cpu->PC - 1);
+    uint16_t address = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+    write_byte(cpu, cpu->registers.A, address);
     cpu->t_cycles = 16;
 }
 
