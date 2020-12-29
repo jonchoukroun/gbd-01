@@ -5,6 +5,15 @@
 
 typedef void (*OpcodeInstruction)(CPU *);
 
+// ADC A, r8: Add value in r8 + carry flag to register A
+void ADC_A_A(CPU *);
+void ADC_A_B(CPU *);
+void ADC_A_C(CPU *);
+void ADC_A_D(CPU *);
+void ADC_A_E(CPU *);
+void ADC_A_H(CPU *);
+void ADC_A_L(CPU *);
+
 // LD r, r*
 void LD_B_A(CPU *);
 void LD_B_B(CPU *);

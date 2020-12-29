@@ -1,6 +1,18 @@
 #include <stdio.h>
 #include "instructions.h"
 
+// ADC A, r8
+void ADC_A_A(CPU *cpu)
+{
+    uint16_t value = cpu->registers.A + get_flag(cpu, CARRY_FLAG);
+    toggle_zero_flag(cpu, (cpu->registers.A + value & 0xff));
+    clear_flag(cpu, SUBTRACT_FLAG);
+    toggle_hcarry_flag(cpu, cpu->registers.A, value);
+    toggle_carry_flag(cpu, cpu->registers.A + value);
+
+    cpu->registers.A += value & 0xff;
+}
+
 // LD r, r*: load 2nd register's value into 1st
 void LD_B_A(CPU *cpu)
 {

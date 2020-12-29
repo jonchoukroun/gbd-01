@@ -132,7 +132,6 @@ void test_toggle_carry_flag(void)
     cpu.registers.F = 0b00010000;
     toggle_carry_flag(&cpu, 0x23);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-    printf("f: %x\t", cpu.registers.F);
 
     // Leaves bit set on overflow
     cpu.registers.F = 0b00010000;
