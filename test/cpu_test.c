@@ -55,6 +55,37 @@ void test_write_word(void)
     CU_ASSERT_EQUAL(cpu.memory[address + 1], 0x56);
 }
 
+void test_toggle_zero_flag(void)
+{
+    CPU cpu;
+    uint16_t value = 0;
+    cpu.registers.F = 0b00000000;
+    toggle_zero_flag(&cpu, value);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
+
+    cpu.registers.F = 0b10000000;
+    toggle_zero_flag(&cpu, value);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
+
+    cpu.registers.F = 0b01110000;
+    toggle_zero_flag(&cpu, value);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b11110000);
+
+    value = 1;
+    cpu.registers.F = 0b00000000;
+    toggle_zero_flag(&cpu, value);
+    printf("F: %x\t", cpu.registers.F);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+
+    cpu.registers.F = 0b10000000;
+    toggle_zero_flag(&cpu, value);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+
+    cpu.registers.F = 0b01110000;
+    toggle_zero_flag(&cpu, value);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01110000);
+}
+
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -93,6 +124,11 @@ int main()
             test_suite,
             "CPU | write_word writes word into adjacent memory locations at previous 2 PC",
             test_write_word
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "CPU | toggle_zero_flag sets zero flag bit if value is zero or clears it if value is 0",
+            test_toggle_zero_flag
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();

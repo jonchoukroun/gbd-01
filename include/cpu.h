@@ -96,4 +96,6 @@ uint8_t get_flag(CPU *, FlagPosition);
 void clear_flag(CPU *, FlagPosition);
 void set_flag(CPU *, FlagPosition);
 
+void toggle_zero_flag(CPU *, uint16_t);
+
 #endif

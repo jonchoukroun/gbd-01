@@ -50,3 +50,10 @@ void set_flag(CPU *cpu, FlagPosition flag)
 {
     cpu->registers.F |= (0b1 << flag);
 }
+
+void toggle_zero_flag(CPU *cpu, uint16_t value)
+{
+    uint8_t bit = value == 0;
+    uint8_t mask = cpu->registers.F & 0b01110000;
+    cpu->registers.F = mask | (bit << ZERO_FLAG);
+}
