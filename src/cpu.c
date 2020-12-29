@@ -57,3 +57,10 @@ void toggle_zero_flag(CPU *cpu, uint16_t value)
     uint8_t mask = cpu->registers.F & 0b01110000;
     cpu->registers.F = mask | (bit << ZERO_FLAG);
 }
+
+void toggle_hcarry_flag(CPU *cpu, uint16_t a, uint16_t b)
+{
+    uint8_t overflow = (a & 0xf) + (b & 0xf) > 0xf;
+    uint8_t mask = cpu->registers.F & 0b11010000;
+    cpu->registers.F = mask | (overflow << HALF_CARRY_FLAG);
+}
