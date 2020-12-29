@@ -115,6 +115,36 @@ void test_toggle_hcarry_flag(void)
     CU_ASSERT_EQUAL(cpu.registers.F, 0b11110000);
 }
 
+void test_toggle_carry_flag(void)
+{
+    CPU cpu;
+    // Sets carry bit on overflow
+    cpu.registers.F = 0b00000000;
+    toggle_carry_flag(&cpu, 0x0123);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+
+    // Does not set bit when there is no overflow
+    cpu.registers.F = 0b00000000;
+    toggle_carry_flag(&cpu, 0x23);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+
+    // Clears bit if there is no overflow
+    cpu.registers.F = 0b00010000;
+    toggle_carry_flag(&cpu, 0x23);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    printf("f: %x\t", cpu.registers.F);
+
+    // Leaves bit set on overflow
+    cpu.registers.F = 0b00010000;
+    toggle_carry_flag(&cpu, 0x2134);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+
+    // Doesn't affect set bits
+    cpu.registers.F = 0b11100000;
+    toggle_carry_flag(&cpu, 0x4f);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b11100000);
+}
+
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -163,6 +193,11 @@ int main()
             test_suite,
             "CPU | toggle_hcarry_flag sets half carry bit if bit 3 overflows or clears it if there is no overflow",
             test_toggle_hcarry_flag
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "CPU | toggle_carry_flag set carry bit if bit 7 overflows or clears it if there is no overflow",
+            test_toggle_carry_flag
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();
