@@ -107,8 +107,19 @@ void LD_DE_nn(CPU *);
 void LD_HL_nn(CPU *);
 
 void LD_nn_SP(CPU *);
-
 void LD_SP_HL(CPU *);
+
+// PUSH rr: Push to stack from register rr
+void PUSH_AF(CPU *);
+void PUSH_BC(CPU *);
+void PUSH_DE(CPU *);
+void PUSH_HL(CPU *);
+
+// POP rr: Pop to register rr from stack
+void POP_AF(CPU *);
+void POP_BC(CPU *);
+void POP_DE(CPU *);
+void POP_HL(CPU *);
 
 void UNDEF(CPU *);
 
@@ -126,10 +137,10 @@ static const OpcodeInstruction opcode_table[256] = {
 /* 9 */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
 /* a */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
 /* b */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* c */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* d */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* e */   &LDH_n_A,    &UNDEF,  &LDH_C_A,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,  &LD_nn_A,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* f */   &LDH_A_n,    &UNDEF,  &LDH_A_C,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF, &LD_SP_HL,  &LD_A_nn,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
+/* c */     &UNDEF,   &POP_BC,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_BC,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
+/* d */     &UNDEF,   &POP_DE,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_DE,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
+/* e */   &LDH_n_A,   &POP_HL,  &LDH_C_A,   &UNDEF,   &UNDEF, &PUSH_HL,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,  &LD_nn_A,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
+/* f */   &LDH_A_n,   &POP_AF,  &LDH_A_C,   &UNDEF,   &UNDEF, &PUSH_AF,   &UNDEF,   &UNDEF,    &UNDEF, &LD_SP_HL,  &LD_A_nn,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
 };
 
 #endif

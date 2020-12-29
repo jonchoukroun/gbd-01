@@ -516,6 +516,77 @@ void LD_SP_HL(CPU *cpu)
     cpu->t_cycles = 8;
 }
 
+// PUSH rr
+void PUSH_AF(CPU *cpu)
+{
+    cpu->SP--;
+    cpu->memory[cpu->SP] = cpu->registers.F;
+    cpu->SP--;
+    cpu->memory[cpu->SP] = cpu->registers.A;
+    cpu->t_cycles = 16;
+}
+
+void PUSH_BC(CPU *cpu)
+{
+    cpu->SP--;
+    cpu->memory[cpu->SP] = cpu->registers.C;
+    cpu->SP--;
+    cpu->memory[cpu->SP] = cpu->registers.B;
+    cpu->t_cycles = 16;
+}
+
+void PUSH_DE(CPU *cpu)
+{
+    cpu->SP--;
+    cpu->memory[cpu->SP] = cpu->registers.E;
+    cpu->SP--;
+    cpu->memory[cpu->SP] = cpu->registers.D;
+    cpu->t_cycles = 16;
+}
+
+void PUSH_HL(CPU *cpu)
+{
+    cpu->SP--;
+    cpu->memory[cpu->SP] = cpu->registers.L;
+    cpu->SP--;
+    cpu->memory[cpu->SP] = cpu->registers.H;
+    cpu->t_cycles = 16;
+}
+
+void POP_AF(CPU *cpu)
+{
+    cpu->registers.A = cpu->memory[cpu->SP];
+    cpu->SP++;
+    cpu->registers.F = cpu->memory[cpu->SP];
+    cpu->SP++;
+    cpu->t_cycles = 12;
+}
+
+void POP_BC(CPU *cpu)
+{
+    cpu->registers.B = cpu->memory[cpu->SP];
+    cpu->SP++;
+    cpu->registers.C = cpu->memory[cpu->SP];
+    cpu->SP++;
+    cpu->t_cycles = 12;
+}
+
+void POP_DE(CPU *cpu)
+{
+    cpu->registers.D = cpu->memory[cpu->SP];
+    cpu->SP++;
+    cpu->registers.E = cpu->memory[cpu->SP];
+    cpu->SP++;
+    cpu->t_cycles = 12;
+}
+void POP_HL(CPU *cpu)
+{
+    cpu->registers.H = cpu->memory[cpu->SP];
+    cpu->SP++;
+    cpu->registers.L = cpu->memory[cpu->SP];
+    cpu->SP++;
+    cpu->t_cycles = 12;
+}
 void UNDEF(CPU *cpu)
 {
     printf("Opcode instruction undefined (%x)\n", cpu->memory[cpu->PC--]);
