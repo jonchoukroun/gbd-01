@@ -58,16 +58,26 @@ void toggle_zero_flag(CPU *cpu, uint16_t value)
     cpu->registers.F = mask | (bit << ZERO_FLAG);
 }
 
-void toggle_hcarry_flag(CPU *cpu, uint16_t a, uint16_t b)
+void toggle_hcarry_flag(CPU *cpu, uint16_t a, uint16_t b, USIZE size)
 {
-    uint8_t overflow = (a & 0xf) + (b & 0xf) > 0xf;
+    uint8_t overflow;
+    if (size == BYTE) {
+        overflow = (a & 0xf) + (b & 0xf) > 0xf;
+    } else {
+        overflow = (a & 0xf00) + (b & 0xf00) > 0x400;
+    }
     uint8_t mask = cpu->registers.F & 0b11010000;
     cpu->registers.F = mask | (overflow << HALF_CARRY_FLAG);
 }
 
-void toggle_carry_flag(CPU *cpu, uint16_t value)
+void toggle_carry_flag(CPU *cpu, uint16_t value, USIZE size)
 {
-    uint8_t bit = value > 0xff;
+    uint8_t overflow;
+    if (size == BYTE) {
+        overflow = value > 0xff;
+    } else {
+        overflow = value > 0xffff;
+    }
     uint8_t mask = cpu->registers.F & 0b11100000;
-    cpu->registers.F = mask | (bit << CARRY_FLAG);
+    cpu->registers.F = mask | (overflow << CARRY_FLAG);
 }

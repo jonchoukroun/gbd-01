@@ -74,7 +74,6 @@ void test_toggle_zero_flag(void)
     value = 1;
     cpu.registers.F = 0b00000000;
     toggle_zero_flag(&cpu, value);
-    printf("F: %x\t", cpu.registers.F);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
 
     cpu.registers.F = 0b10000000;
@@ -91,28 +90,33 @@ void test_toggle_hcarry_flag(void)
     CPU cpu;
     // Does not set bit when there is no overflow
     cpu.registers.F = 0b00000000;
-    toggle_hcarry_flag(&cpu, 0x01, 0x02);
+    toggle_hcarry_flag(&cpu, 0x01, 0x02, BYTE);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
 
-    // Sets bit when 3rd bit of operation overflows
+    // Sets bit when 3rd bit overflows on an 8bit value
     cpu.registers.F = 0b00000000;
-    toggle_hcarry_flag(&cpu, 0x0f, 0x05);
+    toggle_hcarry_flag(&cpu, 0x0f, 0x05, BYTE);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
 
     // Clears bit if there is no overflow
     cpu.registers.F = 0b00100000;
-    toggle_hcarry_flag(&cpu, 0x01, 0x3);
+    toggle_hcarry_flag(&cpu, 0x01, 0x3, BYTE);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
 
     // Leaves bit set if there is overflow
     cpu.registers.F = 0b00100000;
-    toggle_hcarry_flag(&cpu, 0x0d, 0x0f);
+    toggle_hcarry_flag(&cpu, 0x0d, 0x0f, BYTE);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
 
     // Doesn't affect existing bits
     cpu.registers.F = 0b11010000;
-    toggle_hcarry_flag(&cpu, 0x05, 0x0f);
+    toggle_hcarry_flag(&cpu, 0x05, 0x0f, BYTE);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b11110000);
+
+    // Sets flag on 11th bit overflow, for 16bit values
+    cpu.registers.F = 0b00000000;
+    toggle_hcarry_flag(&cpu, 0x0400, 0x0400, WORD);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
 }
 
 void test_toggle_carry_flag(void)
@@ -120,28 +124,35 @@ void test_toggle_carry_flag(void)
     CPU cpu;
     // Sets carry bit on overflow
     cpu.registers.F = 0b00000000;
-    toggle_carry_flag(&cpu, 0x0123);
+    toggle_carry_flag(&cpu, 0x0123, BYTE);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
 
     // Does not set bit when there is no overflow
     cpu.registers.F = 0b00000000;
-    toggle_carry_flag(&cpu, 0x23);
+    toggle_carry_flag(&cpu, 0x23, BYTE);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
 
     // Clears bit if there is no overflow
     cpu.registers.F = 0b00010000;
-    toggle_carry_flag(&cpu, 0x23);
+    toggle_carry_flag(&cpu, 0x23, BYTE);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
 
     // Leaves bit set on overflow
     cpu.registers.F = 0b00010000;
-    toggle_carry_flag(&cpu, 0x2134);
+    toggle_carry_flag(&cpu, 0x2134, BYTE);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
 
     // Doesn't affect set bits
     cpu.registers.F = 0b11100000;
-    toggle_carry_flag(&cpu, 0x4f);
+    toggle_carry_flag(&cpu, 0x4f, BYTE);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b11100000);
+
+    // Sets flag on 15th bit overflow, for 16bit values
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wconstant-conversion"
+    cpu.registers.F = 0b00000000;
+    toggle_carry_flag(&cpu, 0xf000 + 0xf000, WORD);
+    #pragma clang diagnostic pop
 }
 
 int main()

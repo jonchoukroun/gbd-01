@@ -6,8 +6,8 @@ void add_A_8(CPU *cpu, uint16_t value)
     uint8_t A = cpu->registers.A;
     toggle_zero_flag(cpu, (A + value) & 0xff);
     clear_flag(cpu, SUBTRACT_FLAG);
-    toggle_hcarry_flag(cpu, A, value);
-    toggle_carry_flag(cpu, A + value);
+    toggle_hcarry_flag(cpu, A, value, BYTE);
+    toggle_carry_flag(cpu, A + value, BYTE);
 
     cpu->registers.A += (value & 0xff);
 }

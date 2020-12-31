@@ -85,6 +85,11 @@ typedef enum {
     CARRY_FLAG = 4
 } FlagPosition;
 
+typedef enum {
+    BYTE = 0,
+    WORD = 1
+} USIZE;
+
 uint8_t fetch_opcode(CPU *);
 
 uint8_t read_byte(CPU *, uint16_t);
@@ -97,7 +102,7 @@ void clear_flag(CPU *, FlagPosition);
 void set_flag(CPU *, FlagPosition);
 
 void toggle_zero_flag(CPU *, uint16_t);
-void toggle_hcarry_flag(CPU *, uint16_t, uint16_t);
-void toggle_carry_flag(CPU *, uint16_t);
+void toggle_hcarry_flag(CPU *, uint16_t a, uint16_t b, USIZE);
+void toggle_carry_flag(CPU *, uint16_t, USIZE);
 
 #endif
