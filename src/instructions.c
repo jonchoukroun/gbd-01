@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "instructions.h"
 
-void ADC_A_x(CPU *cpu, uint16_t value)
+void add_A_8(CPU *cpu, uint16_t value)
 {
     uint8_t A = cpu->registers.A;
     toggle_zero_flag(cpu, (A + value) & 0xff);
@@ -12,67 +12,122 @@ void ADC_A_x(CPU *cpu, uint16_t value)
     cpu->registers.A += (value & 0xff);
 }
 
+// ADD A, r8
+void ADD_A_A(CPU *cpu)
+{
+    add_A_8(cpu, cpu->registers.A);
+    cpu->t_cycles = 4;
+}
+
+void ADD_A_B(CPU *cpu)
+{
+    add_A_8(cpu, cpu->registers.B);
+    cpu->t_cycles = 4;
+}
+
+void ADD_A_C(CPU *cpu)
+{
+    add_A_8(cpu, cpu->registers.C);
+    cpu->t_cycles = 4;
+}
+
+void ADD_A_D(CPU *cpu)
+{
+    add_A_8(cpu, cpu->registers.D);
+    cpu->t_cycles = 4;
+}
+
+void ADD_A_E(CPU *cpu)
+{
+    add_A_8(cpu, cpu->registers.E);
+    cpu->t_cycles = 4;
+}
+
+void ADD_A_H(CPU *cpu)
+{
+    add_A_8(cpu, cpu->registers.H);
+    cpu->t_cycles = 4;
+}
+
+void ADD_A_L(CPU *cpu)
+{
+    add_A_8(cpu, cpu->registers.L);
+    cpu->t_cycles = 4;
+}
+
+void ADD_A_HL(CPU *cpu)
+{
+    add_A_8(cpu, cpu->memory[cpu->registers.HL]);
+    cpu->t_cycles = 8;
+}
+
+void ADD_A_n(CPU *cpu)
+{
+    add_A_8(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+}
+
 // ADC A, r8
 void ADC_A_A(CPU *cpu)
 {
     uint16_t value = cpu->registers.A + get_flag(cpu, CARRY_FLAG);
-    ADC_A_x(cpu, value);
+    add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_B(CPU *cpu)
 {
     uint16_t value = cpu->registers.B + get_flag(cpu, CARRY_FLAG);
-    ADC_A_x(cpu, value);
+    add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_C(CPU *cpu)
 {
     uint16_t value = cpu->registers.C + get_flag(cpu, CARRY_FLAG);
-    ADC_A_x(cpu, value);
+    add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_D(CPU *cpu)
 {
     uint16_t value = cpu->registers.D + get_flag(cpu, CARRY_FLAG);
-    ADC_A_x(cpu, value);
+    add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_E(CPU *cpu)
 {
     uint16_t value = cpu->registers.E + get_flag(cpu, CARRY_FLAG);
-    ADC_A_x(cpu, value);
+    add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_H(CPU *cpu)
 {
     uint16_t value = cpu->registers.H + get_flag(cpu, CARRY_FLAG);
-    ADC_A_x(cpu, value);
+    add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_L(CPU *cpu)
 {
     uint16_t value = cpu->registers.L + get_flag(cpu, CARRY_FLAG);
-    ADC_A_x(cpu, value);
+    add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_HL(CPU *cpu)
 {
     uint16_t value = read_byte(cpu, cpu->registers.HL) + get_flag(cpu, CARRY_FLAG);
-    ADC_A_x(cpu, value);
+    add_A_8(cpu, value);
     cpu->t_cycles = 8;
 }
 
 void ADC_A_n(CPU *cpu)
 {
     uint8_t value = fetch_opcode(cpu) + get_flag(cpu, CARRY_FLAG);
-    ADC_A_x(cpu, value);
+    add_A_8(cpu, value);
     cpu->t_cycles = 8;
 }
 
