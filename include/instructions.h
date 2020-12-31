@@ -14,6 +14,9 @@ void ADC_A_E(CPU *);
 void ADC_A_H(CPU *);
 void ADC_A_L(CPU *);
 
+void ADC_A_HL(CPU *);
+void ADC_A_n(CPU *);
+
 // LD r, r*
 void LD_B_A(CPU *);
 void LD_B_B(CPU *);
@@ -133,23 +136,23 @@ void POP_HL(CPU *);
 void UNDEF(CPU *);
 
 static const OpcodeInstruction opcode_table[256] = {
-/*             0x0        0x1        0x2       0x3       0x4       0x5       0x6       0x7        0x8        0x9        0xa      0xb      0xc      0xd       0xe      0xf */
-/* 0 */     &UNDEF, &LD_BC_nn,  &LD_BC_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_B_n,   &UNDEF, &LD_nn_SP,    &UNDEF,  &LD_A_BC,  &UNDEF,  &UNDEF,  &UNDEF,  &LD_C_n,  &UNDEF,
-/* 1 */     &UNDEF, &LD_DE_nn,  &LD_DE_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_D_n,   &UNDEF,    &UNDEF,    &UNDEF,  &LD_A_DE,  &UNDEF,  &UNDEF,  &UNDEF,  &LD_E_n,  &UNDEF,
-/* 2 */     &UNDEF, &LD_HL_nn, &LD_HLI_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_H_n,   &UNDEF,    &UNDEF,    &UNDEF, &LD_A_HLI,  &UNDEF,  &UNDEF,  &UNDEF,  &LD_L_n,  &UNDEF,
-/* 3 */     &UNDEF,    &UNDEF, &LD_HLD_A,   &UNDEF,   &UNDEF,   &UNDEF, &LD_HL_n,   &UNDEF,    &UNDEF,    &UNDEF, &LD_A_HLD,  &UNDEF,  &UNDEF,  &UNDEF,  &LD_A_n,  &UNDEF,
-/* 4 */    &LD_B_B,   &LD_B_C,   &LD_B_D,  &LD_B_E,  &LD_B_H,  &LD_B_L, &LD_B_HL,  &LD_B_A,   &LD_C_B,   &LD_C_C,   &LD_C_D, &LD_C_E, &LD_C_H, &LD_C_L, &LD_C_HL, &LD_C_A,
-/* 5 */    &LD_D_B,   &LD_D_C,   &LD_D_D,  &LD_D_E,  &LD_D_H,  &LD_D_L, &LD_D_HL,  &LD_D_A,   &LD_E_B,   &LD_E_C,   &LD_E_D, &LD_E_E, &LD_E_H, &LD_E_L, &LD_E_HL, &LD_E_A,
-/* 6 */    &LD_H_B,   &LD_H_C,   &LD_H_D,  &LD_H_E,  &LD_H_H,  &LD_H_L, &LD_H_HL,  &LD_H_A,   &LD_L_B,   &LD_L_C,   &LD_L_D, &LD_L_E, &LD_L_H, &LD_L_L, &LD_L_HL, &LD_L_A,
-/* 7 */   &LD_HL_B,  &LD_HL_C,  &LD_HL_D, &LD_HL_E, &LD_HL_H, &LD_HL_L,   &UNDEF, &LD_HL_A,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF, &LD_A_HL,  &UNDEF,
-/* 8 */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* 9 */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* a */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* b */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* c */     &UNDEF,   &POP_BC,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_BC,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* d */     &UNDEF,   &POP_DE,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_DE,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* e */   &LDH_n_A,   &POP_HL,  &LDH_C_A,   &UNDEF,   &UNDEF, &PUSH_HL,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,  &LD_nn_A,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
-/* f */   &LDH_A_n,   &POP_AF,  &LDH_A_C,   &UNDEF,   &UNDEF, &PUSH_AF,   &UNDEF,   &UNDEF,    &UNDEF, &LD_SP_HL,  &LD_A_nn,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,
+/*             0x0        0x1        0x2       0x3       0x4       0x5       0x6       0x7        0x8        0x9        0xa       0xb       0xc       0xd        0xe       0xf */
+/* 0 */     &UNDEF, &LD_BC_nn,  &LD_BC_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_B_n,   &UNDEF, &LD_nn_SP,    &UNDEF,  &LD_A_BC,   &UNDEF,   &UNDEF,   &UNDEF,   &LD_C_n,   &UNDEF,
+/* 1 */     &UNDEF, &LD_DE_nn,  &LD_DE_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_D_n,   &UNDEF,    &UNDEF,    &UNDEF,  &LD_A_DE,   &UNDEF,   &UNDEF,   &UNDEF,   &LD_E_n,   &UNDEF,
+/* 2 */     &UNDEF, &LD_HL_nn, &LD_HLI_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_H_n,   &UNDEF,    &UNDEF,    &UNDEF, &LD_A_HLI,   &UNDEF,   &UNDEF,   &UNDEF,   &LD_L_n,   &UNDEF,
+/* 3 */     &UNDEF,    &UNDEF, &LD_HLD_A,   &UNDEF,   &UNDEF,   &UNDEF, &LD_HL_n,   &UNDEF,    &UNDEF,    &UNDEF, &LD_A_HLD,   &UNDEF,   &UNDEF,   &UNDEF,   &LD_A_n,   &UNDEF,
+/* 4 */    &LD_B_B,   &LD_B_C,   &LD_B_D,  &LD_B_E,  &LD_B_H,  &LD_B_L, &LD_B_HL,  &LD_B_A,   &LD_C_B,   &LD_C_C,   &LD_C_D,  &LD_C_E,  &LD_C_H,  &LD_C_L,  &LD_C_HL,  &LD_C_A,
+/* 5 */    &LD_D_B,   &LD_D_C,   &LD_D_D,  &LD_D_E,  &LD_D_H,  &LD_D_L, &LD_D_HL,  &LD_D_A,   &LD_E_B,   &LD_E_C,   &LD_E_D,  &LD_E_E,  &LD_E_H,  &LD_E_L,  &LD_E_HL,  &LD_E_A,
+/* 6 */    &LD_H_B,   &LD_H_C,   &LD_H_D,  &LD_H_E,  &LD_H_H,  &LD_H_L, &LD_H_HL,  &LD_H_A,   &LD_L_B,   &LD_L_C,   &LD_L_D,  &LD_L_E,  &LD_L_H,  &LD_L_L,  &LD_L_HL,  &LD_L_A,
+/* 7 */   &LD_HL_B,  &LD_HL_C,  &LD_HL_D, &LD_HL_E, &LD_HL_H, &LD_HL_L,   &UNDEF, &LD_HL_A,    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_A_HL,   &UNDEF,
+/* 8 */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &ADC_A_B,  &ADC_A_C,  &ADC_A_D, &ADC_A_E, &ADC_A_H, &ADC_A_L, &ADC_A_HL, &ADC_A_A,
+/* 9 */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* a */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* b */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* c */     &UNDEF,   &POP_BC,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_BC,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &ADC_A_n,   &UNDEF,
+/* d */     &UNDEF,   &POP_DE,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_DE,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* e */   &LDH_n_A,   &POP_HL,  &LDH_C_A,   &UNDEF,   &UNDEF, &PUSH_HL,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,  &LD_nn_A,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* f */   &LDH_A_n,   &POP_AF,  &LDH_A_C,   &UNDEF,   &UNDEF, &PUSH_AF,   &UNDEF,   &UNDEF,    &UNDEF, &LD_SP_HL,  &LD_A_nn,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 };
 
 #endif

@@ -1,16 +1,79 @@
 #include <stdio.h>
 #include "instructions.h"
 
+void ADC_A_x(CPU *cpu, uint16_t value)
+{
+    uint8_t A = cpu->registers.A;
+    toggle_zero_flag(cpu, (A + value) & 0xff);
+    clear_flag(cpu, SUBTRACT_FLAG);
+    toggle_hcarry_flag(cpu, A, value);
+    toggle_carry_flag(cpu, A + value);
+
+    cpu->registers.A += (value & 0xff);
+}
+
 // ADC A, r8
 void ADC_A_A(CPU *cpu)
 {
     uint16_t value = cpu->registers.A + get_flag(cpu, CARRY_FLAG);
-    toggle_zero_flag(cpu, (cpu->registers.A + value & 0xff));
-    clear_flag(cpu, SUBTRACT_FLAG);
-    toggle_hcarry_flag(cpu, cpu->registers.A, value);
-    toggle_carry_flag(cpu, cpu->registers.A + value);
+    ADC_A_x(cpu, value);
+    cpu->t_cycles = 4;
+}
 
-    cpu->registers.A += value & 0xff;
+void ADC_A_B(CPU *cpu)
+{
+    uint16_t value = cpu->registers.B + get_flag(cpu, CARRY_FLAG);
+    ADC_A_x(cpu, value);
+    cpu->t_cycles = 4;
+}
+
+void ADC_A_C(CPU *cpu)
+{
+    uint16_t value = cpu->registers.C + get_flag(cpu, CARRY_FLAG);
+    ADC_A_x(cpu, value);
+    cpu->t_cycles = 4;
+}
+
+void ADC_A_D(CPU *cpu)
+{
+    uint16_t value = cpu->registers.D + get_flag(cpu, CARRY_FLAG);
+    ADC_A_x(cpu, value);
+    cpu->t_cycles = 4;
+}
+
+void ADC_A_E(CPU *cpu)
+{
+    uint16_t value = cpu->registers.E + get_flag(cpu, CARRY_FLAG);
+    ADC_A_x(cpu, value);
+    cpu->t_cycles = 4;
+}
+
+void ADC_A_H(CPU *cpu)
+{
+    uint16_t value = cpu->registers.H + get_flag(cpu, CARRY_FLAG);
+    ADC_A_x(cpu, value);
+    cpu->t_cycles = 4;
+}
+
+void ADC_A_L(CPU *cpu)
+{
+    uint16_t value = cpu->registers.L + get_flag(cpu, CARRY_FLAG);
+    ADC_A_x(cpu, value);
+    cpu->t_cycles = 4;
+}
+
+void ADC_A_HL(CPU *cpu)
+{
+    uint16_t value = read_byte(cpu, cpu->registers.HL) + get_flag(cpu, CARRY_FLAG);
+    ADC_A_x(cpu, value);
+    cpu->t_cycles = 8;
+}
+
+void ADC_A_n(CPU *cpu)
+{
+    uint8_t value = fetch_opcode(cpu) + get_flag(cpu, CARRY_FLAG);
+    ADC_A_x(cpu, value);
+    cpu->t_cycles = 8;
 }
 
 // LD r, r*: load 2nd register's value into 1st
