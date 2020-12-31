@@ -46,11 +46,6 @@ void clear_flag(CPU *cpu, FlagPosition flag)
     cpu->registers.F &= ~(0b1 << flag);
 }
 
-void set_flag(CPU *cpu, FlagPosition flag)
-{
-    cpu->registers.F |= (0b1 << flag);
-}
-
 void toggle_zero_flag(CPU *cpu, uint16_t value)
 {
     uint8_t bit = value == 0;
