@@ -70,7 +70,7 @@ void toggle_hcarry_flag(CPU *cpu, uint16_t a, uint16_t b, USIZE size)
     cpu->registers.F = mask | (overflow << HALF_CARRY_FLAG);
 }
 
-void toggle_carry_flag(CPU *cpu, uint16_t value, USIZE size)
+void toggle_carry_flag(CPU *cpu, uint32_t value, USIZE size)
 {
     uint8_t overflow;
     if (size == BYTE) {

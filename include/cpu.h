@@ -103,6 +103,6 @@ void set_flag(CPU *, FlagPosition);
 
 void toggle_zero_flag(CPU *, uint16_t);
 void toggle_hcarry_flag(CPU *, uint16_t a, uint16_t b, USIZE);
-void toggle_carry_flag(CPU *, uint16_t, USIZE);
+void toggle_carry_flag(CPU *, uint32_t, USIZE);
 
 #endif

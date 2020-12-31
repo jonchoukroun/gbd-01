@@ -148,11 +148,8 @@ void test_toggle_carry_flag(void)
     CU_ASSERT_EQUAL(cpu.registers.F, 0b11100000);
 
     // Sets flag on 15th bit overflow, for 16bit values
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wconstant-conversion"
     cpu.registers.F = 0b00000000;
     toggle_carry_flag(&cpu, 0xf000 + 0xf000, WORD);
-    #pragma clang diagnostic pop
 }
 
 int main()
