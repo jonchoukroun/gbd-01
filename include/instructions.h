@@ -5,6 +5,10 @@
 
 typedef void (*OpcodeInstruction)(CPU *);
 
+// ***********************************
+// 8-bit Arithmetic/Logical Operations
+// ***********************************
+
 // ADD A, r8: Add value in r8 to register A
 void ADD_A_A(CPU *);
 void ADD_A_B(CPU *);
@@ -14,8 +18,8 @@ void ADD_A_E(CPU *);
 void ADD_A_H(CPU *);
 void ADD_A_L(CPU *);
 
-void ADD_A_HL(CPU *);
 void ADD_A_n(CPU *);
+void ADD_A_HL(CPU *);
 
 // ADC A, r8: Add value in r8 + carry flag to register A
 void ADC_A_A(CPU *);
@@ -26,8 +30,22 @@ void ADC_A_E(CPU *);
 void ADC_A_H(CPU *);
 void ADC_A_L(CPU *);
 
-void ADC_A_HL(CPU *);
 void ADC_A_n(CPU *);
+void ADC_A_HL(CPU *);
+
+// AND A, r8: Set A to bitwise & between A and r8
+void AND_A_A(CPU *);
+void AND_A_B(CPU *);
+void AND_A_C(CPU *);
+void AND_A_D(CPU *);
+void AND_A_E(CPU *);
+void AND_A_H(CPU *);
+void AND_A_L(CPU *);
+
+
+// ************************************
+// 16-bit Arithmetic/Logical Operations
+// ************************************
 
 // ADD HL, r16: Add value in r8 to register HL
 void ADD_HL_BC(CPU *);
@@ -39,14 +57,10 @@ void ADD_HL_SP(CPU *);
 // ADD SP, nn: Add signed immediate value to stack pointer
 void ADD_SP_nn(CPU *);
 
-// AND A, r8: Set A to bitwise & between A and r8
-void AND_A_A(CPU *);
-void AND_A_B(CPU *);
-void AND_A_C(CPU *);
-void AND_A_D(CPU *);
-void AND_A_E(CPU *);
-void AND_A_H(CPU *);
-void AND_A_L(CPU *);
+
+// *********************
+// 8-bit Load Operations
+// *********************
 
 // LD r, r*
 void LD_B_A(CPU *);
@@ -143,6 +157,11 @@ void LD_A_HLD(CPU *);
 // LD (HL+/-), A: Load into address stored in HL from register A, then increment/decrement HL
 void LD_HLI_A(CPU *);
 void LD_HLD_A(CPU *);
+
+
+// **********************
+// 16-bit Load Operations
+// **********************
 
 // LD rr, nn: Load 16 bit data into 16 bit register
 void LD_BC_nn(CPU *);
