@@ -363,6 +363,84 @@ void test_ADC_A_n(void)
     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
+void test_AND_A_A(void)
+{
+    CPU cpu;
+    uint8_t A = 0x1a;
+    cpu.registers.A = A;
+    cpu.registers.F = 0;
+    AND_A_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, A);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+
+    A = 0;
+    cpu.registers.A = A;
+    AND_A_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10100000);
+}
+
+void test_AND_A_B(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x23;
+    cpu.registers.B = 0x45;
+    AND_A_B(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x01);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+}
+
+void test_AND_A_C(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x4c;
+    cpu.registers.C = 0xff;
+    AND_A_C(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x4c);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+}
+
+void test_AND_A_D(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x4c;
+    cpu.registers.D = 0xff;
+    AND_A_D(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x4c);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+}
+
+void test_AND_A_E(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x4c;
+    cpu.registers.E = 0xff;
+    AND_A_E(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x4c);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+}
+
+void test_AND_A_H(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x4c;
+    cpu.registers.H = 0xff;
+    AND_A_H(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x4c);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+}
+
+void test_AND_A_L(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x4c;
+    cpu.registers.L = 0xff;
+    AND_A_L(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x4c);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+}
+
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -491,6 +569,41 @@ int main()
             test_suite,
             "Arithmetic | ADC_A_n adds immediate value and carry flag to A register value",
             test_ADC_A_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | AND_A_A sets A to itself (bitwise), sets 0 flag if zero, sets half carry flag, and clears other flags",
+            test_AND_A_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | AND_A_B sets A to bitwise with B",
+            test_AND_A_B
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | AND_A_C sets A to bitwise with C",
+            test_AND_A_C
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | AND_A_D sets A to bitwise with D",
+            test_AND_A_D
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | AND_A_E sets A to bitwise with E",
+            test_AND_A_E
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | AND_A_H sets A to bitwise with H",
+            test_AND_A_H
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | AND_A_L sets A to bitwise with L",
+            test_AND_A_L
         ) == NULL) {
         printf("Failed to add test to arithmetic unit test suite\n");
         CU_cleanup_registry();
