@@ -135,6 +135,65 @@ void ADC_A_n(CPU *cpu)
     cpu->t_cycles = 8;
 }
 
+void add_HL_16(CPU *cpu, uint16_t value)
+{
+    uint16_t HL = cpu->registers.HL;
+    clear_flag(cpu, SUBTRACT_FLAG);
+    clear_flag(cpu, HALF_CARRY_FLAG);
+    clear_flag(cpu, CARRY_FLAG);
+
+    if ((HL & 0xf00) + (value & 0xf00) > 0x400) set_flag(cpu, HALF_CARRY_FLAG);
+    if (0xffff - HL <= value) set_flag(cpu, CARRY_FLAG);
+
+    cpu->registers.HL += value;
+}
+
+// ADD HL, r16
+void ADD_HL_BC(CPU *cpu)
+{
+    add_HL_16(cpu, cpu->registers.BC);
+    cpu->t_cycles = 8;
+}
+
+void ADD_HL_DE(CPU *cpu)
+{
+    add_HL_16(cpu, cpu->registers.DE);
+    cpu->t_cycles = 8;
+}
+
+void ADD_HL_HL(CPU *cpu)
+{
+    add_HL_16(cpu, cpu->registers.HL);
+    cpu->t_cycles = 8;
+}
+
+void ADD_HL_SP(CPU *cpu)
+{
+    add_HL_16(cpu, cpu->SP);
+    cpu->t_cycles = 8;
+}
+
+void ADD_SP_nn(CPU *cpu)
+{
+    clear_flag(cpu, ZERO_FLAG);
+    clear_flag(cpu, SUBTRACT_FLAG);
+    clear_flag(cpu, HALF_CARRY_FLAG);
+    clear_flag(cpu, CARRY_FLAG);
+
+    uint8_t n = fetch_opcode(cpu);
+    if (0b10000000 & n) {
+        n = (~n) + 1;
+        cpu->SP -= n;
+    } else {
+        if ((cpu->SP & 0xf) + (cpu->SP & 0xf) > 0xf) set_flag(cpu, HALF_CARRY_FLAG);
+        if ((cpu->SP & 0x00ff) + n > 0xff) set_flag(cpu, CARRY_FLAG);
+
+        cpu->SP += n;
+    }
+
+    cpu->t_cycles = 16;
+}
+
 // LD r, r*: load 2nd register's value into 1st
 void LD_B_A(CPU *cpu)
 {

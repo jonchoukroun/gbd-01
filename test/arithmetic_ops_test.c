@@ -65,6 +65,168 @@ void test_ADD_A_n(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
+void test_ADD_HL_BC(void)
+{
+    CPU cpu;
+    cpu.registers.HL = 0x1234;
+    cpu.registers.BC = 0x4321;
+    cpu.registers.F = 0;
+    ADD_HL_BC(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.HL, 0x5555);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_ADD_HL_DE(void)
+{
+    CPU cpu;
+    cpu.registers.HL = 0x07f3;
+    cpu.registers.DE = 0x0711;
+    cpu.registers.F = 0;
+    ADD_HL_DE(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.HL, 0xf04);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_ADD_HL_HL(void)
+{
+    CPU cpu;
+    cpu.registers.HL = 0xabcd;
+    cpu.registers.F = 0;
+    ADD_HL_HL(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.HL, 0x579a);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00110000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_ADD_HL_SP(void)
+{
+    CPU cpu;
+    cpu.registers.HL = 0x0101;
+    cpu.SP = 0x1010;
+    cpu.registers.F = 0;
+    ADD_HL_SP(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.HL, 0x1111);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_ADD_SP_nn(void)
+{
+    // Signed positive
+    CPU cpu;
+    uint16_t PC = 0x0100;
+    uint16_t SP = 1000;
+    int8_t pos_value = 59;
+    cpu.PC = PC;
+    cpu.memory[PC] = pos_value;
+    cpu.SP = SP;
+    ADD_SP_nn(&cpu);
+    CU_ASSERT_EQUAL(cpu.SP, 1059);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+
+    // Signed negative
+    int8_t neg_value = -59;
+    cpu.PC = PC;
+    cpu.SP = SP;
+    cpu.memory[PC] = neg_value;
+    ADD_SP_nn(&cpu);
+    CU_ASSERT_EQUAL(cpu.SP, 941);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+
+    // Unsigned negative
+    uint8_t u_neg = 0xa8;
+    cpu.PC = PC;
+    cpu.SP = SP;
+    cpu.memory[PC] = u_neg;
+    ADD_SP_nn(&cpu);
+    CU_ASSERT_EQUAL(cpu.SP, 912);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+}
+
+void test_ADD_SP_nn_zero(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x100;
+    uint16_t SP = 0x0000a;
+    int8_t value = -0xa;
+    cpu.PC = PC;
+    cpu.SP = SP;
+    cpu.memory[PC] = value;
+    cpu.registers.F = 0;
+    ADD_SP_nn(&cpu);
+    CU_ASSERT_EQUAL(cpu.SP, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+
+    SP = 0x1000;
+    cpu.PC = PC;
+    cpu.SP = SP;
+    cpu.memory[PC] = value;
+    cpu.registers.F = 0;
+    ADD_SP_nn(&cpu);
+    CU_ASSERT_EQUAL(cpu.SP, 0xff6);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+}
+
+void test_ADD_SP_nn_subtract(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x100;
+    uint16_t SP = 0x1000;
+    int8_t value = -0xa;
+    cpu.PC = PC;
+    cpu.SP = SP;
+    cpu.memory[PC] = value;
+    cpu.registers.F = 0b00000000;
+    ADD_SP_nn(&cpu);
+    CU_ASSERT_EQUAL(cpu.SP, 0xff6);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+}
+
+void test_ADD_SP_nn_hcarry(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x100;
+    uint16_t SP = 0x100f;
+    uint8_t value = 0xf;
+    cpu.PC = PC;
+    cpu.memory[PC] = value;
+    cpu.SP = SP;
+    cpu.registers.F = 0b00000000;
+    ADD_SP_nn(&cpu);
+    CU_ASSERT_EQUAL(cpu.SP, 0x101e);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+
+    SP = 0x1000;
+    value = 0x1;
+    cpu.PC = PC;
+    cpu.memory[PC] = value;
+    cpu.SP = SP;
+    cpu.registers.F = 0b00000000;
+    ADD_SP_nn(&cpu);
+    CU_ASSERT_EQUAL(cpu.SP, 0x1001);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+}
+
+void test_ADD_SP_nn_carry(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x100;
+    uint16_t SP = 0x10a0;
+    uint8_t value = 0x70;
+    cpu.PC = PC;
+    cpu.memory[PC] = value;
+    cpu.SP = SP;
+    cpu.registers.F = 0b00000000;
+    ADD_SP_nn(&cpu);
+    CU_ASSERT_EQUAL(cpu.SP, 0x1110);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+}
+
 void test_ADC_A_A(void)
 {
     // Doubles A when carry flag is cleared
@@ -239,6 +401,51 @@ int main()
             test_suite,
             "Arithmetic | ADD_A_n adds immediate value to register A",
             test_ADD_A_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | ADD_HL_BC adds value from register BC to register HL",
+            test_ADD_HL_BC
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | ADD_HL_DE adds value from register DE to register HL",
+            test_ADD_HL_DE
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | ADD_HL_HL adds value from register HL to register HL",
+            test_ADD_HL_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | ADD_HL_SP adds value from SP to register HL",
+            test_ADD_HL_SP
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | ADD_SP_nn adds signed 8bit immediate value to SP",
+            test_ADD_SP_nn
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | ADD_SP_nn clears zero flag even when result is 0",
+            test_ADD_SP_nn_zero
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | ADD_SP_nn clears subtract flag even when operand is negative",
+            test_ADD_SP_nn_subtract
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | ADD_SP_nn sets half carry flag on 3rd bit overflow",
+            test_ADD_SP_nn_hcarry
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | ADD_SP_nn sets carry flag on 7th bit overflow",
+            test_ADD_SP_nn_carry
         ) == NULL ||
         CU_add_test(
             test_suite,
