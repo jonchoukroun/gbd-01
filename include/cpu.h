@@ -98,10 +98,7 @@ void write_byte(CPU *, uint8_t byte, uint16_t address);
 void write_word(CPU *, uint16_t word, uint16_t address);
 
 uint8_t get_flag(CPU *, FlagPosition);
+void set_flag(CPU *, FlagPosition);
 void clear_flag(CPU *, FlagPosition);
-
-void toggle_zero_flag(CPU *, uint16_t);
-void toggle_hcarry_flag(CPU *, uint16_t a, uint16_t b, USIZE);
-void toggle_carry_flag(CPU *, uint32_t, USIZE);
 
 #endif

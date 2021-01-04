@@ -4,12 +4,16 @@
 void add_A_8(CPU *cpu, uint16_t value)
 {
     uint8_t A = cpu->registers.A;
-    toggle_zero_flag(cpu, (A + value) & 0xff);
+    clear_flag(cpu, ZERO_FLAG);
     clear_flag(cpu, SUBTRACT_FLAG);
-    toggle_hcarry_flag(cpu, A, value, BYTE);
-    toggle_carry_flag(cpu, A + value, BYTE);
+    clear_flag(cpu, HALF_CARRY_FLAG);
+    clear_flag(cpu, CARRY_FLAG);
 
-    cpu->registers.A += (value & 0xff);
+    if (((A + value) & 0xff) == 0) set_flag(cpu, ZERO_FLAG);
+    if ((A & 0xf) + (value & 0xf) > 0xf) set_flag(cpu, HALF_CARRY_FLAG);
+    if (0xff - A <= value) set_flag(cpu, CARRY_FLAG);
+
+    cpu->registers.A += value;
 }
 
 // ADD A, r8

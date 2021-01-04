@@ -55,101 +55,48 @@ void test_write_word(void)
     CU_ASSERT_EQUAL(cpu.memory[address + 1], 0x56);
 }
 
-void test_toggle_zero_flag(void)
+void test_set_flag(void)
 {
     CPU cpu;
-    uint16_t value = 0;
-    cpu.registers.F = 0b00000000;
-    toggle_zero_flag(&cpu, value);
+
+    // Set cleared flags
+    cpu.registers.F = 0;
+    set_flag(&cpu, ZERO_FLAG);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
 
+    cpu.registers.F = 0;
+    set_flag(&cpu, SUBTRACT_FLAG);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
+
+    cpu.registers.F = 0;
+    set_flag(&cpu, HALF_CARRY_FLAG);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+
+    cpu.registers.F = 0;
+    set_flag(&cpu, CARRY_FLAG);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+
+    // Set existing flags
     cpu.registers.F = 0b10000000;
-    toggle_zero_flag(&cpu, value);
+    set_flag(&cpu, ZERO_FLAG);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
 
-    cpu.registers.F = 0b01110000;
-    toggle_zero_flag(&cpu, value);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b11110000);
+    cpu.registers.F = 0b01000000;
+    set_flag(&cpu, SUBTRACT_FLAG);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
 
-    value = 1;
-    cpu.registers.F = 0b00000000;
-    toggle_zero_flag(&cpu, value);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-
-    cpu.registers.F = 0b10000000;
-    toggle_zero_flag(&cpu, value);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-
-    cpu.registers.F = 0b01110000;
-    toggle_zero_flag(&cpu, value);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01110000);
-}
-
-void test_toggle_hcarry_flag(void)
-{
-    CPU cpu;
-    // Does not set bit when there is no overflow
-    cpu.registers.F = 0b00000000;
-    toggle_hcarry_flag(&cpu, 0x01, 0x02, BYTE);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-
-    // Sets bit when 3rd bit overflows on an 8bit value
-    cpu.registers.F = 0b00000000;
-    toggle_hcarry_flag(&cpu, 0x0f, 0x05, BYTE);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
-
-    // Clears bit if there is no overflow
     cpu.registers.F = 0b00100000;
-    toggle_hcarry_flag(&cpu, 0x01, 0x3, BYTE);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-
-    // Leaves bit set if there is overflow
-    cpu.registers.F = 0b00100000;
-    toggle_hcarry_flag(&cpu, 0x0d, 0x0f, BYTE);
+    set_flag(&cpu, HALF_CARRY_FLAG);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
 
-    // Doesn't affect existing bits
-    cpu.registers.F = 0b11010000;
-    toggle_hcarry_flag(&cpu, 0x05, 0x0f, BYTE);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b11110000);
-
-    // Sets flag on 11th bit overflow, for 16bit values
-    cpu.registers.F = 0b00000000;
-    toggle_hcarry_flag(&cpu, 0x0400, 0x0400, WORD);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
-}
-
-void test_toggle_carry_flag(void)
-{
-    CPU cpu;
-    // Sets carry bit on overflow
-    cpu.registers.F = 0b00000000;
-    toggle_carry_flag(&cpu, 0x0123, BYTE);
+    cpu.registers.F = 0;
+    set_flag(&cpu, CARRY_FLAG);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
 
-    // Does not set bit when there is no overflow
-    cpu.registers.F = 0b00000000;
-    toggle_carry_flag(&cpu, 0x23, BYTE);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-
-    // Clears bit if there is no overflow
-    cpu.registers.F = 0b00010000;
-    toggle_carry_flag(&cpu, 0x23, BYTE);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-
-    // Leaves bit set on overflow
-    cpu.registers.F = 0b00010000;
-    toggle_carry_flag(&cpu, 0x2134, BYTE);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
-
-    // Doesn't affect set bits
-    cpu.registers.F = 0b11100000;
-    toggle_carry_flag(&cpu, 0x4f, BYTE);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b11100000);
-
-    // Sets flag on 15th bit overflow, for 16bit values
-    cpu.registers.F = 0b00000000;
-    toggle_carry_flag(&cpu, 0xf000 + 0xf000, WORD);
+    // Ignore other flags
+    cpu.registers.F = 0b10110000;
+    set_flag(&cpu, SUBTRACT_FLAG);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b11110000);
 }
 
 int main()
@@ -193,18 +140,8 @@ int main()
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "CPU | toggle_zero_flag sets zero flag bit if value is zero or clears it if value is 0",
-            test_toggle_zero_flag
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "CPU | toggle_hcarry_flag sets half carry bit if bit 3 overflows or clears it if there is no overflow",
-            test_toggle_hcarry_flag
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "CPU | toggle_carry_flag set carry bit if bit 7 overflows or clears it if there is no overflow",
-            test_toggle_carry_flag
+            "CPU | set_flag sets flag bit and ignores other flag bits",
+            test_set_flag
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();

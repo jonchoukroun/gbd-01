@@ -18,10 +18,22 @@ void test_ADD_A_B(void)
     CPU cpu;
     cpu.registers.A = 0x34;
     cpu.registers.B = 0x0f;
+    cpu.registers.F = 0b00000000;
     ADD_A_B(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x43);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_ADD_A_C(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0xfe;
+    cpu.registers.C = 0x0a;
+    cpu.registers.F = 0b00000000;
+    ADD_A_C(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x08);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00110000);
 }
 
 void test_ADD_A_HL(void)
@@ -212,6 +224,11 @@ int main()
             test_suite,
             "Arithmetic | ADD_A_B adds value in register B to register A",
             test_ADD_A_B
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | ADD_A_C adds C into A and sets carry flag when result is over 0xff",
+            test_ADD_A_C
         ) == NULL ||
         CU_add_test(
             test_suite,

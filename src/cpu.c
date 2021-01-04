@@ -41,38 +41,31 @@ uint8_t get_flag(CPU *cpu, FlagPosition flag)
     return (cpu->registers.F >> flag) & 0b1;
 }
 
+void set_flag(CPU *cpu, FlagPosition flag)
+{
+    uint8_t mask;
+    switch (flag) {
+        case ZERO_FLAG:
+            mask = cpu->registers.F & 0b01110000;
+            break;
+        case SUBTRACT_FLAG:
+            mask = cpu->registers.F & 0b10110000;
+            break;
+        case HALF_CARRY_FLAG:
+            mask = cpu->registers.F & 0b11010000;
+            break;
+        case CARRY_FLAG:
+            mask = cpu->registers.F & 0b11100000;
+            break;
+        default:
+            printf("Invalid flag: %d", flag);
+            return;
+    }
+
+    cpu->registers.F = mask | (0b1 << flag);
+}
+
 void clear_flag(CPU *cpu, FlagPosition flag)
 {
     cpu->registers.F &= ~(0b1 << flag);
-}
-
-void toggle_zero_flag(CPU *cpu, uint16_t value)
-{
-    uint8_t bit = value == 0;
-    uint8_t mask = cpu->registers.F & 0b01110000;
-    cpu->registers.F = mask | (bit << ZERO_FLAG);
-}
-
-void toggle_hcarry_flag(CPU *cpu, uint16_t a, uint16_t b, USIZE size)
-{
-    uint8_t overflow;
-    if (size == BYTE) {
-        overflow = (a & 0xf) + (b & 0xf) > 0xf;
-    } else {
-        overflow = (a & 0xf00) + (b & 0xf00) > 0x400;
-    }
-    uint8_t mask = cpu->registers.F & 0b11010000;
-    cpu->registers.F = mask | (overflow << HALF_CARRY_FLAG);
-}
-
-void toggle_carry_flag(CPU *cpu, uint32_t value, USIZE size)
-{
-    uint8_t overflow;
-    if (size == BYTE) {
-        overflow = value > 0xff;
-    } else {
-        overflow = value > 0xffff;
-    }
-    uint8_t mask = cpu->registers.F & 0b11100000;
-    cpu->registers.F = mask | (overflow << CARRY_FLAG);
 }
