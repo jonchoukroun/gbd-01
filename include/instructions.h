@@ -45,6 +45,18 @@ void SUB_A_L(CPU *);
 void SUB_A_n(CPU *);
 void SUB_A_HL(CPU *);
 
+// SBC A, r8: Subtract value in r8 and carry from register A
+void SBC_A_A(CPU *);
+void SBC_A_B(CPU *);
+void SBC_A_C(CPU *);
+void SBC_A_D(CPU *);
+void SBC_A_E(CPU *);
+void SBC_A_H(CPU *);
+void SBC_A_L(CPU *);
+
+void SBC_A_n(CPU *);
+void SBC_A_HL(CPU *);
+
 // AND A, r8: Set A to bitwise & between A and r8
 void AND_A_A(CPU *);
 void AND_A_B(CPU *);
@@ -208,11 +220,11 @@ static const OpcodeInstruction opcode_table[256] = {
 /* 6 */    &LD_H_B,   &LD_H_C,   &LD_H_D,  &LD_H_E,  &LD_H_H,  &LD_H_L,  &LD_H_HL,  &LD_H_A,    &LD_L_B,    &LD_L_C,   &LD_L_D,  &LD_L_E,  &LD_L_H,  &LD_L_L,  &LD_L_HL,  &LD_L_A,
 /* 7 */   &LD_HL_B,  &LD_HL_C,  &LD_HL_D, &LD_HL_E, &LD_HL_H, &LD_HL_L,    &UNDEF, &LD_HL_A,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_A_HL,   &UNDEF,
 /* 8 */   &ADD_A_B,  &ADD_A_C,  &ADD_A_D, &ADD_A_E, &ADD_A_H, &ADD_A_L, &ADD_A_HL, &ADD_A_A,   &ADC_A_B,   &ADC_A_C,  &ADC_A_D, &ADC_A_E, &ADC_A_H, &ADC_A_L, &ADC_A_HL, &ADC_A_A,
-/* 9 */   &SUB_A_B,  &SUB_A_C,  &SUB_A_D, &SUB_A_E, &SUB_A_H, &SUB_A_L, &SUB_A_HL, &SUB_A_A,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* 9 */   &SUB_A_B,  &SUB_A_C,  &SUB_A_D, &SUB_A_E, &SUB_A_H, &SUB_A_L, &SUB_A_HL, &SUB_A_A,   &SBC_A_B,   &SBC_A_C,  &SBC_A_D, &SBC_A_E, &SBC_A_H, &SBC_A_L, &SBC_A_HL,   &UNDEF,
 /* a */   &AND_A_B,  &AND_A_C,  &AND_A_D, &AND_A_E, &AND_A_H, &AND_A_L,    &UNDEF,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* b */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* c */     &UNDEF,   &POP_BC,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_BC,  &ADD_A_n,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &ADC_A_n,   &UNDEF,
-/* d */     &UNDEF,   &POP_DE,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_DE,  &SUB_A_n,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* d */     &UNDEF,   &POP_DE,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_DE,  &SUB_A_n,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &SBC_A_n,   &UNDEF,
 /* e */   &LDH_n_A,   &POP_HL,  &LDH_C_A,   &UNDEF,   &UNDEF, &PUSH_HL,    &UNDEF,   &UNDEF, &ADD_SP_nn,     &UNDEF,  &LD_nn_A,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* f */   &LDH_A_n,   &POP_AF,  &LDH_A_C,   &UNDEF,   &UNDEF, &PUSH_AF,    &UNDEF,   &UNDEF,     &UNDEF,  &LD_SP_HL,  &LD_A_nn,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 };

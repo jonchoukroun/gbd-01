@@ -435,6 +435,70 @@ void test_SUB_A_HL(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
+void test_SBC_A_A(void)
+{
+    CPU cpu;
+    uint8_t A = 0x0c;
+    cpu.registers.A = A;
+    cpu.registers.F = 0b00000000;
+    SBC_A_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b11000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+
+    cpu.registers.A = A;
+    cpu.registers.F = 0b00010000;
+    SBC_A_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0xff);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01110000);
+}
+
+void test_SBC_A_B(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x32;
+    cpu.registers.B = 0x11;
+    cpu.registers.F = 0b00010000;
+    SBC_A_B(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x20);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
+
+    cpu.registers.A = 0xab;
+    cpu.registers.B = 0xff;
+    cpu.registers.F = 0b00010000;
+    SBC_A_B(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0xab);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
+}
+
+void test_SBC_A_n(void)
+{
+    CPU cpu;
+    cpu.PC = 0x100;
+    cpu.memory[cpu.PC] = 0x32;
+    cpu.registers.A = 0xfa;
+    cpu.registers.F = 0b11110000;
+    SBC_A_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0xc7);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SBC_A_HL(void)
+{
+    CPU cpu;
+    uint8_t n = 0x0f;
+    uint16_t address = 0x4000;
+    cpu.registers.A = 0x35;
+    cpu.registers.F = 0b00010000;
+    cpu.registers.HL = address;
+    cpu.memory[address] = n;
+    SBC_A_HL(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x25);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
 void test_AND_A_A(void)
 {
     CPU cpu;
@@ -666,6 +730,26 @@ int main()
             test_suite,
             "Arithmetic | SUB_A_HL subtracts byte at address in HL from A",
             test_SUB_A_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | SBC_A_A sets A to 0 or 0xff if carry flag is set",
+            test_SBC_A_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | SBC_A_B subtracts B and carry from A, where sum of B and flag is up to 0xff",
+            test_SBC_A_B
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | SBC_A_n subtracts immediate value and carry flag from register A",
+            test_SBC_A_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | SBC_A_HL subtracts byte at address in HL and carry flag from A",
+            test_SBC_A_HL
         ) == NULL ||
         CU_add_test(
             test_suite,

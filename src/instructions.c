@@ -136,7 +136,7 @@ void ADC_A_n(CPU *cpu)
 }
 
 // SUB A, r8
-void sub_A_r(CPU *cpu, uint8_t r)
+void sub_A_8(CPU *cpu, uint8_t r)
 {
     clear_flag(cpu, ZERO_FLAG);
     set_flag(cpu, SUBTRACT_FLAG);
@@ -153,55 +153,118 @@ void sub_A_r(CPU *cpu, uint8_t r)
 
 void SUB_A_A(CPU *cpu)
 {
-    sub_A_r(cpu, cpu->registers.A);
+    sub_A_8(cpu, cpu->registers.A);
     cpu->t_cycles = 4;
 }
 
 void SUB_A_B(CPU *cpu)
 {
-    sub_A_r(cpu, cpu->registers.B);
+    sub_A_8(cpu, cpu->registers.B);
     cpu->t_cycles = 4;
 }
 
 void SUB_A_C(CPU *cpu)
 {
-    sub_A_r(cpu, cpu->registers.C);
+    sub_A_8(cpu, cpu->registers.C);
     cpu->t_cycles = 4;
 }
 
 void SUB_A_D(CPU *cpu)
 {
-    sub_A_r(cpu, cpu->registers.D);
+    sub_A_8(cpu, cpu->registers.D);
     cpu->t_cycles = 4;
 }
 
 void SUB_A_E(CPU *cpu)
 {
-    sub_A_r(cpu, cpu->registers.E);
+    sub_A_8(cpu, cpu->registers.E);
     cpu->t_cycles = 4;
 }
 
 void SUB_A_H(CPU *cpu)
 {
-    sub_A_r(cpu, cpu->registers.H);
+    sub_A_8(cpu, cpu->registers.H);
     cpu->t_cycles = 4;
 }
 
 void SUB_A_L(CPU *cpu)
 {
-    sub_A_r(cpu, cpu->registers.L);
+    sub_A_8(cpu, cpu->registers.L);
     cpu->t_cycles = 4;
 }
 
 void SUB_A_n(CPU *cpu)
 {
-    sub_A_r(cpu, fetch_opcode(cpu));
+    sub_A_8(cpu, fetch_opcode(cpu));
     cpu->t_cycles = 8;
 }
 
 void SUB_A_HL(CPU *cpu)
 {
-    sub_A_r(cpu, read_byte(cpu, cpu->registers.HL));
+    sub_A_8(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
+}
+
+void SBC_A_A(CPU *cpu)
+{
+    uint8_t value = cpu->registers.A + get_flag(cpu, CARRY_FLAG);
+    sub_A_8(cpu, value);
+    cpu->t_cycles = 4;
+}
+
+void SBC_A_B(CPU *cpu)
+{
+    uint8_t value = cpu->registers.B + get_flag(cpu, CARRY_FLAG);
+    sub_A_8(cpu, value);
+    cpu->t_cycles = 4;
+}
+
+void SBC_A_C(CPU *cpu)
+{
+    uint8_t value = cpu->registers.C + get_flag(cpu, CARRY_FLAG);
+    sub_A_8(cpu, value);
+    cpu->t_cycles = 4;
+}
+
+void SBC_A_D(CPU *cpu)
+{
+    uint8_t value = cpu->registers.D + get_flag(cpu, CARRY_FLAG);
+    sub_A_8(cpu, value);
+    cpu->t_cycles = 4;
+}
+
+void SBC_A_E(CPU *cpu)
+{
+    uint8_t value = cpu->registers.E + get_flag(cpu, CARRY_FLAG);
+    sub_A_8(cpu, value);
+    cpu->t_cycles = 4;
+}
+
+void SBC_A_H(CPU *cpu)
+{
+    uint8_t value = cpu->registers.H + get_flag(cpu, CARRY_FLAG);
+    sub_A_8(cpu, value);
+    cpu->t_cycles = 4;
+}
+
+void SBC_A_L(CPU *cpu)
+{
+    uint8_t value = cpu->registers.L + get_flag(cpu, CARRY_FLAG);
+    sub_A_8(cpu, value);
+    cpu->t_cycles = 4;
+}
+
+void SBC_A_n(CPU *cpu)
+{
+    uint8_t value = fetch_opcode(cpu) + get_flag(cpu, CARRY_FLAG);
+    sub_A_8(cpu, value);
+    cpu->t_cycles = 8;
+}
+
+void SBC_A_HL(CPU *cpu)
+{
+    uint8_t value = read_byte(cpu, cpu->registers.HL) + get_flag(cpu, CARRY_FLAG);
+    sub_A_8(cpu, value);
     cpu->t_cycles = 8;
 }
 
