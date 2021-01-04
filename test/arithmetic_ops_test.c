@@ -363,6 +363,78 @@ void test_ADC_A_n(void)
     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
+void test_SUB_A_A(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x3f;
+    SUB_A_A(&cpu);
+
+    CU_ASSERT_EQUAL(cpu.registers.A, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b11000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_SUB_A_B(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x51;
+    cpu.registers.B = 0x11;
+    SUB_A_B(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x40);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+
+    cpu.registers.A = 0x10;
+    cpu.registers.B = 0x04;
+    SUB_A_B(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x0c);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01100000);
+
+    cpu.registers.A = 0x20;
+    cpu.registers.B = 0x30;
+    SUB_A_B(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0xf0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01010000);
+}
+
+void test_SUB_A_C(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0;
+    cpu.registers.C = 0xff;
+    SUB_A_C(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x01);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01110000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_SUB_A_n(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x45;
+    uint8_t n = 0xf;
+    cpu.PC = 0x100;
+    cpu.memory[cpu.PC] = n;
+    SUB_A_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x36);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SUB_A_HL(void)
+{
+    CPU cpu;
+    uint8_t value = 0x12;
+    uint16_t address = 0x0200;
+    cpu.registers.A = 0x24;
+    cpu.registers.HL = address;
+    cpu.memory[address] = value;
+    SUB_A_HL(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x12);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
 void test_AND_A_A(void)
 {
     CPU cpu;
@@ -569,6 +641,31 @@ int main()
             test_suite,
             "Arithmetic | ADC_A_n adds immediate value and carry flag to A register value",
             test_ADC_A_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | SUB_A_A sets A to zero, sets zero and subtract flags, and clears both carry flags",
+            test_SUB_A_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | SUB_A_B subtracts B from A and sets carry flags on 3rd and 7th bit borrows",
+            test_SUB_A_B
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | SUB_A_C subtracts C from A and sets carry flags on 3rd and 7th bit borrows",
+            test_SUB_A_C
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | SUB_A_n subtracts immediate value from A",
+            test_SUB_A_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | SUB_A_HL subtracts byte at address in HL from A",
+            test_SUB_A_HL
         ) == NULL ||
         CU_add_test(
             test_suite,
