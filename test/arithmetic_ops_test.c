@@ -703,6 +703,69 @@ void test_OR_A_HL(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
+void test_CP_A_A(void)
+{
+    CPU cpu;
+    uint8_t A = 0x3a;
+    cpu.registers.A = A;
+    CP_A_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b11000000);
+    CU_ASSERT_EQUAL(cpu.registers.A, A);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_CP_A_B(void)
+{
+    CPU cpu;
+    uint8_t A = 0xab;
+    cpu.registers.A = A;
+    cpu.registers.B = 0x11;
+    CP_A_B(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
+    CU_ASSERT_EQUAL(cpu.registers.A, A);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_CP_A_C(void)
+{
+    CPU cpu;
+    uint8_t A = 0xa1;
+    cpu.registers.A = A;
+    cpu.registers.C = 0x0f;
+    CP_A_C(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01100000);
+    CU_ASSERT_EQUAL(cpu.registers.A, A);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_CP_A_n(void)
+{
+    CPU cpu;
+    uint8_t A = 0xaf;
+    cpu.registers.A = A;
+    cpu.PC = 0x100;
+    cpu.memory[cpu.PC] = 0xff;
+    CP_A_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01010000);
+    CU_ASSERT_EQUAL(cpu.registers.A, A);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_CP_A_HL(void)
+{
+    CPU cpu;
+    uint8_t A = 0x23;
+    uint8_t value = 0xdd;
+    uint16_t address = 0x4524;
+    cpu.registers.A = A;
+    cpu.registers.HL = address;
+    cpu.memory[address] = value;
+    CP_A_HL(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01110000);
+    CU_ASSERT_EQUAL(cpu.registers.A, A);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -961,6 +1024,31 @@ int main()
             test_suite,
             "Arithmetic | OR_A_HL sets A to bitwise or with byte in address at HL",
             test_OR_A_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | CP_A_A sets zero and subtract flags but leaves A register untouched",
+            test_CP_A_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | CP_A_B sets flags on register B and A comparison but leaves A untouched",
+            test_CP_A_B
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | CP_A_C sets flags on register C and A comparison but leaves A untouched",
+            test_CP_A_C
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | CP_A_n sets flags on immediate data and A comparison but leaves A untouched",
+            test_CP_A_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | CP_A_HL sets flags on comparison between A and byte pointed to from HL but leaves A untouched",
+            test_CP_A_HL
         ) == NULL) {
         printf("Failed to add test to arithmetic unit test suite\n");
         CU_cleanup_registry();

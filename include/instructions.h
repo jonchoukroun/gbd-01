@@ -93,6 +93,18 @@ void OR_A_L(CPU *);
 void OR_A_n(CPU *);
 void OR_A_HL(CPU *);
 
+// CP A, r8: Compare A and register values
+void CP_A_A(CPU *);
+void CP_A_B(CPU *);
+void CP_A_C(CPU *);
+void CP_A_D(CPU *);
+void CP_A_E(CPU *);
+void CP_A_H(CPU *);
+void CP_A_L(CPU *);
+
+void CP_A_n(CPU *);
+void CP_A_HL(CPU *);
+
 // ************************************
 // 16-bit Arithmetic/Logical Operations
 // ************************************
@@ -248,11 +260,11 @@ static const OpcodeInstruction opcode_table[256] = {
 /* 8 */   &ADD_A_B,  &ADD_A_C,  &ADD_A_D, &ADD_A_E, &ADD_A_H, &ADD_A_L, &ADD_A_HL, &ADD_A_A,   &ADC_A_B,   &ADC_A_C,  &ADC_A_D, &ADC_A_E, &ADC_A_H, &ADC_A_L, &ADC_A_HL, &ADC_A_A,
 /* 9 */   &SUB_A_B,  &SUB_A_C,  &SUB_A_D, &SUB_A_E, &SUB_A_H, &SUB_A_L, &SUB_A_HL, &SUB_A_A,   &SBC_A_B,   &SBC_A_C,  &SBC_A_D, &SBC_A_E, &SBC_A_H, &SBC_A_L, &SBC_A_HL, &SBC_A_A,
 /* a */   &AND_A_B,  &AND_A_C,  &AND_A_D, &AND_A_E, &AND_A_H, &AND_A_L, &AND_A_HL, &AND_A_A,   &XOR_A_B,   &XOR_A_C,  &XOR_A_D, &XOR_A_E, &XOR_A_H, &XOR_A_L, &XOR_A_HL, &XOR_A_A,
-/* b */    &OR_A_B,   &OR_A_C,   &OR_A_D,  &OR_A_E,  &OR_A_H,  &OR_A_L,  &OR_A_HL,  &OR_A_A,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* b */    &OR_A_B,   &OR_A_C,   &OR_A_D,  &OR_A_E,  &OR_A_H,  &OR_A_L,  &OR_A_HL,  &OR_A_A,    &CP_A_B,    &CP_A_C,   &CP_A_D,  &CP_A_E,  &CP_A_H,  &CP_A_L,  &CP_A_HL,  &CP_A_A,
 /* c */     &UNDEF,   &POP_BC,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_BC,  &ADD_A_n,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &ADC_A_n,   &UNDEF,
 /* d */     &UNDEF,   &POP_DE,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_DE,  &SUB_A_n,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &SBC_A_n,   &UNDEF,
 /* e */   &LDH_n_A,   &POP_HL,  &LDH_C_A,   &UNDEF,   &UNDEF, &PUSH_HL,  &AND_A_n,   &UNDEF, &ADD_SP_nn,     &UNDEF,  &LD_nn_A,   &UNDEF,   &UNDEF,   &UNDEF,  &XOR_A_n,   &UNDEF,
-/* f */   &LDH_A_n,   &POP_AF,  &LDH_A_C,   &UNDEF,   &UNDEF, &PUSH_AF,   &OR_A_n,   &UNDEF,     &UNDEF,  &LD_SP_HL,  &LD_A_nn,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* f */   &LDH_A_n,   &POP_AF,  &LDH_A_C,   &UNDEF,   &UNDEF, &PUSH_AF,   &OR_A_n,   &UNDEF,     &UNDEF,  &LD_SP_HL,  &LD_A_nn,   &UNDEF,   &UNDEF,   &UNDEF,   &CP_A_n,   &UNDEF,
 };
 
 #endif
