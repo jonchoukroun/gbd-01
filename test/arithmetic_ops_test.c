@@ -525,6 +525,7 @@ void test_AND_A_B(void)
     AND_A_B(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x01);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
 void test_AND_A_C(void)
@@ -535,6 +536,7 @@ void test_AND_A_C(void)
     AND_A_C(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x4c);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
 void test_AND_A_D(void)
@@ -545,6 +547,7 @@ void test_AND_A_D(void)
     AND_A_D(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x4c);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
 void test_AND_A_E(void)
@@ -555,6 +558,7 @@ void test_AND_A_E(void)
     AND_A_E(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x4c);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
 void test_AND_A_H(void)
@@ -565,6 +569,7 @@ void test_AND_A_H(void)
     AND_A_H(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x4c);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
 void test_AND_A_L(void)
@@ -575,6 +580,80 @@ void test_AND_A_L(void)
     AND_A_L(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x4c);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_AND_A_n(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0xca;
+    cpu.PC = 0x100;
+    cpu.memory[cpu.PC] = 0x31;
+    AND_A_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_AND_A_HL(void)
+{
+    CPU cpu;
+    uint8_t n = 0x0a;
+    uint16_t address = 0x2400;
+    cpu.registers.HL = address;
+    cpu.memory[address] = n;
+    cpu.registers.A = 0x04;
+    AND_A_HL(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_XOR_A_A(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x5b;
+    XOR_A_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_XOR_A_B(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x32;
+    cpu.registers.B = 0xba;
+    XOR_A_B(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x88);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_XOR_A_n(void)
+{
+    CPU cpu;
+    cpu.PC = 0x200;
+    cpu.memory[cpu.PC] = 0x12;
+    cpu.registers.A = 0x21;
+    XOR_A_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x33);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_XOR_A_HL(void)
+{
+    CPU cpu;
+    uint8_t value = 0xdd;
+    uint16_t address = 0x2345;
+    cpu.registers.HL = address;
+    cpu.memory[address] = value;
+    cpu.registers.A = 0x45;
+    XOR_A_HL(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x98);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
 int main()
@@ -785,6 +864,36 @@ int main()
             test_suite,
             "Arithmetic | AND_A_L sets A to bitwise with L",
             test_AND_A_L
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | AND_A_n sets A to bitwise with immediate data",
+            test_AND_A_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | AND_A_HL sets A to bitwise with byte at address in HL",
+            test_AND_A_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | XOR_A_A sets A to XOR with itself and sets zero flag",
+            test_XOR_A_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | XOR_A_B sets A to XOR with B and sets zero flag if result is 0",
+            test_XOR_A_B
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | XOR_A_n sets A to XOR with immediate value",
+            test_XOR_A_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | XOR_A_HL sets A to XOR with byte at address in HL",
+            test_XOR_A_HL
         ) == NULL) {
         printf("Failed to add test to arithmetic unit test suite\n");
         CU_cleanup_registry();

@@ -66,6 +66,20 @@ void AND_A_E(CPU *);
 void AND_A_H(CPU *);
 void AND_A_L(CPU *);
 
+void AND_A_n(CPU *);
+void AND_A_HL(CPU *);
+
+// XOR A, r8: Set A to bitwise xor between A and r8
+void XOR_A_A(CPU *);
+void XOR_A_B(CPU *);
+void XOR_A_C(CPU *);
+void XOR_A_D(CPU *);
+void XOR_A_E(CPU *);
+void XOR_A_H(CPU *);
+void XOR_A_L(CPU *);
+
+void XOR_A_n(CPU *);
+void XOR_A_HL(CPU *);
 
 // ************************************
 // 16-bit Arithmetic/Logical Operations
@@ -221,11 +235,11 @@ static const OpcodeInstruction opcode_table[256] = {
 /* 7 */   &LD_HL_B,  &LD_HL_C,  &LD_HL_D, &LD_HL_E, &LD_HL_H, &LD_HL_L,    &UNDEF, &LD_HL_A,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_A_HL,   &UNDEF,
 /* 8 */   &ADD_A_B,  &ADD_A_C,  &ADD_A_D, &ADD_A_E, &ADD_A_H, &ADD_A_L, &ADD_A_HL, &ADD_A_A,   &ADC_A_B,   &ADC_A_C,  &ADC_A_D, &ADC_A_E, &ADC_A_H, &ADC_A_L, &ADC_A_HL, &ADC_A_A,
 /* 9 */   &SUB_A_B,  &SUB_A_C,  &SUB_A_D, &SUB_A_E, &SUB_A_H, &SUB_A_L, &SUB_A_HL, &SUB_A_A,   &SBC_A_B,   &SBC_A_C,  &SBC_A_D, &SBC_A_E, &SBC_A_H, &SBC_A_L, &SBC_A_HL,   &UNDEF,
-/* a */   &AND_A_B,  &AND_A_C,  &AND_A_D, &AND_A_E, &AND_A_H, &AND_A_L,    &UNDEF,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* b */     &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* a */   &AND_A_B,  &AND_A_C,  &AND_A_D, &AND_A_E, &AND_A_H, &AND_A_L, &AND_A_HL,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF, &XOR_A_HL,   &UNDEF,
+/* b */   &XOR_A_B,  &XOR_A_C,  &XOR_A_D, &XOR_A_E, &XOR_A_H, &XOR_A_L,    &UNDEF,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* c */     &UNDEF,   &POP_BC,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_BC,  &ADD_A_n,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &ADC_A_n,   &UNDEF,
 /* d */     &UNDEF,   &POP_DE,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_DE,  &SUB_A_n,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &SBC_A_n,   &UNDEF,
-/* e */   &LDH_n_A,   &POP_HL,  &LDH_C_A,   &UNDEF,   &UNDEF, &PUSH_HL,    &UNDEF,   &UNDEF, &ADD_SP_nn,     &UNDEF,  &LD_nn_A,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* e */   &LDH_n_A,   &POP_HL,  &LDH_C_A,   &UNDEF,   &UNDEF, &PUSH_HL,  &AND_A_n,   &UNDEF, &ADD_SP_nn,     &UNDEF,  &LD_nn_A,   &UNDEF,   &UNDEF,   &UNDEF,  &XOR_A_n,   &UNDEF,
 /* f */   &LDH_A_n,   &POP_AF,  &LDH_A_C,   &UNDEF,   &UNDEF, &PUSH_AF,    &UNDEF,   &UNDEF,     &UNDEF,  &LD_SP_HL,  &LD_A_nn,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 };
 

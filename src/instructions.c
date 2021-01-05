@@ -268,6 +268,138 @@ void SBC_A_HL(CPU *cpu)
     cpu->t_cycles = 8;
 }
 
+// AND A, r8
+void AND_A_8(CPU *cpu, uint8_t r)
+{
+    cpu->registers.A &= r;
+    clear_flag(cpu, ZERO_FLAG);
+    clear_flag(cpu, SUBTRACT_FLAG);
+    set_flag(cpu, HALF_CARRY_FLAG);
+    clear_flag(cpu, CARRY_FLAG);
+    if (cpu->registers.A == 0) set_flag(cpu, ZERO_FLAG);
+}
+
+void AND_A_A(CPU *cpu)
+{
+    AND_A_8(cpu, cpu->registers.A);
+    cpu->t_cycles = 4;
+}
+
+void AND_A_B(CPU *cpu)
+{
+    AND_A_8(cpu, cpu->registers.B);
+    cpu->t_cycles = 4;
+}
+
+void AND_A_C(CPU *cpu)
+{
+    AND_A_8(cpu, cpu->registers.C);
+    cpu->t_cycles = 4;
+}
+
+void AND_A_D(CPU *cpu)
+{
+    AND_A_8(cpu, cpu->registers.D);
+    cpu->t_cycles = 4;
+}
+
+void AND_A_E(CPU *cpu)
+{
+    AND_A_8(cpu, cpu->registers.E);
+    cpu->t_cycles = 4;
+}
+
+void AND_A_H(CPU *cpu)
+{
+    AND_A_8(cpu, cpu->registers.H);
+    cpu->t_cycles = 4;
+}
+
+void AND_A_L(CPU *cpu)
+{
+    AND_A_8(cpu, cpu->registers.L);
+    cpu->t_cycles = 4;
+}
+
+void AND_A_n(CPU *cpu)
+{
+    AND_A_8(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+}
+
+void AND_A_HL(CPU *cpu)
+{
+    AND_A_8(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
+}
+
+// XOR A, r8
+
+void XOR_A_8(CPU *cpu, uint8_t r)
+{
+    clear_flag(cpu, ZERO_FLAG);
+    clear_flag(cpu, SUBTRACT_FLAG);
+    clear_flag(cpu, HALF_CARRY_FLAG);
+    clear_flag(cpu, CARRY_FLAG);
+
+    cpu->registers.A ^= r;
+    if (cpu->registers.A == 0) set_flag(cpu, ZERO_FLAG);
+}
+
+void XOR_A_A(CPU *cpu)
+{
+    XOR_A_8(cpu, cpu->registers.A);
+    cpu->t_cycles = 4;
+}
+
+void XOR_A_B(CPU *cpu)
+{
+    XOR_A_8(cpu, cpu->registers.B);
+    cpu->t_cycles = 4;
+}
+
+void XOR_A_C(CPU *cpu)
+{
+    XOR_A_8(cpu, cpu->registers.C);
+    cpu->t_cycles = 4;
+}
+
+void XOR_A_D(CPU *cpu)
+{
+    XOR_A_8(cpu, cpu->registers.D);
+    cpu->t_cycles = 4;
+}
+
+void XOR_A_E(CPU *cpu)
+{
+    XOR_A_8(cpu, cpu->registers.E);
+    cpu->t_cycles = 4;
+}
+
+void XOR_A_H(CPU *cpu)
+{
+    XOR_A_8(cpu, cpu->registers.H);
+    cpu->t_cycles = 4;
+}
+
+void XOR_A_L(CPU *cpu)
+{
+    XOR_A_8(cpu, cpu->registers.L);
+    cpu->t_cycles = 4;
+}
+
+void XOR_A_n(CPU *cpu)
+{
+    XOR_A_8(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+}
+
+void XOR_A_HL(CPU *cpu)
+{
+    XOR_A_8(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
+}
+
 void add_HL_16(CPU *cpu, uint16_t value)
 {
     uint16_t HL = cpu->registers.HL;
@@ -325,54 +457,6 @@ void ADD_SP_nn(CPU *cpu)
     }
 
     cpu->t_cycles = 16;
-}
-
-// AND A, r8
-void AND_A_r(CPU *cpu, uint8_t r)
-{
-    cpu->registers.A &= r;
-    clear_flag(cpu, ZERO_FLAG);
-    clear_flag(cpu, SUBTRACT_FLAG);
-    set_flag(cpu, HALF_CARRY_FLAG);
-    clear_flag(cpu, CARRY_FLAG);
-    if (cpu->registers.A == 0) set_flag(cpu, ZERO_FLAG);
-
-    cpu->t_cycles = 4;
-}
-
-void AND_A_A(CPU *cpu)
-{
-    AND_A_r(cpu, cpu->registers.A);
-}
-
-void AND_A_B(CPU *cpu)
-{
-    AND_A_r(cpu, cpu->registers.B);
-}
-
-void AND_A_C(CPU *cpu)
-{
-    AND_A_r(cpu, cpu->registers.C);
-}
-
-void AND_A_D(CPU *cpu)
-{
-    AND_A_r(cpu, cpu->registers.D);
-}
-
-void AND_A_E(CPU *cpu)
-{
-    AND_A_r(cpu, cpu->registers.E);
-}
-
-void AND_A_H(CPU *cpu)
-{
-    AND_A_r(cpu, cpu->registers.H);
-}
-
-void AND_A_L(CPU *cpu)
-{
-    AND_A_r(cpu, cpu->registers.L);
 }
 
 // LD r, r*: load 2nd register's value into 1st
