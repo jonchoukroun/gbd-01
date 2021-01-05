@@ -656,6 +656,53 @@ void test_XOR_A_HL(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
+void test_OR_A_A(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x23;
+    OR_A_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x23);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_OR_A_E(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0xaa;
+    cpu.registers.E = 0x11;
+    OR_A_E(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_OR_A_n(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x0;
+    cpu.PC = 0x500;
+    cpu.memory[cpu.PC] = 0x5;
+    OR_A_n(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x5);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_OR_A_HL(void)
+{
+    CPU cpu;
+    uint8_t value = 0x5a;
+    uint16_t address = 0x1200;
+    cpu.registers.HL = address;
+    cpu.memory[address] = value;
+    cpu.registers.A = 0x12;
+    OR_A_HL(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x5a)
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -894,6 +941,26 @@ int main()
             test_suite,
             "Arithmetic | XOR_A_HL sets A to XOR with byte at address in HL",
             test_XOR_A_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | OR_A_A leaves A as is",
+            test_OR_A_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | OR_A_B sets A to bitwise or with B",
+            test_OR_A_E
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | OR_A_n sets A to bitwise or with immediate value",
+            test_OR_A_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | OR_A_HL sets A to bitwise or with byte in address at HL",
+            test_OR_A_HL
         ) == NULL) {
         printf("Failed to add test to arithmetic unit test suite\n");
         CU_cleanup_registry();

@@ -400,6 +400,72 @@ void XOR_A_HL(CPU *cpu)
     cpu->t_cycles = 8;
 }
 
+// OR A, r8
+void or_A_8(CPU *cpu, uint8_t r)
+{
+    clear_flag(cpu, ZERO_FLAG);
+    clear_flag(cpu, SUBTRACT_FLAG);
+    clear_flag(cpu, HALF_CARRY_FLAG);
+    clear_flag(cpu, CARRY_FLAG);
+
+    cpu->registers.A |= r;
+    if (cpu->registers.A == 0) set_flag(cpu, ZERO_FLAG);
+}
+
+void OR_A_A(CPU *cpu)
+{
+    or_A_8(cpu, cpu->registers.A);
+    cpu->t_cycles = 4;
+}
+
+void OR_A_B(CPU *cpu)
+{
+    or_A_8(cpu, cpu->registers.B);
+    cpu->t_cycles = 4;
+}
+
+void OR_A_C(CPU *cpu)
+{
+    or_A_8(cpu, cpu->registers.C);
+    cpu->t_cycles = 4;
+}
+
+void OR_A_D(CPU *cpu)
+{
+    or_A_8(cpu, cpu->registers.D);
+    cpu->t_cycles = 4;
+}
+
+void OR_A_E(CPU *cpu)
+{
+    or_A_8(cpu, cpu->registers.E);
+    cpu->t_cycles = 4;
+}
+
+void OR_A_H(CPU *cpu)
+{
+    or_A_8(cpu, cpu->registers.H);
+    cpu->t_cycles = 4;
+}
+
+void OR_A_L(CPU *cpu)
+{
+    or_A_8(cpu, cpu->registers.L);
+    cpu->t_cycles = 4;
+}
+
+void OR_A_n(CPU *cpu)
+{
+    or_A_8(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+}
+
+void OR_A_HL(CPU *cpu)
+{
+    or_A_8(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
+}
+
 void add_HL_16(CPU *cpu, uint16_t value)
 {
     uint16_t HL = cpu->registers.HL;
