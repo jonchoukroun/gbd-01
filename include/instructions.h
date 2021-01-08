@@ -105,6 +105,28 @@ void CP_A_L(CPU *);
 void CP_A_n(CPU *);
 void CP_A_HL(CPU *);
 
+// INC r
+void INC_A(CPU *);
+void INC_B(CPU *);
+void INC_C(CPU *);
+void INC_D(CPU *);
+void INC_E(CPU *);
+void INC_H(CPU *);
+void INC_L(CPU *);
+
+void INC_HL(CPU *);
+
+// DEC r
+void DEC_A(CPU *);
+void DEC_B(CPU *);
+void DEC_C(CPU *);
+void DEC_D(CPU *);
+void DEC_E(CPU *);
+void DEC_H(CPU *);
+void DEC_L(CPU *);
+
+void DEC_HL(CPU *);
+
 // ************************************
 // 16-bit Arithmetic/Logical Operations
 // ************************************
@@ -249,10 +271,10 @@ void UNDEF(CPU *);
 
 static const OpcodeInstruction opcode_table[256] = {
 /*             0x0        0x1        0x2       0x3       0x4       0x5        0x6       0x7         0x8         0x9        0xa       0xb       0xc       0xd        0xe       0xf */
-/* 0 */     &UNDEF, &LD_BC_nn,  &LD_BC_A,   &UNDEF,   &UNDEF,   &UNDEF,   &LD_B_n,   &UNDEF,  &LD_nn_SP, &ADD_HL_BC,  &LD_A_BC,   &UNDEF,   &UNDEF,   &UNDEF,   &LD_C_n,   &UNDEF,
-/* 1 */     &UNDEF, &LD_DE_nn,  &LD_DE_A,   &UNDEF,   &UNDEF,   &UNDEF,   &LD_D_n,   &UNDEF,     &UNDEF, &ADD_HL_DE,  &LD_A_DE,   &UNDEF,   &UNDEF,   &UNDEF,   &LD_E_n,   &UNDEF,
-/* 2 */     &UNDEF, &LD_HL_nn, &LD_HLI_A,   &UNDEF,   &UNDEF,   &UNDEF,   &LD_H_n,   &UNDEF,     &UNDEF, &ADD_HL_HL, &LD_A_HLI,   &UNDEF,   &UNDEF,   &UNDEF,   &LD_L_n,   &UNDEF,
-/* 3 */     &UNDEF,    &UNDEF, &LD_HLD_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_HL_n,   &UNDEF,     &UNDEF, &ADD_HL_SP, &LD_A_HLD,   &UNDEF,   &UNDEF,   &UNDEF,   &LD_A_n,   &UNDEF,
+/* 0 */     &UNDEF, &LD_BC_nn,  &LD_BC_A,   &UNDEF,   &INC_B,   &DEC_B,   &LD_B_n,   &UNDEF,  &LD_nn_SP, &ADD_HL_BC,  &LD_A_BC,   &UNDEF,   &INC_C,   &DEC_C,   &LD_C_n,   &UNDEF,
+/* 1 */     &UNDEF, &LD_DE_nn,  &LD_DE_A,   &UNDEF,   &INC_D,   &DEC_D,   &LD_D_n,   &UNDEF,     &UNDEF, &ADD_HL_DE,  &LD_A_DE,   &UNDEF,   &INC_E,   &DEC_E,   &LD_E_n,   &UNDEF,
+/* 2 */     &UNDEF, &LD_HL_nn, &LD_HLI_A,   &UNDEF,   &INC_H,   &DEC_H,   &LD_H_n,   &UNDEF,     &UNDEF, &ADD_HL_HL, &LD_A_HLI,   &UNDEF,   &INC_L,   &DEC_L,   &LD_L_n,   &UNDEF,
+/* 3 */     &UNDEF,    &UNDEF, &LD_HLD_A,   &UNDEF,  &INC_HL,  &DEC_HL,  &LD_HL_n,   &UNDEF,     &UNDEF, &ADD_HL_SP, &LD_A_HLD,   &UNDEF,   &INC_A,   &DEC_A,   &LD_A_n,   &UNDEF,
 /* 4 */    &LD_B_B,   &LD_B_C,   &LD_B_D,  &LD_B_E,  &LD_B_H,  &LD_B_L,  &LD_B_HL,  &LD_B_A,    &LD_C_B,    &LD_C_C,   &LD_C_D,  &LD_C_E,  &LD_C_H,  &LD_C_L,  &LD_C_HL,  &LD_C_A,
 /* 5 */    &LD_D_B,   &LD_D_C,   &LD_D_D,  &LD_D_E,  &LD_D_H,  &LD_D_L,  &LD_D_HL,  &LD_D_A,    &LD_E_B,    &LD_E_C,   &LD_E_D,  &LD_E_E,  &LD_E_H,  &LD_E_L,  &LD_E_HL,  &LD_E_A,
 /* 6 */    &LD_H_B,   &LD_H_C,   &LD_H_D,  &LD_H_E,  &LD_H_H,  &LD_H_L,  &LD_H_HL,  &LD_H_A,    &LD_L_B,    &LD_L_C,   &LD_L_D,  &LD_L_E,  &LD_L_H,  &LD_L_L,  &LD_L_HL,  &LD_L_A,

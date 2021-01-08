@@ -533,6 +533,140 @@ void CP_A_HL(CPU *cpu)
     cpu->t_cycles = 8;
 }
 
+// INC r
+void handle_INC_flags(CPU *cpu, uint8_t value)
+{
+    clear_flag(cpu, ZERO_FLAG);
+    clear_flag(cpu, SUBTRACT_FLAG);
+    clear_flag(cpu, HALF_CARRY_FLAG);
+
+    if (value == 0xff) set_flag(cpu, ZERO_FLAG);
+    if ((value & 0xf) == 0xf) set_flag(cpu, HALF_CARRY_FLAG);
+}
+
+void INC_A(CPU *cpu)
+{
+    handle_INC_flags(cpu, cpu->registers.A);
+    cpu->registers.A++;
+    cpu->t_cycles = 4;
+}
+
+void INC_B(CPU *cpu)
+{
+    handle_INC_flags(cpu, cpu->registers.B);
+    cpu->registers.B++;
+    cpu->t_cycles = 4;
+}
+
+void INC_C(CPU *cpu)
+{
+    handle_INC_flags(cpu, cpu->registers.C);
+    cpu->registers.C++;
+    cpu->t_cycles = 4;
+}
+
+void INC_D(CPU *cpu)
+{
+    handle_INC_flags(cpu, cpu->registers.D);
+    cpu->registers.D++;
+    cpu->t_cycles = 4;
+}
+
+void INC_E(CPU *cpu)
+{
+    handle_INC_flags(cpu, cpu->registers.E);
+    cpu->registers.E++;
+    cpu->t_cycles = 4;
+}
+
+void INC_H(CPU *cpu)
+{
+    handle_INC_flags(cpu, cpu->registers.H);
+    cpu->registers.H++;
+    cpu->t_cycles = 4;
+}
+
+void INC_L(CPU *cpu)
+{
+    handle_INC_flags(cpu, cpu->registers.L);
+    cpu->registers.L++;
+    cpu->t_cycles = 4;
+}
+
+void INC_HL(CPU *cpu)
+{
+    handle_INC_flags(cpu, cpu->memory[cpu->registers.HL]);
+    cpu->memory[cpu->registers.HL]++;
+    cpu->t_cycles = 12;
+}
+
+// DEC r
+void handle_DEC_flags(CPU *cpu, uint8_t value)
+{
+    clear_flag(cpu, ZERO_FLAG);
+    set_flag(cpu, SUBTRACT_FLAG);
+    clear_flag(cpu, HALF_CARRY_FLAG);
+
+    if (value == 0x1) set_flag(cpu, ZERO_FLAG);
+    if ((value & 0xf) == 0) set_flag(cpu, HALF_CARRY_FLAG);
+}
+
+void DEC_A(CPU *cpu)
+{
+    handle_DEC_flags(cpu, cpu->registers.A);
+    cpu->registers.A--;
+    cpu->t_cycles = 4;
+}
+
+void DEC_B(CPU *cpu)
+{
+    handle_DEC_flags(cpu, cpu->registers.B);
+    cpu->registers.B--;
+    cpu->t_cycles = 4;
+}
+
+void DEC_C(CPU *cpu)
+{
+    handle_DEC_flags(cpu, cpu->registers.C);
+    cpu->registers.C--;
+    cpu->t_cycles = 4;
+}
+
+void DEC_D(CPU *cpu)
+{
+    handle_DEC_flags(cpu, cpu->registers.D);
+    cpu->registers.D--;
+    cpu->t_cycles = 4;
+}
+
+void DEC_E(CPU *cpu)
+{
+    handle_DEC_flags(cpu, cpu->registers.E);
+    cpu->registers.E--;
+    cpu->t_cycles = 4;
+}
+
+void DEC_H(CPU *cpu)
+{
+    handle_DEC_flags(cpu, cpu->registers.H);
+    cpu->registers.H--;
+    cpu->t_cycles = 4;
+}
+
+void DEC_L(CPU *cpu)
+{
+    handle_DEC_flags(cpu, cpu->registers.L);
+    cpu->registers.L--;
+    cpu->t_cycles = 4;
+}
+
+void DEC_HL(CPU *cpu)
+{
+    handle_DEC_flags(cpu, cpu->memory[cpu->registers.HL]);
+    cpu->memory[cpu->registers.HL]--;
+    cpu->t_cycles = 12;
+}
+
 void add_HL_16(CPU *cpu, uint16_t value)
 {
     uint16_t HL = cpu->registers.HL;

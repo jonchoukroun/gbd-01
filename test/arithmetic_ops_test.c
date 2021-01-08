@@ -766,6 +766,101 @@ void test_CP_A_HL(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
+void test_INC_A(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x23;
+    cpu.registers.F = 0;
+    INC_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x24);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+
+    cpu.registers.A = 0x2f;
+    INC_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x30);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+}
+
+void test_INC_B(void)
+{
+    CPU cpu;
+    cpu.registers.B = 0xff;
+    cpu.registers.F = 0;
+    INC_B(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.B, 0x0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10100000);
+}
+
+void test_INC_C(void)
+{
+    CPU cpu;
+    cpu.registers.C = 0x0;
+    cpu.registers.F = 0b00010000;
+    INC_C(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.C, 0x1);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+}
+
+void test_INC_HL(void)
+{
+    CPU cpu;
+    uint8_t value = 0x05;
+    uint16_t address = 0x1234;
+    cpu.registers.HL = address;
+    cpu.memory[address] = value;
+    cpu.registers.F = 0;
+    INC_HL(&cpu);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0x06);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+}
+
+void test_DEC_A(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x3;
+    DEC_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x2);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_DEC_B(void)
+{
+    CPU cpu;
+    cpu.registers.B = 0x0;
+    cpu.registers.F = 0;
+    DEC_B(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.B, 0xff);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_DEC_C(void)
+{
+    CPU cpu;
+    cpu.registers.C = 0x01;
+    cpu.registers.F = 0;
+    DEC_C(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.C, 0x0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b11000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_DEC_HL(void)
+{
+    CPU cpu;
+    uint8_t value = 0x30;
+    uint16_t address = 0x4000;
+    cpu.registers.HL = address;
+    cpu.memory[address] = value;
+    cpu.registers.F = 0b00010000;
+    DEC_HL(&cpu);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0x2f);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01110000);
+    printf("F: %x\t", cpu.registers.F);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+}
+
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -1049,6 +1144,46 @@ int main()
             test_suite,
             "Arithmetic | CP_A_HL sets flags on comparison between A and byte pointed to from HL but leaves A untouched",
             test_CP_A_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | INC_A increments value in register A and sets half carry flag on 3rd bit overflow",
+            test_INC_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | INC_B increments value in register B sets zero flag on byte overflow",
+            test_INC_B
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | INC_C increments value in register C and ignores carry flag",
+            test_INC_C
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | INC_HL increments byte in memory at address pointed to from HL",
+            test_INC_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | DEC_A decrements value in register A",
+            test_DEC_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | DEC_B decrements value in register B and wraps on byte",
+            test_DEC_B
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | DEC_C decrements value in register C and sets zero flag if result is 0",
+            test_DEC_C
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | DEC_HL decrements byte in memory at address pointed to from register HL",
+            test_DEC_HL
         ) == NULL) {
         printf("Failed to add test to arithmetic unit test suite\n");
         CU_cleanup_registry();
