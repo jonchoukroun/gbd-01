@@ -801,7 +801,7 @@ void test_INC_C(void)
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
 }
 
-void test_INC_HL(void)
+void test_INC_nHL(void)
 {
     CPU cpu;
     uint8_t value = 0x05;
@@ -809,7 +809,7 @@ void test_INC_HL(void)
     cpu.registers.HL = address;
     cpu.memory[address] = value;
     cpu.registers.F = 0;
-    INC_HL(&cpu);
+    INC_nHL(&cpu);
     CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0x06);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
 }
@@ -846,7 +846,7 @@ void test_DEC_C(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_DEC_HL(void)
+void test_DEC_nHL(void)
 {
     CPU cpu;
     uint8_t value = 0x30;
@@ -854,11 +854,73 @@ void test_DEC_HL(void)
     cpu.registers.HL = address;
     cpu.memory[address] = value;
     cpu.registers.F = 0b00010000;
-    DEC_HL(&cpu);
+    DEC_nHL(&cpu);
     CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0x2f);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b01110000);
     printf("F: %x\t", cpu.registers.F);
     CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+}
+
+void test_INC_BC(void)
+{
+    CPU cpu;
+    cpu.registers.BC = 0x3425;
+    cpu.registers.F = 0;
+    INC_BC(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.BC, 0x3426);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+
+    uint8_t flags = 0b11110000;
+    cpu.registers.F = flags;
+    INC_BC(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.BC, 0x3427);
+    CU_ASSERT_EQUAL(cpu.registers.F, flags);
+
+    cpu.registers.BC = 0xffff;
+    cpu.registers.F = 0;
+    INC_BC(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.BC, 0x0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+}
+
+void test_INC_SP(void)
+{
+    CPU cpu;
+    cpu.SP = 0x1212;
+    cpu.registers.F = 0;
+    INC_SP(&cpu);
+    CU_ASSERT_EQUAL(cpu.SP, 0x1213);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_DEC_HL(void)
+{
+    CPU cpu;
+    cpu.registers.HL = 0x0001;
+    cpu.registers.F = 0;
+    DEC_HL(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.HL, 0x0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+
+    cpu.registers.HL = 0x0000;
+    cpu.registers.F = 0;
+    DEC_HL(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.HL, 0xffff);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+}
+
+void test_DEC_SP(void)
+{
+    CPU cpu;
+    cpu.SP = 0x3410;
+    cpu.registers.F = 0;
+    DEC_SP(&cpu);
+    CU_ASSERT_EQUAL(cpu.SP, 0x340f);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
 int main()
@@ -1162,8 +1224,8 @@ int main()
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Arithmetic | INC_HL increments byte in memory at address pointed to from HL",
-            test_INC_HL
+            "Arithmetic | INC_nHL increments byte in memory at address pointed to from HL",
+            test_INC_nHL
         ) == NULL ||
         CU_add_test(
             test_suite,
@@ -1182,8 +1244,28 @@ int main()
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Arithmetic | DEC_HL decrements byte in memory at address pointed to from register HL",
+            "Arithmetic | DEC_nHL decrements byte in memory at address pointed to from register HL",
+            test_DEC_nHL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | INC_BC increments value in register BC and ignores flags",
+            test_INC_BC
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | INC_SP increments stack pointer and ignores flags",
+            test_INC_SP
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | DEC_HL decrements value in register HL and ignores flags",
             test_DEC_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Arithmetic | DEC_SP decrements stack pointer and ignores flags",
+            test_DEC_SP
         ) == NULL) {
         printf("Failed to add test to arithmetic unit test suite\n");
         CU_cleanup_registry();

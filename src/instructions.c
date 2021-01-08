@@ -593,7 +593,7 @@ void INC_L(CPU *cpu)
     cpu->t_cycles = 4;
 }
 
-void INC_HL(CPU *cpu)
+void INC_nHL(CPU *cpu)
 {
     handle_INC_flags(cpu, cpu->memory[cpu->registers.HL]);
     cpu->memory[cpu->registers.HL]++;
@@ -660,7 +660,7 @@ void DEC_L(CPU *cpu)
     cpu->t_cycles = 4;
 }
 
-void DEC_HL(CPU *cpu)
+void DEC_nHL(CPU *cpu)
 {
     handle_DEC_flags(cpu, cpu->memory[cpu->registers.HL]);
     cpu->memory[cpu->registers.HL]--;
@@ -724,6 +724,56 @@ void ADD_SP_nn(CPU *cpu)
     }
 
     cpu->t_cycles = 16;
+}
+
+// INC rr
+void INC_BC(CPU *cpu)
+{
+    cpu->registers.BC++;
+    cpu->t_cycles = 8;
+}
+
+void INC_DE(CPU *cpu)
+{
+    cpu->registers.DE++;
+    cpu->t_cycles = 8;
+}
+
+void INC_HL(CPU *cpu)
+{
+    cpu->registers.HL++;
+    cpu->t_cycles = 8;
+}
+
+void INC_SP(CPU *cpu)
+{
+    cpu->SP++;
+    cpu->t_cycles = 8;
+}
+
+// DEC rr
+void DEC_BC(CPU *cpu)
+{
+    cpu->registers.BC--;
+    cpu->t_cycles = 8;
+}
+
+void DEC_DE(CPU *cpu)
+{
+    cpu->registers.DE--;
+    cpu->t_cycles = 8;
+}
+
+void DEC_HL(CPU *cpu)
+{
+    cpu->registers.HL--;
+    cpu->t_cycles = 8;
+}
+
+void DEC_SP(CPU *cpu)
+{
+    cpu->SP--;
+    cpu->t_cycles = 8;
 }
 
 // LD r, r*: load 2nd register's value into 1st
