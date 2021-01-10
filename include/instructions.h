@@ -127,6 +127,12 @@ void DEC_L(CPU *);
 
 void DEC_nHL(CPU *);
 
+// DAA: decimal adjust
+void DAA(CPU *);
+
+// CPL: complement A
+void CPL(CPU *);
+
 // ************************************
 // 16-bit Arithmetic/Logical Operations
 // ************************************
@@ -285,7 +291,7 @@ static const OpcodeInstruction opcode_table[256] = {
 /*             0x0        0x1        0x2       0x3       0x4       0x5        0x6       0x7         0x8         0x9        0xa       0xb       0xc       0xd        0xe       0xf */
 /* 0 */     &UNDEF, &LD_BC_nn,  &LD_BC_A,  &INC_BC,   &INC_B,   &DEC_B,   &LD_B_n,   &UNDEF,  &LD_nn_SP, &ADD_HL_BC,  &LD_A_BC,  &DEC_BC,   &INC_C,   &DEC_C,   &LD_C_n,   &UNDEF,
 /* 1 */     &UNDEF, &LD_DE_nn,  &LD_DE_A,  &INC_DE,   &INC_D,   &DEC_D,   &LD_D_n,   &UNDEF,     &UNDEF, &ADD_HL_DE,  &LD_A_DE,  &DEC_DE,   &INC_E,   &DEC_E,   &LD_E_n,   &UNDEF,
-/* 2 */     &UNDEF, &LD_HL_nn, &LD_HLI_A,  &INC_HL,   &INC_H,   &DEC_H,   &LD_H_n,   &UNDEF,     &UNDEF, &ADD_HL_HL, &LD_A_HLI,  &DEC_HL,   &INC_L,   &DEC_L,   &LD_L_n,   &UNDEF,
+/* 2 */     &UNDEF, &LD_HL_nn, &LD_HLI_A,  &INC_HL,   &INC_H,   &DEC_H,   &LD_H_n,     &DAA,     &UNDEF, &ADD_HL_HL, &LD_A_HLI,  &DEC_HL,   &INC_L,   &DEC_L,   &LD_L_n,     &CPL,
 /* 3 */     &UNDEF,    &UNDEF, &LD_HLD_A,  &INC_SP, &INC_nHL, &DEC_nHL,  &LD_HL_n,   &UNDEF,     &UNDEF, &ADD_HL_SP, &LD_A_HLD,  &DEC_SP,   &INC_A,   &DEC_A,   &LD_A_n,   &UNDEF,
 /* 4 */    &LD_B_B,   &LD_B_C,   &LD_B_D,  &LD_B_E,  &LD_B_H,  &LD_B_L,  &LD_B_HL,  &LD_B_A,    &LD_C_B,    &LD_C_C,   &LD_C_D,  &LD_C_E,  &LD_C_H,  &LD_C_L,  &LD_C_HL,  &LD_C_A,
 /* 5 */    &LD_D_B,   &LD_D_C,   &LD_D_D,  &LD_D_E,  &LD_D_H,  &LD_D_L,  &LD_D_HL,  &LD_D_A,    &LD_E_B,    &LD_E_C,   &LD_E_D,  &LD_E_E,  &LD_E_H,  &LD_E_L,  &LD_E_HL,  &LD_E_A,

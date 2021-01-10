@@ -776,6 +776,38 @@ void DEC_SP(CPU *cpu)
     cpu->t_cycles = 8;
 }
 
+void DAA(CPU *cpu)
+{
+    uint8_t A = cpu->registers.A;
+    uint8_t half_carry = get_flag(cpu, HALF_CARRY_FLAG);
+    uint8_t carry = get_flag(cpu, CARRY_FLAG);
+
+    if (get_flag(cpu, SUBTRACT_FLAG) == 0) {
+        if (carry == 1 || A > 0x99) {
+            cpu->registers.A += 0x60;
+            set_flag(cpu, CARRY_FLAG);
+        }
+        if (half_carry == 1 || (A & 0x0f) > 0x09) cpu->registers.A += 0x06;
+    } else {
+        if (carry == 1) cpu->registers.A -= 0x60;
+        if (half_carry == 1) cpu->registers.A -= 0x06;
+    }
+
+    if (cpu->registers.A == 0) set_flag(cpu, ZERO_FLAG);
+    clear_flag(cpu, HALF_CARRY_FLAG);
+
+    cpu->t_cycles = 4;
+}
+
+void CPL(CPU *cpu)
+{
+    cpu->registers.A = ~cpu->registers.A;
+    set_flag(cpu, SUBTRACT_FLAG);
+    set_flag(cpu, HALF_CARRY_FLAG);
+
+    cpu->t_cycles = 4;
+}
+
 // LD r, r*: load 2nd register's value into 1st
 void LD_B_A(CPU *cpu)
 {
