@@ -39,7 +39,7 @@ TEST_RESULTS = test/results/
 
 TEST_LIBS = cunit
 
-_TEST_OBJ = 8bit_load_test.o 16bit_load_test.o cpu_test.o 8bit_ALU_test.o 16bit_ALU_test.o
+_TEST_OBJ = 8bit_load_test.o 16bit_load_test.o cpu_test.o 8bit_ALU_test.o 16bit_ALU_test.o misc_arithmetic_test.o
 TEST_OBJ = $(patsubst %,$(TEST_BUILD_DIR)%,$(_TEST_OBJ))
 
 SUITES_RUN = `grep Suite $(TEST_RESULTS)*.txt | sed "s/Suite: //g"`
@@ -62,20 +62,25 @@ $(TEST_RESULTS)test_results.txt: $(TEST_OBJ)
 	@for test in $(TEST_OBJ) ; do \
 		./$$test >> $(TEST_RESULTS)test_results.txt ; done
 
-$(TEST_BUILD_DIR)8bit_load_test.o: $(TEST_DIR)8bit_load_test.c
-	$(CC) $< $(SOURCE_DIR)cpu.c $(SOURCE_DIR)instructions.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
-
-$(TEST_BUILD_DIR)16bit_load_test.o: $(TEST_DIR)16bit_load_test.c
-	$(CC) $< $(SOURCE_DIR)cpu.c $(SOURCE_DIR)instructions.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
-
 $(TEST_BUILD_DIR)cpu_test.o: $(TEST_DIR)cpu_test.c
 	$(CC) $< $(SOURCE_DIR)cpu.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
 
+INSTRUCTIONS_TEST_COMPILE_OPTS = $(CC) $< $(SOURCE_DIR)cpu.c $(SOURCE_DIR)instructions.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
+
+$(TEST_BUILD_DIR)8bit_load_test.o: $(TEST_DIR)8bit_load_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
+$(TEST_BUILD_DIR)16bit_load_test.o: $(TEST_DIR)16bit_load_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
 $(TEST_BUILD_DIR)8bit_ALU_test.o: $(TEST_DIR)8bit_ALU_test.c
-	$(CC) $< $(SOURCE_DIR)cpu.c $(SOURCE_DIR)instructions.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
 
 $(TEST_BUILD_DIR)16bit_ALU_test.o: $(TEST_DIR)16bit_ALU_test.c
-	$(CC) $< $(SOURCE_DIR)cpu.c $(SOURCE_DIR)instructions.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
+$(TEST_BUILD_DIR)misc_arithmetic_test.o: $(TEST_DIR)misc_arithmetic_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
 
 # ---------------------------------------------------------
 # Misc
