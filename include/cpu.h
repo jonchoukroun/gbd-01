@@ -79,10 +79,10 @@ typedef struct CPU {
 } CPU;
 
 typedef enum {
-    ZERO_FLAG = 7,
-    SUBTRACT_FLAG = 6,
-    HALF_CARRY_FLAG = 5,
-    CARRY_FLAG = 4
+    Z_FLAG = 7,
+    N_FLAG = 6,
+    H_FLAG = 5,
+    C_FLAG = 4
 } FlagPosition;
 
 typedef enum {

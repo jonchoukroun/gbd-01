@@ -4,14 +4,14 @@
 void add_A_8(CPU *cpu, uint16_t value)
 {
     uint8_t A = cpu->registers.A;
-    clear_flag(cpu, ZERO_FLAG);
-    clear_flag(cpu, SUBTRACT_FLAG);
-    clear_flag(cpu, HALF_CARRY_FLAG);
-    clear_flag(cpu, CARRY_FLAG);
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
 
-    if (((A + value) & 0xff) == 0) set_flag(cpu, ZERO_FLAG);
-    if ((A & 0xf) + (value & 0xf) > 0xf) set_flag(cpu, HALF_CARRY_FLAG);
-    if (0xff - A <= value) set_flag(cpu, CARRY_FLAG);
+    if (((A + value) & 0xff) == 0) set_flag(cpu, Z_FLAG);
+    if ((A & 0xf) + (value & 0xf) > 0xf) set_flag(cpu, H_FLAG);
+    if (0xff - A <= value) set_flag(cpu, C_FLAG);
 
     cpu->registers.A += value;
 }
@@ -74,63 +74,63 @@ void ADD_A_n(CPU *cpu)
 // ADC A, r8
 void ADC_A_A(CPU *cpu)
 {
-    uint16_t value = cpu->registers.A + get_flag(cpu, CARRY_FLAG);
+    uint16_t value = cpu->registers.A + get_flag(cpu, C_FLAG);
     add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_B(CPU *cpu)
 {
-    uint16_t value = cpu->registers.B + get_flag(cpu, CARRY_FLAG);
+    uint16_t value = cpu->registers.B + get_flag(cpu, C_FLAG);
     add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_C(CPU *cpu)
 {
-    uint16_t value = cpu->registers.C + get_flag(cpu, CARRY_FLAG);
+    uint16_t value = cpu->registers.C + get_flag(cpu, C_FLAG);
     add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_D(CPU *cpu)
 {
-    uint16_t value = cpu->registers.D + get_flag(cpu, CARRY_FLAG);
+    uint16_t value = cpu->registers.D + get_flag(cpu, C_FLAG);
     add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_E(CPU *cpu)
 {
-    uint16_t value = cpu->registers.E + get_flag(cpu, CARRY_FLAG);
+    uint16_t value = cpu->registers.E + get_flag(cpu, C_FLAG);
     add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_H(CPU *cpu)
 {
-    uint16_t value = cpu->registers.H + get_flag(cpu, CARRY_FLAG);
+    uint16_t value = cpu->registers.H + get_flag(cpu, C_FLAG);
     add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_L(CPU *cpu)
 {
-    uint16_t value = cpu->registers.L + get_flag(cpu, CARRY_FLAG);
+    uint16_t value = cpu->registers.L + get_flag(cpu, C_FLAG);
     add_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void ADC_A_HL(CPU *cpu)
 {
-    uint16_t value = read_byte(cpu, cpu->registers.HL) + get_flag(cpu, CARRY_FLAG);
+    uint16_t value = read_byte(cpu, cpu->registers.HL) + get_flag(cpu, C_FLAG);
     add_A_8(cpu, value);
     cpu->t_cycles = 8;
 }
 
 void ADC_A_n(CPU *cpu)
 {
-    uint8_t value = fetch_opcode(cpu) + get_flag(cpu, CARRY_FLAG);
+    uint8_t value = fetch_opcode(cpu) + get_flag(cpu, C_FLAG);
     add_A_8(cpu, value);
     cpu->t_cycles = 8;
 }
@@ -138,17 +138,17 @@ void ADC_A_n(CPU *cpu)
 // SUB A, r8
 void sub_A_8(CPU *cpu, uint8_t r)
 {
-    clear_flag(cpu, ZERO_FLAG);
-    set_flag(cpu, SUBTRACT_FLAG);
-    clear_flag(cpu, HALF_CARRY_FLAG);
-    clear_flag(cpu, CARRY_FLAG);
+    clear_flag(cpu, Z_FLAG);
+    set_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
 
-    if ((r & 0xf) > (cpu->registers.A & 0xf)) set_flag(cpu, HALF_CARRY_FLAG);
-    if (r > cpu->registers.A) set_flag(cpu, CARRY_FLAG);
+    if ((r & 0xf) > (cpu->registers.A & 0xf)) set_flag(cpu, H_FLAG);
+    if (r > cpu->registers.A) set_flag(cpu, C_FLAG);
 
     cpu->registers.A -= r;
 
-    if (cpu->registers.A == 0) set_flag(cpu, ZERO_FLAG);
+    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
 }
 
 void SUB_A_A(CPU *cpu)
@@ -207,63 +207,63 @@ void SUB_A_HL(CPU *cpu)
 
 void SBC_A_A(CPU *cpu)
 {
-    uint8_t value = cpu->registers.A + get_flag(cpu, CARRY_FLAG);
+    uint8_t value = cpu->registers.A + get_flag(cpu, C_FLAG);
     sub_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void SBC_A_B(CPU *cpu)
 {
-    uint8_t value = cpu->registers.B + get_flag(cpu, CARRY_FLAG);
+    uint8_t value = cpu->registers.B + get_flag(cpu, C_FLAG);
     sub_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void SBC_A_C(CPU *cpu)
 {
-    uint8_t value = cpu->registers.C + get_flag(cpu, CARRY_FLAG);
+    uint8_t value = cpu->registers.C + get_flag(cpu, C_FLAG);
     sub_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void SBC_A_D(CPU *cpu)
 {
-    uint8_t value = cpu->registers.D + get_flag(cpu, CARRY_FLAG);
+    uint8_t value = cpu->registers.D + get_flag(cpu, C_FLAG);
     sub_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void SBC_A_E(CPU *cpu)
 {
-    uint8_t value = cpu->registers.E + get_flag(cpu, CARRY_FLAG);
+    uint8_t value = cpu->registers.E + get_flag(cpu, C_FLAG);
     sub_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void SBC_A_H(CPU *cpu)
 {
-    uint8_t value = cpu->registers.H + get_flag(cpu, CARRY_FLAG);
+    uint8_t value = cpu->registers.H + get_flag(cpu, C_FLAG);
     sub_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void SBC_A_L(CPU *cpu)
 {
-    uint8_t value = cpu->registers.L + get_flag(cpu, CARRY_FLAG);
+    uint8_t value = cpu->registers.L + get_flag(cpu, C_FLAG);
     sub_A_8(cpu, value);
     cpu->t_cycles = 4;
 }
 
 void SBC_A_n(CPU *cpu)
 {
-    uint8_t value = fetch_opcode(cpu) + get_flag(cpu, CARRY_FLAG);
+    uint8_t value = fetch_opcode(cpu) + get_flag(cpu, C_FLAG);
     sub_A_8(cpu, value);
     cpu->t_cycles = 8;
 }
 
 void SBC_A_HL(CPU *cpu)
 {
-    uint8_t value = read_byte(cpu, cpu->registers.HL) + get_flag(cpu, CARRY_FLAG);
+    uint8_t value = read_byte(cpu, cpu->registers.HL) + get_flag(cpu, C_FLAG);
     sub_A_8(cpu, value);
     cpu->t_cycles = 8;
 }
@@ -272,11 +272,11 @@ void SBC_A_HL(CPU *cpu)
 void AND_A_8(CPU *cpu, uint8_t r)
 {
     cpu->registers.A &= r;
-    clear_flag(cpu, ZERO_FLAG);
-    clear_flag(cpu, SUBTRACT_FLAG);
-    set_flag(cpu, HALF_CARRY_FLAG);
-    clear_flag(cpu, CARRY_FLAG);
-    if (cpu->registers.A == 0) set_flag(cpu, ZERO_FLAG);
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    set_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
 }
 
 void AND_A_A(CPU *cpu)
@@ -337,13 +337,13 @@ void AND_A_HL(CPU *cpu)
 
 void XOR_A_8(CPU *cpu, uint8_t r)
 {
-    clear_flag(cpu, ZERO_FLAG);
-    clear_flag(cpu, SUBTRACT_FLAG);
-    clear_flag(cpu, HALF_CARRY_FLAG);
-    clear_flag(cpu, CARRY_FLAG);
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
 
     cpu->registers.A ^= r;
-    if (cpu->registers.A == 0) set_flag(cpu, ZERO_FLAG);
+    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
 }
 
 void XOR_A_A(CPU *cpu)
@@ -403,13 +403,13 @@ void XOR_A_HL(CPU *cpu)
 // OR A, r8
 void or_A_8(CPU *cpu, uint8_t r)
 {
-    clear_flag(cpu, ZERO_FLAG);
-    clear_flag(cpu, SUBTRACT_FLAG);
-    clear_flag(cpu, HALF_CARRY_FLAG);
-    clear_flag(cpu, CARRY_FLAG);
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
 
     cpu->registers.A |= r;
-    if (cpu->registers.A == 0) set_flag(cpu, ZERO_FLAG);
+    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
 }
 
 void OR_A_A(CPU *cpu)
@@ -468,14 +468,14 @@ void OR_A_HL(CPU *cpu)
 
 void cp_A_8(CPU *cpu, uint8_t r)
 {
-    clear_flag(cpu, ZERO_FLAG);
-    set_flag(cpu, SUBTRACT_FLAG);
-    clear_flag(cpu, HALF_CARRY_FLAG);
-    clear_flag(cpu, CARRY_FLAG);
+    clear_flag(cpu, Z_FLAG);
+    set_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
 
-    if ((r & 0xf) > (cpu->registers.A & 0xf)) set_flag(cpu, HALF_CARRY_FLAG);
-    if (r > cpu->registers.A) set_flag(cpu, CARRY_FLAG);
-    if (cpu->registers.A == r) set_flag(cpu, ZERO_FLAG);
+    if ((r & 0xf) > (cpu->registers.A & 0xf)) set_flag(cpu, H_FLAG);
+    if (r > cpu->registers.A) set_flag(cpu, C_FLAG);
+    if (cpu->registers.A == r) set_flag(cpu, Z_FLAG);
 }
 
 // CP A, r8
@@ -536,12 +536,12 @@ void CP_A_HL(CPU *cpu)
 // INC r
 void handle_INC_flags(CPU *cpu, uint8_t value)
 {
-    clear_flag(cpu, ZERO_FLAG);
-    clear_flag(cpu, SUBTRACT_FLAG);
-    clear_flag(cpu, HALF_CARRY_FLAG);
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
 
-    if (value == 0xff) set_flag(cpu, ZERO_FLAG);
-    if ((value & 0xf) == 0xf) set_flag(cpu, HALF_CARRY_FLAG);
+    if (value == 0xff) set_flag(cpu, Z_FLAG);
+    if ((value & 0xf) == 0xf) set_flag(cpu, H_FLAG);
 }
 
 void INC_A(CPU *cpu)
@@ -603,12 +603,12 @@ void INC_nHL(CPU *cpu)
 // DEC r
 void handle_DEC_flags(CPU *cpu, uint8_t value)
 {
-    clear_flag(cpu, ZERO_FLAG);
-    set_flag(cpu, SUBTRACT_FLAG);
-    clear_flag(cpu, HALF_CARRY_FLAG);
+    clear_flag(cpu, Z_FLAG);
+    set_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
 
-    if (value == 0x1) set_flag(cpu, ZERO_FLAG);
-    if ((value & 0xf) == 0) set_flag(cpu, HALF_CARRY_FLAG);
+    if (value == 0x1) set_flag(cpu, Z_FLAG);
+    if ((value & 0xf) == 0) set_flag(cpu, H_FLAG);
 }
 
 void DEC_A(CPU *cpu)
@@ -670,12 +670,12 @@ void DEC_nHL(CPU *cpu)
 void add_HL_16(CPU *cpu, uint16_t value)
 {
     uint16_t HL = cpu->registers.HL;
-    clear_flag(cpu, SUBTRACT_FLAG);
-    clear_flag(cpu, HALF_CARRY_FLAG);
-    clear_flag(cpu, CARRY_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
 
-    if ((HL & 0xf00) + (value & 0xf00) > 0x400) set_flag(cpu, HALF_CARRY_FLAG);
-    if (0xffff - HL <= value) set_flag(cpu, CARRY_FLAG);
+    if ((HL & 0xf00) + (value & 0xf00) > 0x400) set_flag(cpu, H_FLAG);
+    if (0xffff - HL <= value) set_flag(cpu, C_FLAG);
 
     cpu->registers.HL += value;
 }
@@ -707,18 +707,18 @@ void ADD_HL_SP(CPU *cpu)
 
 void ADD_SP_e(CPU *cpu)
 {
-    clear_flag(cpu, ZERO_FLAG);
-    clear_flag(cpu, SUBTRACT_FLAG);
-    clear_flag(cpu, HALF_CARRY_FLAG);
-    clear_flag(cpu, CARRY_FLAG);
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
 
     uint8_t n = fetch_opcode(cpu);
     if (0b10000000 & n) {
         n = (~n) + 1;
         cpu->SP -= n;
     } else {
-        if ((cpu->SP & 0xf) + (n & 0xf) > 0xf) set_flag(cpu, HALF_CARRY_FLAG);
-        if ((cpu->SP & 0x00ff) + n > 0xff) set_flag(cpu, CARRY_FLAG);
+        if ((cpu->SP & 0xf) + (n & 0xf) > 0xf) set_flag(cpu, H_FLAG);
+        if ((cpu->SP & 0xff) + n > 0xff) set_flag(cpu, C_FLAG);
 
         cpu->SP += n;
     }
@@ -779,13 +779,13 @@ void DEC_SP(CPU *cpu)
 void DAA(CPU *cpu)
 {
     uint8_t A = cpu->registers.A;
-    uint8_t half_carry = get_flag(cpu, HALF_CARRY_FLAG);
-    uint8_t carry = get_flag(cpu, CARRY_FLAG);
+    uint8_t half_carry = get_flag(cpu, H_FLAG);
+    uint8_t carry = get_flag(cpu, C_FLAG);
 
-    if (get_flag(cpu, SUBTRACT_FLAG) == 0) {
+    if (get_flag(cpu, N_FLAG) == 0) {
         if (carry == 1 || A > 0x99) {
             cpu->registers.A += 0x60;
-            set_flag(cpu, CARRY_FLAG);
+            set_flag(cpu, C_FLAG);
         }
         if (half_carry == 1 || (A & 0x0f) > 0x09) cpu->registers.A += 0x06;
     } else {
@@ -793,8 +793,8 @@ void DAA(CPU *cpu)
         if (half_carry == 1) cpu->registers.A -= 0x06;
     }
 
-    if (cpu->registers.A == 0) set_flag(cpu, ZERO_FLAG);
-    clear_flag(cpu, HALF_CARRY_FLAG);
+    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
+    clear_flag(cpu, H_FLAG);
 
     cpu->t_cycles = 4;
 }
@@ -802,8 +802,8 @@ void DAA(CPU *cpu)
 void CPL(CPU *cpu)
 {
     cpu->registers.A = ~cpu->registers.A;
-    set_flag(cpu, SUBTRACT_FLAG);
-    set_flag(cpu, HALF_CARRY_FLAG);
+    set_flag(cpu, N_FLAG);
+    set_flag(cpu, H_FLAG);
 
     cpu->t_cycles = 4;
 }
@@ -1325,21 +1325,21 @@ void LD_SP_HL(CPU *cpu)
 
 void LD_HL_SPe(CPU *cpu)
 {
-    clear_flag(cpu, ZERO_FLAG);
-    clear_flag(cpu, SUBTRACT_FLAG);
-    clear_flag(cpu, HALF_CARRY_FLAG);
-    clear_flag(cpu, CARRY_FLAG);
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
 
     uint8_t n = fetch_opcode(cpu);
     uint16_t result;
     if ((0b10000000 & n) != 0) {
         n = (~n) + 1;
-        if ((cpu->SP & 0xf) < (n & 0xf)) set_flag(cpu, HALF_CARRY_FLAG);
-        if ((cpu->SP & 0xff) < n) set_flag(cpu, CARRY_FLAG);
+        if ((cpu->SP & 0xf) < (n & 0xf)) set_flag(cpu, H_FLAG);
+        if ((cpu->SP & 0xff) < n) set_flag(cpu, C_FLAG);
         result = cpu->SP - n;
     } else {
-        if ((cpu->SP & 0xf) + (n & 0xf) > 0xf) set_flag(cpu, HALF_CARRY_FLAG);
-        if ((cpu->SP & 0x00ff) + n > 0xff) set_flag(cpu, CARRY_FLAG);
+        if ((cpu->SP & 0xf) + (n & 0xf) > 0xf) set_flag(cpu, H_FLAG);
+        if ((cpu->SP & 0x00ff) + n > 0xff) set_flag(cpu, C_FLAG);
         result = cpu->SP + n;
     }
 

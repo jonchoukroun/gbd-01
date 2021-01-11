@@ -45,16 +45,16 @@ void set_flag(CPU *cpu, FlagPosition flag)
 {
     uint8_t mask;
     switch (flag) {
-        case ZERO_FLAG:
+        case Z_FLAG:
             mask = cpu->registers.F & 0b01110000;
             break;
-        case SUBTRACT_FLAG:
+        case N_FLAG:
             mask = cpu->registers.F & 0b10110000;
             break;
-        case HALF_CARRY_FLAG:
+        case H_FLAG:
             mask = cpu->registers.F & 0b11010000;
             break;
-        case CARRY_FLAG:
+        case C_FLAG:
             mask = cpu->registers.F & 0b11100000;
             break;
         default:

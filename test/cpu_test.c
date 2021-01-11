@@ -61,41 +61,41 @@ void test_set_flag(void)
 
     // Set cleared flags
     cpu.registers.F = 0;
-    set_flag(&cpu, ZERO_FLAG);
+    set_flag(&cpu, Z_FLAG);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
 
     cpu.registers.F = 0;
-    set_flag(&cpu, SUBTRACT_FLAG);
+    set_flag(&cpu, N_FLAG);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
 
     cpu.registers.F = 0;
-    set_flag(&cpu, HALF_CARRY_FLAG);
+    set_flag(&cpu, H_FLAG);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
 
     cpu.registers.F = 0;
-    set_flag(&cpu, CARRY_FLAG);
+    set_flag(&cpu, C_FLAG);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
 
     // Set existing flags
     cpu.registers.F = 0b10000000;
-    set_flag(&cpu, ZERO_FLAG);
+    set_flag(&cpu, Z_FLAG);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
 
     cpu.registers.F = 0b01000000;
-    set_flag(&cpu, SUBTRACT_FLAG);
+    set_flag(&cpu, N_FLAG);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
 
     cpu.registers.F = 0b00100000;
-    set_flag(&cpu, HALF_CARRY_FLAG);
+    set_flag(&cpu, H_FLAG);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
 
     cpu.registers.F = 0;
-    set_flag(&cpu, CARRY_FLAG);
+    set_flag(&cpu, C_FLAG);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
 
     // Ignore other flags
     cpu.registers.F = 0b10110000;
-    set_flag(&cpu, SUBTRACT_FLAG);
+    set_flag(&cpu, N_FLAG);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b11110000);
 }
 
