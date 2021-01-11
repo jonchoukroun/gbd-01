@@ -39,7 +39,14 @@ TEST_RESULTS = test/results/
 
 TEST_LIBS = cunit
 
-_TEST_OBJ = 8bit_load_test.o 16bit_load_test.o cpu_test.o 8bit_ALU_test.o 16bit_ALU_test.o misc_arithmetic_test.o
+_TEST_OBJ = cpu_test.o
+_TEST_OBJ += 8bit_load_test.o
+_TEST_OBJ += 16bit_load_test.o
+_TEST_OBJ += 8bit_ALU_test.o
+_TEST_OBJ += 16bit_ALU_test.o
+_TEST_OBJ += misc_arithmetic_test.o
+_TEST_OBJ += rotate_shift_test.o
+
 TEST_OBJ = $(patsubst %,$(TEST_BUILD_DIR)%,$(_TEST_OBJ))
 
 SUITES_RUN = `grep Suite $(TEST_RESULTS)*.txt | sed "s/Suite: //g"`
@@ -80,6 +87,9 @@ $(TEST_BUILD_DIR)16bit_ALU_test.o: $(TEST_DIR)16bit_ALU_test.c
 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
 
 $(TEST_BUILD_DIR)misc_arithmetic_test.o: $(TEST_DIR)misc_arithmetic_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
+$(TEST_BUILD_DIR)rotate_shift_test.o: $(TEST_DIR)rotate_shift_test.c
 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
 
 # ---------------------------------------------------------

@@ -1,5 +1,10 @@
 #include <stdio.h>
+#include <limits.h>
 #include "instructions.h"
+
+// *************************************
+// 8-bit Arithmetic/Logical Instructions
+// *************************************
 
 void add_A_8(CPU *cpu, uint16_t value)
 {
@@ -667,6 +672,11 @@ void DEC_nHL(CPU *cpu)
     cpu->t_cycles = 12;
 }
 
+
+// **************************************
+// 16-bit Arithmetic/Logical Instructions
+// **************************************
+
 void add_HL_16(CPU *cpu, uint16_t value)
 {
     uint16_t HL = cpu->registers.HL;
@@ -779,37 +789,10 @@ void DEC_SP(CPU *cpu)
     cpu->t_cycles = 8;
 }
 
-void DAA(CPU *cpu)
-{
-    uint8_t A = cpu->registers.A;
-    uint8_t half_carry = get_flag(cpu, H_FLAG);
-    uint8_t carry = get_flag(cpu, C_FLAG);
 
-    if (get_flag(cpu, N_FLAG) == 0) {
-        if (carry == 1 || A > 0x99) {
-            cpu->registers.A += 0x60;
-            set_flag(cpu, C_FLAG);
-        }
-        if (half_carry == 1 || (A & 0x0f) > 0x09) cpu->registers.A += 0x06;
-    } else {
-        if (carry == 1) cpu->registers.A -= 0x60;
-        if (half_carry == 1) cpu->registers.A -= 0x06;
-    }
-
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
-    clear_flag(cpu, H_FLAG);
-
-    cpu->t_cycles = 4;
-}
-
-void CPL(CPU *cpu)
-{
-    cpu->registers.A = ~cpu->registers.A;
-    set_flag(cpu, N_FLAG);
-    set_flag(cpu, H_FLAG);
-
-    cpu->t_cycles = 4;
-}
+// ***********************
+// 8-bit Load Instructions
+// ***********************
 
 // LD r, r*: load 2nd register's value into 1st
 void LD_B_A(CPU *cpu)
@@ -1294,6 +1277,11 @@ void LD_HLD_A(CPU *cpu)
     cpu->t_cycles = 8;
 }
 
+
+// ************************
+// 16-bit Load Instructions
+// ************************
+
 // LD rr, nn
 void LD_BC_nn(CPU *cpu)
 {
@@ -1413,6 +1401,7 @@ void POP_DE(CPU *cpu)
     cpu->SP++;
     cpu->t_cycles = 12;
 }
+
 void POP_HL(CPU *cpu)
 {
     cpu->registers.H = cpu->memory[cpu->SP];
@@ -1421,6 +1410,100 @@ void POP_HL(CPU *cpu)
     cpu->SP++;
     cpu->t_cycles = 12;
 }
+
+
+// *************************
+// Rotate Shift Instructions
+// *************************
+void RLCA(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    uint8_t A = cpu->registers.A;
+    if (A & 0b10000000) set_flag(cpu, C_FLAG);
+
+    cpu->registers.A = (A << 1) | (A >> 7);
+    cpu->t_cycles = 4;
+}
+
+void RLA(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.A & 0b10000000) set_flag(cpu, C_FLAG);
+    cpu->registers.A <<= 1;
+    cpu->t_cycles = 4;
+}
+
+void RRCA(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    uint8_t A = cpu->registers.A;
+    if (A & 1) set_flag(cpu, C_FLAG);
+
+    cpu->registers.A = (A >> 1) | (A << 7);
+    cpu->t_cycles = 4;
+}
+
+void RRA(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.A & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.A >>= 1;
+    cpu->t_cycles = 4;
+}
+
+
+// *****************************
+// Misc. Arithmetic Instructions
+// *****************************
+
+void DAA(CPU *cpu)
+{
+    uint8_t A = cpu->registers.A;
+    uint8_t half_carry = get_flag(cpu, H_FLAG);
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
+    if (get_flag(cpu, N_FLAG) == 0) {
+        if (carry == 1 || A > 0x99) {
+            cpu->registers.A += 0x60;
+            set_flag(cpu, C_FLAG);
+        }
+        if (half_carry == 1 || (A & 0x0f) > 0x09) cpu->registers.A += 0x06;
+    } else {
+        if (carry == 1) cpu->registers.A -= 0x60;
+        if (half_carry == 1) cpu->registers.A -= 0x06;
+    }
+
+    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
+    clear_flag(cpu, H_FLAG);
+
+    cpu->t_cycles = 4;
+}
+
+void CPL(CPU *cpu)
+{
+    cpu->registers.A = ~cpu->registers.A;
+    set_flag(cpu, N_FLAG);
+    set_flag(cpu, H_FLAG);
+
+    cpu->t_cycles = 4;
+}
+
 void UNDEF(CPU *cpu)
 {
     printf("Opcode instruction undefined (%x)\n", cpu->memory[cpu->PC--]);
