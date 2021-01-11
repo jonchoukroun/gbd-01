@@ -312,6 +312,26 @@ void RL_H(CPU *);
 void RL_L(CPU *);
 void RL_HL(CPU *);
 
+// RRC r
+void RRC_A(CPU *);
+void RRC_B(CPU *);
+void RRC_C(CPU *);
+void RRC_D(CPU *);
+void RRC_E(CPU *);
+void RRC_H(CPU *);
+void RRC_L(CPU *);
+void RRC_HL(CPU *);
+
+// RR r
+void RR_A(CPU *);
+void RR_B(CPU *);
+void RR_C(CPU *);
+void RR_D(CPU *);
+void RR_E(CPU *);
+void RR_H(CPU *);
+void RR_L(CPU *);
+void RR_HL(CPU *);
+
 
 // *****************************
 // Misc. Arithmetic Instructions
@@ -346,7 +366,7 @@ static const OpcodeInstruction opcode_table[256] = {
 
 static const OpcodeInstruction prefixed_opcode_table[256] = {
 /*           0x0      0x1      0x2      0x3      0x4      0x5       0x6     0x7      0x8      0x9      0xa      0xb      0xc      0xd      0xe      0xf */
-/* 0 */   &RLC_B,  &RLC_C,  &RLC_D,  &RLC_E,  &RLC_H,  &RLC_L,  &RLC_HL,  &RLC_A,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
+/* 0 */   &RLC_B,  &RLC_C,  &RLC_D,  &RLC_E,  &RLC_H,  &RLC_L,  &RLC_HL,  &RLC_A,  &RRC_B,  &RRC_C,  &RRC_D,  &RRC_E,  &RRC_H,  &RRC_L, &RRC_HL,  &RRC_A,
 /* 1 */    &RL_B,   &RL_C,   &RL_D,   &RL_E,   &RL_H,   &RL_L,   &RL_HL,   &RL_A,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
 /* 2 */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
 /* 3 */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,

@@ -1597,6 +1597,7 @@ void RLC_HL(CPU *cpu)
     cpu->t_cycles = 16;
 }
 
+// RL r
 void RL_A(CPU *cpu)
 {
     clear_flag(cpu, Z_FLAG);
@@ -1716,6 +1717,219 @@ void RL_HL(CPU *cpu)
     if (read_byte(cpu, cpu->registers.HL) == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 16;
+}
+
+// RRC r
+void RRC_A(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.A & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.A = rotate_right_carry(cpu->registers.A);
+    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void RRC_B(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.B & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.B = rotate_right_carry(cpu->registers.B);
+    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void RRC_C(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.C & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.C = rotate_right_carry(cpu->registers.C);
+    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void RRC_D(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.D & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.D = rotate_right_carry(cpu->registers.D);
+    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void RRC_E(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.E & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.E = rotate_right_carry(cpu->registers.E);
+    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void RRC_H(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.H & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.H = rotate_right_carry(cpu->registers.H);
+    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void RRC_L(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.L & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.L = rotate_right_carry(cpu->registers.L);
+    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void RRC_HL(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    if (byte & 1) set_flag(cpu, C_FLAG);
+    write_byte(cpu, rotate_right_carry(byte), cpu->registers.HL);
+    if (read_byte(cpu, cpu->registers.HL) == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 16;
+}
+
+// RR r
+void RR_A(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.A & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.A >>= 1;
+    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void RR_B(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.B & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.B >>= 1;
+    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void RR_C(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.C & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.C >>= 1;
+    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void RR_D(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.D & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.D >>= 1;
+    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void RR_E(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.E & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.E >>= 1;
+    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void RR_H(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.H & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.H >>= 1;
+    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void RR_L(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.L & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.L >>= 1;
+    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
 }
 
 

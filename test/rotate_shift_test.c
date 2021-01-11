@@ -231,6 +231,157 @@ void test_RL_HL(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 16);
 }
 
+void test_RRC_A(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x1;
+    RRC_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x80);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_RRC_B(void)
+{
+    CPU cpu;
+    cpu.registers.B = 0x1;
+    RRC_B(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.B, 0x80);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_RRC_C(void)
+{
+    CPU cpu;
+    cpu.registers.C = 0x1;
+    RRC_C(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.C, 0x80);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_RRC_D(void)
+{
+    CPU cpu;
+    cpu.registers.D = 0x1;
+    RRC_D(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.D, 0x80);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_RRC_E(void)
+{
+    CPU cpu;
+    cpu.registers.E = 0x1;
+    RRC_E(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.E, 0x80);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_RRC_H(void)
+{
+    CPU cpu;
+    cpu.registers.H = 0x1;
+    RRC_H(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.H, 0x80);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_RRC_L(void)
+{
+    CPU cpu;
+    cpu.registers.L = 0x1;
+    RRC_L(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.L, 0x80);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_RRC_HL(void)
+{
+    CPU cpu;
+    cpu.registers.HL = 0x2222;
+    cpu.memory[cpu.registers.HL] = 0;
+    RRC_HL(&cpu);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+}
+
+void test_RR_A(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x01;
+    RR_A(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_RR_B(void)
+{
+    CPU cpu;
+    cpu.registers.B = 0x01;
+    RR_B(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.B, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_RR_C(void)
+{
+    CPU cpu;
+    cpu.registers.C = 0x01;
+    RR_C(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.C, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_RR_D(void)
+{
+    CPU cpu;
+    cpu.registers.D = 0x01;
+    RR_D(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.D, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_RR_E(void)
+{
+    CPU cpu;
+    cpu.registers.E = 0x01;
+    RR_E(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.E, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_RR_H(void)
+{
+    CPU cpu;
+    cpu.registers.H = 0x01;
+    RR_H(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.H, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_RR_L(void)
+{
+    CPU cpu;
+    cpu.registers.L = 0x01;
+    RR_L(&cpu);
+    CU_ASSERT_EQUAL(cpu.registers.L, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -302,7 +453,7 @@ int main()
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RLC_HL rotates byte in memory pointed to from HL and wraps, sets bit 7 into C flag",
+            "Rotate Shift | RLC_HL rotates byte in memory pointed to from HL left and wraps, sets bit 7 into C flag",
             test_RLC_HL
         ) == NULL ||
         CU_add_test(
@@ -344,6 +495,81 @@ int main()
             test_suite,
             "Rotate Shift | RL_HL rotates byte in memory pointed to from HL, sets Z and C flags conditionally",
             test_RL_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RRC_A rotates value in A right by 1 and wraps, sets Z and C flags conditionally",
+            test_RRC_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RRC_B rotates value in B right by 1 and wraps, sets Z and C flags conditionally",
+            test_RRC_B
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RRC_C rotates value in C right by 1 and wraps, sets Z and C flags conditionally",
+            test_RRC_C
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RRC_D rotates value in D right by 1 and wraps, sets Z and C flags conditionally",
+            test_RRC_D
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RRC_E rotates value in E right by 1 and wraps, sets Z and C flags conditionally",
+            test_RRC_E
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RRC_H rotates value in H right by 1 and wraps, sets Z and C flags conditionally",
+            test_RRC_H
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RRC_L rotates value in L right by 1 and wraps, sets Z and C flags conditionally",
+            test_RRC_L
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RRC_HL rotates byte in memory pointed to by HL right and wraps, sets Z and C flags conditionally",
+            test_RRC_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RR_A shifts value in A right by 1, sets Z and C flags conditionally",
+            test_RR_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RR_B shifts value in B right by 1, sets Z and C flags conditionally",
+            test_RR_B
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RR_C shifts value in C right by 1, sets Z and C flags conditionally",
+            test_RR_C
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RR_D shifts value in D right by 1, sets Z and C flags conditionally",
+            test_RR_D
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RR_E shifts value in E right by 1, sets Z and C flags conditionally",
+            test_RR_E
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RR_H shifts value in H right by 1, sets Z and C flags conditionally",
+            test_RR_H
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate Shift | RR_L shifts value in L right by 1, sets Z and C flags conditionally",
+            test_RR_L
         ) == NULL) {
         printf("Failed to add test to rotate shift unit test suite\n");
         CU_cleanup_registry();
