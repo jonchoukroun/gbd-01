@@ -715,6 +715,9 @@ void ADD_SP_e(CPU *cpu)
     uint8_t n = fetch_opcode(cpu);
     if (0b10000000 & n) {
         n = (~n) + 1;
+        if ((cpu->SP & 0xf) < (n & 0xf)) set_flag(cpu, H_FLAG);
+        if ((cpu->SP & 0xff) < n) set_flag(cpu, C_FLAG);
+
         cpu->SP -= n;
     } else {
         if ((cpu->SP & 0xf) + (n & 0xf) > 0xf) set_flag(cpu, H_FLAG);

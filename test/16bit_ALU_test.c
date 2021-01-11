@@ -51,16 +51,17 @@ void test_ADD_HL_SP(void)
 
 void test_ADD_SP_e(void)
 {
-    // Signed positive
+    // Signed positive, H, C carry
     CPU cpu;
     uint16_t PC = 0x0100;
-    uint16_t SP = 1000;
-    int8_t pos_value = 59;
+    uint16_t SP = 0x03e8;
+    int8_t pos_value = 0x3b;
     cpu.PC = PC;
     cpu.memory[PC] = pos_value;
     cpu.SP = SP;
     ADD_SP_e(&cpu);
-    CU_ASSERT_EQUAL(cpu.SP, 1059);
+    CU_ASSERT_EQUAL(cpu.SP, 0x0423);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00110000);
     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
     CU_ASSERT_EQUAL(cpu.t_cycles, 16);
 
@@ -106,7 +107,7 @@ void test_ADD_SP_e_zero(void)
     cpu.registers.F = 0;
     ADD_SP_e(&cpu);
     CU_ASSERT_EQUAL(cpu.SP, 0xff6);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00110000);
 }
 
 void test_ADD_SP_e_subtract(void)
@@ -114,14 +115,14 @@ void test_ADD_SP_e_subtract(void)
     CPU cpu;
     uint16_t PC = 0x100;
     uint16_t SP = 0x1000;
-    int8_t value = -0xa;
+    uint8_t value = 0xc4;
     cpu.PC = PC;
     cpu.SP = SP;
     cpu.memory[PC] = value;
     cpu.registers.F = 0b00000000;
     ADD_SP_e(&cpu);
-    CU_ASSERT_EQUAL(cpu.SP, 0xff6);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu.SP, 0x0fc4);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00110000);
 }
 
 void test_ADD_SP_e_hcarry(void)
