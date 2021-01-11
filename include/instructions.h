@@ -144,8 +144,8 @@ void ADD_HL_HL(CPU *);
 
 void ADD_HL_SP(CPU *);
 
-// ADD SP, nn: Add signed immediate value to stack pointer
-void ADD_SP_nn(CPU *);
+// ADD SP, e: Add signed immediate value to stack pointer
+void ADD_SP_e(CPU *);
 
 // INC rr
 void INC_BC(CPU *);
@@ -272,6 +272,7 @@ void LD_HL_nn(CPU *);
 
 void LD_nn_SP(CPU *);
 void LD_SP_HL(CPU *);
+void LD_HL_SPe(CPU *);
 
 // PUSH rr: Push to stack from register rr
 void PUSH_AF(CPU *);
@@ -303,8 +304,8 @@ static const OpcodeInstruction opcode_table[256] = {
 /* b */    &OR_A_B,   &OR_A_C,   &OR_A_D,  &OR_A_E,  &OR_A_H,  &OR_A_L,  &OR_A_HL,  &OR_A_A,    &CP_A_B,    &CP_A_C,   &CP_A_D,  &CP_A_E,  &CP_A_H,  &CP_A_L,  &CP_A_HL,  &CP_A_A,
 /* c */     &UNDEF,   &POP_BC,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_BC,  &ADD_A_n,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &ADC_A_n,   &UNDEF,
 /* d */     &UNDEF,   &POP_DE,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_DE,  &SUB_A_n,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &SBC_A_n,   &UNDEF,
-/* e */   &LDH_n_A,   &POP_HL,  &LDH_C_A,   &UNDEF,   &UNDEF, &PUSH_HL,  &AND_A_n,   &UNDEF, &ADD_SP_nn,     &UNDEF,  &LD_nn_A,   &UNDEF,   &UNDEF,   &UNDEF,  &XOR_A_n,   &UNDEF,
-/* f */   &LDH_A_n,   &POP_AF,  &LDH_A_C,   &UNDEF,   &UNDEF, &PUSH_AF,   &OR_A_n,   &UNDEF,     &UNDEF,  &LD_SP_HL,  &LD_A_nn,   &UNDEF,   &UNDEF,   &UNDEF,   &CP_A_n,   &UNDEF,
+/* e */   &LDH_n_A,   &POP_HL,  &LDH_C_A,   &UNDEF,   &UNDEF, &PUSH_HL,  &AND_A_n,   &UNDEF,  &ADD_SP_e,     &UNDEF,  &LD_nn_A,   &UNDEF,   &UNDEF,   &UNDEF,  &XOR_A_n,   &UNDEF,
+/* f */   &LDH_A_n,   &POP_AF,  &LDH_A_C,   &UNDEF,   &UNDEF, &PUSH_AF,   &OR_A_n,   &UNDEF, &LD_HL_SPe,  &LD_SP_HL,  &LD_A_nn,   &UNDEF,   &UNDEF,   &UNDEF,   &CP_A_n,   &UNDEF,
 };
 
 #endif

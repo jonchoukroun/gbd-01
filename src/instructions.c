@@ -705,7 +705,7 @@ void ADD_HL_SP(CPU *cpu)
     cpu->t_cycles = 8;
 }
 
-void ADD_SP_nn(CPU *cpu)
+void ADD_SP_e(CPU *cpu)
 {
     clear_flag(cpu, ZERO_FLAG);
     clear_flag(cpu, SUBTRACT_FLAG);
@@ -717,7 +717,7 @@ void ADD_SP_nn(CPU *cpu)
         n = (~n) + 1;
         cpu->SP -= n;
     } else {
-        if ((cpu->SP & 0xf) + (cpu->SP & 0xf) > 0xf) set_flag(cpu, HALF_CARRY_FLAG);
+        if ((cpu->SP & 0xf) + (n & 0xf) > 0xf) set_flag(cpu, HALF_CARRY_FLAG);
         if ((cpu->SP & 0x00ff) + n > 0xff) set_flag(cpu, CARRY_FLAG);
 
         cpu->SP += n;
@@ -1321,6 +1321,30 @@ void LD_SP_HL(CPU *cpu)
 {
     cpu->SP = cpu->registers.HL;
     cpu->t_cycles = 8;
+}
+
+void LD_HL_SPe(CPU *cpu)
+{
+    clear_flag(cpu, ZERO_FLAG);
+    clear_flag(cpu, SUBTRACT_FLAG);
+    clear_flag(cpu, HALF_CARRY_FLAG);
+    clear_flag(cpu, CARRY_FLAG);
+
+    uint8_t n = fetch_opcode(cpu);
+    uint16_t result;
+    if ((0b10000000 & n) != 0) {
+        n = (~n) + 1;
+        if ((cpu->SP & 0xf) < (n & 0xf)) set_flag(cpu, HALF_CARRY_FLAG);
+        if ((cpu->SP & 0xff) < n) set_flag(cpu, CARRY_FLAG);
+        result = cpu->SP - n;
+    } else {
+        if ((cpu->SP & 0xf) + (n & 0xf) > 0xf) set_flag(cpu, HALF_CARRY_FLAG);
+        if ((cpu->SP & 0x00ff) + n > 0xff) set_flag(cpu, CARRY_FLAG);
+        result = cpu->SP + n;
+    }
+
+    cpu->registers.HL = result;
+    cpu->t_cycles = 12;
 }
 
 // PUSH rr

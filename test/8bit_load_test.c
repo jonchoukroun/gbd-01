@@ -2,7 +2,6 @@
 #include <CUnit/Basic.h>
 #include "instructions.h"
 
-
 void test_LD_B_A(void)
 {
     CPU cpu;
@@ -512,6 +511,7 @@ void test_LD_A_n(void)
     cpu.PC = PC;
     LD_A_n(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
@@ -524,6 +524,7 @@ void test_LD_B_n(void)
     cpu.PC = PC;
     LD_B_n(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.B, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
@@ -536,6 +537,7 @@ void test_LD_C_n(void)
     cpu.PC = PC;
     LD_C_n(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.C, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
@@ -548,6 +550,7 @@ void test_LD_D_n(void)
     cpu.PC = PC;
     LD_D_n(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.D, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
@@ -560,6 +563,7 @@ void test_LD_E_n(void)
     cpu.PC = PC;
     LD_E_n(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.E, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
@@ -572,6 +576,7 @@ void test_LD_H_n(void)
     cpu.PC = PC;
     LD_H_n(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.H, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
@@ -584,6 +589,7 @@ void test_LD_L_n(void)
     cpu.PC = PC;
     LD_L_n(&cpu);
     CU_ASSERT_EQUAL(cpu.registers.L, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
 
@@ -977,178 +983,6 @@ void test_LD_HLD_A(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
-void test_LD_BC_nn(void)
-{
-    CPU cpu;
-    uint16_t PC = 0x2001;
-    cpu.PC = PC;
-    cpu.memory[PC] = 0x69;
-    cpu.memory[PC + 1] = 0x96;
-    LD_BC_nn(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.BC, 0x6996);
-    CU_ASSERT_EQUAL(cpu.PC, PC + 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
-}
-
-void test_LD_DE_nn(void)
-{
-    CPU cpu;
-    uint16_t PC = 0x3541;
-    cpu.PC = PC;
-    cpu.memory[PC] = 0x12;
-    cpu.memory[PC + 1] = 0xfa;
-    LD_DE_nn(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.DE, 0x12fa);
-    CU_ASSERT_EQUAL(cpu.PC, PC + 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
-}
-
-void test_LD_HL_nn(void)
-{
-    CPU cpu;
-    uint16_t PC = 0x2345;
-    cpu.PC = PC;
-    cpu.memory[PC] = 0xba;
-    cpu.memory[PC + 1] = 0xfa;
-    LD_HL_nn(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.HL, 0xbafa);
-    CU_ASSERT_EQUAL(cpu.PC, PC + 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
-}
-
-void test_LD_nn_SP(void)
-{
-    CPU cpu;
-    uint16_t PC = 0x2000;
-    uint16_t value = 0xabce;
-    cpu.PC = PC;
-    cpu.memory[PC] = 0x23;
-    cpu.memory[PC + 1] = 0x45;
-    cpu.SP = value;
-    LD_nn_SP(&cpu);
-    CU_ASSERT_EQUAL(read_word(&cpu, 0x2345), value);
-    CU_ASSERT_EQUAL(cpu.PC, PC + 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 20);
-}
-
-void test_LD_SP_HL(void)
-{
-    CPU cpu;
-    uint16_t value = 0xdef0;
-    cpu.registers.HL = value;
-    LD_SP_HL(&cpu);
-    CU_ASSERT_EQUAL(cpu.SP, value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-}
-
-void test_PUSH_AF(void)
-{
-    CPU cpu;
-    uint16_t SP = ADDRESS_BUS_SIZE;
-    uint16_t value = 0xabcd;
-    cpu.SP = SP;
-    cpu.registers.AF = value;
-    PUSH_AF(&cpu);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.SP], 0xab);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.SP + 1], 0xcd);
-    CU_ASSERT_EQUAL(cpu.SP, SP - 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
-}
-
-void test_PUSH_BC(void)
-{
-    CPU cpu;
-    uint16_t SP = ADDRESS_BUS_SIZE;
-    uint16_t value = 0xabcd;
-    cpu.SP = SP;
-    cpu.registers.BC = value;
-    PUSH_BC(&cpu);
-    CU_ASSERT_EQUAL(cpu.memory[SP - 1], 0xcd);
-    CU_ASSERT_EQUAL(cpu.memory[SP - 2], 0xab);
-    CU_ASSERT_EQUAL(cpu.SP, SP - 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
-}
-
-void test_PUSH_DE(void)
-{
-    CPU cpu;
-    uint16_t SP = ADDRESS_BUS_SIZE;
-    uint16_t value = 0xabcd;
-    cpu.SP = SP;
-    cpu.registers.DE = value;
-    PUSH_DE(&cpu);
-    CU_ASSERT_EQUAL(cpu.memory[SP - 1], 0xcd);
-    CU_ASSERT_EQUAL(cpu.memory[SP - 2], 0xab);
-    CU_ASSERT_EQUAL(cpu.SP, SP - 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
-}
-
-void test_PUSH_HL(void)
-{
-    CPU cpu;
-    uint16_t SP = ADDRESS_BUS_SIZE;
-    uint16_t value = 0xabcd;
-    cpu.SP = SP;
-    cpu.registers.HL = value;
-    PUSH_HL(&cpu);
-    CU_ASSERT_EQUAL(cpu.memory[SP - 1], 0xcd);
-    CU_ASSERT_EQUAL(cpu.memory[SP - 2], 0xab);
-    CU_ASSERT_EQUAL(cpu.SP, SP - 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
-}
-
-void test_POP_AF(void)
-{
-    CPU cpu;
-    uint16_t SP = 0;
-    cpu.SP = SP;
-    cpu.memory[SP] = 0x12;
-    cpu.memory[SP + 1] = 0x34;
-    POP_AF(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.AF, 0x1234);
-    CU_ASSERT_EQUAL(cpu.SP, SP + 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
-}
-
-void test_POP_BC(void)
-{
-    CPU cpu;
-    uint16_t SP = 0;
-    cpu.SP = SP;
-    cpu.memory[SP] = 0x12;
-    cpu.memory[SP + 1] = 0x34;
-    POP_BC(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.BC, 0x1234);
-    CU_ASSERT_EQUAL(cpu.SP, SP + 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
-}
-
-void test_POP_DE(void)
-{
-    CPU cpu;
-    uint16_t SP = 0;
-    cpu.SP = SP;
-    cpu.memory[SP] = 0x12;
-    cpu.memory[SP + 1] = 0x34;
-    POP_DE(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.DE, 0x1234);
-    CU_ASSERT_EQUAL(cpu.SP, SP + 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
-}
-
-void test_POP_HL(void)
-{
-    CPU cpu;
-    uint16_t SP = 0;
-    cpu.SP = SP;
-    cpu.memory[SP] = 0x12;
-    cpu.memory[SP + 1] = 0x34;
-    POP_HL(&cpu);
-    CU_ASSERT_EQUAL(cpu.registers.HL, 0x1234);
-    CU_ASSERT_EQUAL(cpu.SP, SP + 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
-}
-
 int main(void)
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -1156,7 +990,7 @@ int main(void)
         return CU_get_error();
     }
 
-    CU_Suite *test_suite = CU_add_suite("LD Instructions unit tests", NULL, NULL);
+    CU_Suite *test_suite = CU_add_suite("8 bit LD Instructions unit tests", NULL, NULL);
     if (test_suite == NULL) {
         printf("Failed to add test suite\n");
         CU_cleanup_registry();
@@ -1165,423 +999,358 @@ int main(void)
 
     if (CU_add_test(
             test_suite,
-            "LD Instructions | LD_B_A loads register A value into register B and sets cycles",
+            "8 bit LD Instructions | LD_B_A loads register A value into register B and sets cycles",
             test_LD_B_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_B_B loadss register B value into register B and sets cycles",
+            "8 bit LD Instructions | LD_B_B loadss register B value into register B and sets cycles",
             test_LD_B_B
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_B_C loads register C value into register B and sets cycles",
+            "8 bit LD Instructions | LD_B_C loads register C value into register B and sets cycles",
             test_LD_B_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_B_D loads register D value into register B and sets cycles",
+            "8 bit LD Instructions | LD_B_D loads register D value into register B and sets cycles",
             test_LD_B_D
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_B_E loads register E value into register B and sets cycles",
+            "8 bit LD Instructions | LD_B_E loads register E value into register B and sets cycles",
             test_LD_B_E
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_B_H loads register H value into register B and sets cycles",
+            "8 bit LD Instructions | LD_B_H loads register H value into register B and sets cycles",
             test_LD_B_H
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_B_L loads register L value into register B and sets cycles",
+            "8 bit LD Instructions | LD_B_L loads register L value into register B and sets cycles",
             test_LD_B_L
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_C_A loads register A value into register C and sets cycles",
+            "8 bit LD Instructions | LD_C_A loads register A value into register C and sets cycles",
             test_LD_C_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_C_B loads register B value into register C and sets cycles",
+            "8 bit LD Instructions | LD_C_B loads register B value into register C and sets cycles",
             test_LD_C_B
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_C_C loads register C value into register C and sets cycles",
+            "8 bit LD Instructions | LD_C_C loads register C value into register C and sets cycles",
             test_LD_C_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_C_D loads register D value into register C and sets cycles",
+            "8 bit LD Instructions | LD_C_D loads register D value into register C and sets cycles",
             test_LD_C_D
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_C_E loads register E value into register C and sets cycles",
+            "8 bit LD Instructions | LD_C_E loads register E value into register C and sets cycles",
             test_LD_C_E
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_C_H loads register H value into register C and sets cycles",
+            "8 bit LD Instructions | LD_C_H loads register H value into register C and sets cycles",
             test_LD_C_H
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_C_L loads register L value into register C and sets cycles",
+            "8 bit LD Instructions | LD_C_L loads register L value into register C and sets cycles",
             test_LD_C_L
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_D_A loads register A value into register D and sets cycles",
+            "8 bit LD Instructions | LD_D_A loads register A value into register D and sets cycles",
             test_LD_D_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_D_B loads register B value into register D and sets cycles",
+            "8 bit LD Instructions | LD_D_B loads register B value into register D and sets cycles",
             test_LD_D_B
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_D_C loads register C value into register D and sets cycles",
+            "8 bit LD Instructions | LD_D_C loads register C value into register D and sets cycles",
             test_LD_D_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_D_D loads register D value into register D and sets cycles",
+            "8 bit LD Instructions | LD_D_D loads register D value into register D and sets cycles",
             test_LD_D_D
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_D_E loads register E value into register D and sets cycles",
+            "8 bit LD Instructions | LD_D_E loads register E value into register D and sets cycles",
             test_LD_D_E
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_D_H loads register H value into register D and sets cycles",
+            "8 bit LD Instructions | LD_D_H loads register H value into register D and sets cycles",
             test_LD_D_H
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_D_L loads register L value into register D and sets cycles",
+            "8 bit LD Instructions | LD_D_L loads register L value into register D and sets cycles",
             test_LD_D_L
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_E_A loads register A value into register E and sets cycle",
+            "8 bit LD Instructions | LD_E_A loads register A value into register E and sets cycle",
             test_LD_E_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_E_B loads register B value into register E and sets cycle",
+            "8 bit LD Instructions | LD_E_B loads register B value into register E and sets cycle",
             test_LD_E_B
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_E_C loads register C value into register E and sets cycle",
+            "8 bit LD Instructions | LD_E_C loads register C value into register E and sets cycle",
             test_LD_E_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_E_D loads register D value into register E and sets cycle",
+            "8 bit LD Instructions | LD_E_D loads register D value into register E and sets cycle",
             test_LD_E_D
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_E_E loads register E value into register E and sets cycle",
+            "8 bit LD Instructions | LD_E_E loads register E value into register E and sets cycle",
             test_LD_E_E
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_E_H loads register H value into register E and sets cycle",
+            "8 bit LD Instructions | LD_E_H loads register H value into register E and sets cycle",
             test_LD_E_H
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_E_L loads register L value into register E and sets cycle",
+            "8 bit LD Instructions | LD_E_L loads register L value into register E and sets cycle",
             test_LD_E_L
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_H_A loads register A value into register H and sets cycle",
+            "8 bit LD Instructions | LD_H_A loads register A value into register H and sets cycle",
             test_LD_H_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_H_B loads register B value into register H and sets cycle",
+            "8 bit LD Instructions | LD_H_B loads register B value into register H and sets cycle",
             test_LD_H_B
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_H_C loads register C value into register H and sets cycle",
+            "8 bit LD Instructions | LD_H_C loads register C value into register H and sets cycle",
             test_LD_H_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_H_D loads register D value into register H and sets cycle",
+            "8 bit LD Instructions | LD_H_D loads register D value into register H and sets cycle",
             test_LD_H_D
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_H_E loads register E value into register H and sets cycle",
+            "8 bit LD Instructions | LD_H_E loads register E value into register H and sets cycle",
             test_LD_H_E
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_H_H loads register H value into register H and sets cycle",
+            "8 bit LD Instructions | LD_H_H loads register H value into register H and sets cycle",
             test_LD_H_H
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_H_L loads register L value into register H and sets cycle",
+            "8 bit LD Instructions | LD_H_L loads register L value into register H and sets cycle",
             test_LD_H_L
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_A_n loads immediate value into register be and sets cycles",
+            "8 bit LD Instructions | LD_A_n loads immediate value into register be and sets cycles",
             test_LD_A_n
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_B_n loads immediate value into register be and sets cycles",
+            "8 bit LD Instructions | LD_B_n loads immediate value into register be and sets cycles",
             test_LD_B_n
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_C_n loads immediate value into register be and sets cycles",
+            "8 bit LD Instructions | LD_C_n loads immediate value into register be and sets cycles",
             test_LD_C_n
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_D_n loads immediate value into register be and sets cycles",
+            "8 bit LD Instructions | LD_D_n loads immediate value into register be and sets cycles",
             test_LD_D_n
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_E_n loads immediate value into register be and sets cycles",
+            "8 bit LD Instructions | LD_E_n loads immediate value into register be and sets cycles",
             test_LD_E_n
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_H_n loads immediate value into register be and sets cycles",
+            "8 bit LD Instructions | LD_H_n loads immediate value into register be and sets cycles",
             test_LD_H_n
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_L_n loads immediate value into register be and sets cycles",
+            "8 bit LD Instructions | LD_L_n loads immediate value into register be and sets cycles",
             test_LD_L_n
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_A_HL loads value in address stored in HL, to register A and sets cycles",
+            "8 bit LD Instructions | LD_A_HL loads value in address stored in HL, to register A and sets cycles",
             test_LD_A_HL
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_B_HL loads value in address stored in HL, to register B and sets cycles",
+            "8 bit LD Instructions | LD_B_HL loads value in address stored in HL, to register B and sets cycles",
             test_LD_B_HL
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_C_HL loads value in address stored in HL, to register C and sets cycles",
+            "8 bit LD Instructions | LD_C_HL loads value in address stored in HL, to register C and sets cycles",
             test_LD_C_HL
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_D_HL loads value in address stored in HL, to register D and sets cycles",
+            "8 bit LD Instructions | LD_D_HL loads value in address stored in HL, to register D and sets cycles",
             test_LD_D_HL
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_E_HL loads value in address stored in HL, to register E and sets cycles",
+            "8 bit LD Instructions | LD_E_HL loads value in address stored in HL, to register E and sets cycles",
             test_LD_E_HL
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_H_HL loads value in address stored in HL, to register H and sets cycles",
+            "8 bit LD Instructions | LD_H_HL loads value in address stored in HL, to register H and sets cycles",
             test_LD_H_HL
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_L_HL loads value in address stored in HL, to register L and sets cycles",
+            "8 bit LD Instructions | LD_L_HL loads value in address stored in HL, to register L and sets cycles",
             test_LD_L_HL
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_HL_A loads register A value into byte pointed to by register HL",
+            "8 bit LD Instructions | LD_HL_A loads register A value into byte pointed to by register HL",
             test_LD_HL_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_HL_B loads register B value into byte pointed to by register HL",
+            "8 bit LD Instructions | LD_HL_B loads register B value into byte pointed to by register HL",
             test_LD_HL_B
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_HL_C loads register C value into byte pointed to by register HL",
+            "8 bit LD Instructions | LD_HL_C loads register C value into byte pointed to by register HL",
             test_LD_HL_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_HL_D loads register D value into byte pointed to by register HL",
+            "8 bit LD Instructions | LD_HL_D loads register D value into byte pointed to by register HL",
             test_LD_HL_D
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_HL_E loads register E value into byte pointed to by register HL",
+            "8 bit LD Instructions | LD_HL_E loads register E value into byte pointed to by register HL",
             test_LD_HL_E
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_HL_H loads register H value into byte pointed to by register HL",
+            "8 bit LD Instructions | LD_HL_H loads register H value into byte pointed to by register HL",
             test_LD_HL_H
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_HL_L loads register L value into byte pointed to by register HL",
+            "8 bit LD Instructions | LD_HL_L loads register L value into byte pointed to by register HL",
             test_LD_HL_L
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_HL_n loads immediate value into address stored in HL",
+            "8 bit LD Instructions | LD_HL_n loads immediate value into address stored in HL",
             test_LD_HL_n
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_A_BC loads byte pointed to by BC register into register A",
+            "8 bit LD Instructions | LD_A_BC loads byte pointed to by BC register into register A",
             test_LD_A_BC
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_A_DE loads byte pointed to by DE register into register A",
+            "8 bit LD Instructions | LD_A_DE loads byte pointed to by DE register into register A",
             test_LD_A_DE
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_BC_A loads value in register A into byte pointed to by register BC",
+            "8 bit LD Instructions | LD_BC_A loads value in register A into byte pointed to by register BC",
             test_LD_BC_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_DE_A loads value in register A into byte pointed to by register DE",
+            "8 bit LD Instructions | LD_DE_A loads value in register A into byte pointed to by register DE",
             test_LD_DE_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_A_nn loads byte pointed to by immediate value into register A",
+            "8 bit LD Instructions | LD_A_nn loads byte pointed to by immediate value into register A",
             test_LD_A_nn
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_nn_A loads value in register A into byte pointed to by immediate value",
+            "8 bit LD Instructions | LD_nn_A loads value in register A into byte pointed to by immediate value",
             test_LD_nn_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LDH_A_C loads byte pointed to by register C into register A",
+            "8 bit LD Instructions | LDH_A_C loads byte pointed to by register C into register A",
             test_LDH_A_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LDH_C_A loads value in register A into byte pointed to by register C",
+            "8 bit LD Instructions | LDH_C_A loads value in register A into byte pointed to by register C",
             test_LDH_C_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LDH_A_n loads byte at extended address from next PC into A",
+            "8 bit LD Instructions | LDH_A_n loads byte at extended address from next PC into A",
             test_LDH_A_n
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LDH_n_A loads value in register A into byte pointed to by extended address from next PC",
+            "8 bit LD Instructions | LDH_n_A loads value in register A into byte pointed to by extended address from next PC",
             test_LDH_n_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_A_HLI loads byte at address in HL then increments HL",
+            "8 bit LD Instructions | LD_A_HLI loads byte at address in HL then increments HL",
             test_LD_A_HLI
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_A_HLD loads byte at address in HL then decrements HL",
+            "8 bit LD Instructions | LD_A_HLD loads byte at address in HL then decrements HL",
             test_LD_A_HLD
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_HLI_A loads value in A into address in HL then increments HL",
+            "8 bit LD Instructions | LD_HLI_A loads value in A into address in HL then increments HL",
             test_LD_HLI_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "LD Instructions | LD_HLD_A loads value in A into address in HL then decrements HL",
+            "8 bit LD Instructions | LD_HLD_A loads value in A into address in HL then decrements HL",
             test_LD_HLD_A
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "LD Instructions | LD_BC_nn loads byte pointed to by immediate value into register BC",
-            test_LD_BC_nn
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "LD Instructions | LD_DE_nn loads byte pointed to by immediate value into register DE",
-            test_LD_DE_nn
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "LD Instructions | LD_HL_nn loads byte pointed to by immediate value into register HL",
-            test_LD_HL_nn
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "LD Instructions | LD_nn_SP loads value from SP into address pointed to by immediate data",
-            test_LD_nn_SP
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "LD Instructions | LD_SP_HL loads value in HL register into SP",
-            test_LD_SP_HL
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "PUSH | PUSH_AF pushes value from register AF onto stack and decrements SP",
-            test_PUSH_AF
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "PUSH | PUSH_BC pushes value from register BC onto stack and decrements SP",
-            test_PUSH_BC
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "PUSH | PUSH_DE pushes value from register DE onto stack and decrements SP",
-            test_PUSH_DE
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "LD Instructions | PUSH_HL pushes value from register HL onto stack and decrements SP",
-            test_PUSH_HL
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "LD Instructions | POP_AF pops value from stack into register AF and increments SP",
-            test_POP_AF
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "LD Instructions | POP_BC pops value from stack into register BC and increments SP",
-            test_POP_BC
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "LD Instructions | POP_DE pops value from stack into register DE and increments SP",
-            test_POP_DE
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
-            "LD Instructions | POP_HL pops value from stack into register HL and increments SP",
-            test_POP_HL
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();
