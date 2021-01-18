@@ -1443,10 +1443,12 @@ void RLA(CPU *cpu)
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
+
+    uint8_t carry = get_flag(cpu, C_FLAG);
 
     if (cpu->registers.A & 0b10000000) set_flag(cpu, C_FLAG);
     cpu->registers.A <<= 1;
+    cpu->registers.A |= carry;
     cpu->t_cycles = 4;
 }
 
@@ -1468,10 +1470,12 @@ void RRA(CPU *cpu)
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
+
+    uint8_t carry = get_flag(cpu, C_FLAG);
 
     if (cpu->registers.A & 1) set_flag(cpu, C_FLAG);
     cpu->registers.A >>= 1;
+    cpu->registers.A |= (carry << 7);
     cpu->t_cycles = 4;
 }
 
@@ -1600,6 +1604,8 @@ void RLC_HL(CPU *cpu)
 // RL r
 void RL_A(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1608,6 +1614,7 @@ void RL_A(CPU *cpu)
     if (cpu->registers.A & 0b10000000) set_flag(cpu, C_FLAG);
 
     cpu->registers.A <<= 1;
+    cpu->registers.A |= carry;
     if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
@@ -1615,6 +1622,8 @@ void RL_A(CPU *cpu)
 
 void RL_B(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1623,6 +1632,7 @@ void RL_B(CPU *cpu)
     if (cpu->registers.B & 0b10000000) set_flag(cpu, C_FLAG);
 
     cpu->registers.B <<= 1;
+    cpu->registers.B |= carry;
     if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
@@ -1630,6 +1640,8 @@ void RL_B(CPU *cpu)
 
 void RL_C(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1638,6 +1650,7 @@ void RL_C(CPU *cpu)
     if (cpu->registers.C & 0b10000000) set_flag(cpu, C_FLAG);
 
     cpu->registers.C <<= 1;
+    cpu->registers.C |= carry;
     if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
@@ -1645,6 +1658,8 @@ void RL_C(CPU *cpu)
 
 void RL_D(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1653,6 +1668,7 @@ void RL_D(CPU *cpu)
     if (cpu->registers.D & 0b10000000) set_flag(cpu, C_FLAG);
 
     cpu->registers.D <<= 1;
+    cpu->registers.D |= carry;
     if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
@@ -1660,6 +1676,8 @@ void RL_D(CPU *cpu)
 
 void RL_E(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1668,6 +1686,7 @@ void RL_E(CPU *cpu)
     if (cpu->registers.E & 0b10000000) set_flag(cpu, C_FLAG);
 
     cpu->registers.E <<= 1;
+    cpu->registers.E |= carry;
     if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
@@ -1675,6 +1694,8 @@ void RL_E(CPU *cpu)
 
 void RL_H(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1683,6 +1704,7 @@ void RL_H(CPU *cpu)
     if (cpu->registers.H & 0b10000000) set_flag(cpu, C_FLAG);
 
     cpu->registers.H <<= 1;
+    cpu->registers.H |= carry;
     if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
@@ -1690,6 +1712,8 @@ void RL_H(CPU *cpu)
 
 void RL_L(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1698,6 +1722,7 @@ void RL_L(CPU *cpu)
     if (cpu->registers.L & 0b10000000) set_flag(cpu, C_FLAG);
 
     cpu->registers.L <<= 1;
+    cpu->registers.L |= carry;
     if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
@@ -1705,6 +1730,8 @@ void RL_L(CPU *cpu)
 
 void RL_HL(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1713,7 +1740,9 @@ void RL_HL(CPU *cpu)
     uint8_t byte = read_byte(cpu, cpu->registers.HL);
     if (byte & 0b10000000) set_flag(cpu, C_FLAG);
 
-    write_byte(cpu, byte << 1, cpu->registers.HL);
+    byte <<= 1;
+    byte |= carry;
+    write_byte(cpu, byte, cpu->registers.HL);
     if (read_byte(cpu, cpu->registers.HL) == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 16;
@@ -1836,6 +1865,8 @@ void RRC_HL(CPU *cpu)
 // RR r
 void RR_A(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1843,6 +1874,7 @@ void RR_A(CPU *cpu)
 
     if (cpu->registers.A & 1) set_flag(cpu, C_FLAG);
     cpu->registers.A >>= 1;
+    cpu->registers.A |= (carry << 7);
     if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
@@ -1850,6 +1882,8 @@ void RR_A(CPU *cpu)
 
 void RR_B(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1857,6 +1891,7 @@ void RR_B(CPU *cpu)
 
     if (cpu->registers.B & 1) set_flag(cpu, C_FLAG);
     cpu->registers.B >>= 1;
+    cpu->registers.B |= (carry << 7);
     if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
@@ -1864,6 +1899,8 @@ void RR_B(CPU *cpu)
 
 void RR_C(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1871,6 +1908,7 @@ void RR_C(CPU *cpu)
 
     if (cpu->registers.C & 1) set_flag(cpu, C_FLAG);
     cpu->registers.C >>= 1;
+    cpu->registers.C |= (carry << 7);
     if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
@@ -1878,6 +1916,8 @@ void RR_C(CPU *cpu)
 
 void RR_D(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1885,6 +1925,7 @@ void RR_D(CPU *cpu)
 
     if (cpu->registers.D & 1) set_flag(cpu, C_FLAG);
     cpu->registers.D >>= 1;
+    cpu->registers.D |= (carry << 7);
     if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
@@ -1892,6 +1933,8 @@ void RR_D(CPU *cpu)
 
 void RR_E(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1899,6 +1942,7 @@ void RR_E(CPU *cpu)
 
     if (cpu->registers.E & 1) set_flag(cpu, C_FLAG);
     cpu->registers.E >>= 1;
+    cpu->registers.E |= (carry << 7);
     if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
@@ -1906,6 +1950,8 @@ void RR_E(CPU *cpu)
 
 void RR_H(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1913,6 +1959,7 @@ void RR_H(CPU *cpu)
 
     if (cpu->registers.H & 1) set_flag(cpu, C_FLAG);
     cpu->registers.H >>= 1;
+    cpu->registers.H |= (carry << 7);
     if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
@@ -1920,6 +1967,8 @@ void RR_H(CPU *cpu)
 
 void RR_L(CPU *cpu)
 {
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
@@ -1927,9 +1976,29 @@ void RR_L(CPU *cpu)
 
     if (cpu->registers.L & 1) set_flag(cpu, C_FLAG);
     cpu->registers.L >>= 1;
+    cpu->registers.L |= (carry << 7);
     if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 8;
+}
+
+void RR_HL(CPU *cpu)
+{
+    uint8_t carry = get_flag(cpu, C_FLAG);
+
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    if (byte & 1) set_flag(cpu, C_FLAG);
+    byte >>= 1;
+    byte |= (carry << 7);
+    write_byte(cpu, byte, cpu->registers.HL);
+    if (read_byte(cpu, cpu->registers.HL) == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 16;
 }
 
 
