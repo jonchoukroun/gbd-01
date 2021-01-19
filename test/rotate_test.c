@@ -618,7 +618,7 @@ int main()
         return CU_get_error();
     }
 
-    CU_Suite *test_suite = CU_add_suite("Rotate shift unit tests", NULL, NULL);
+    CU_Suite *test_suite = CU_add_suite("Rotate instructions unit tests", NULL, NULL);
     if (test_suite == NULL) {
         printf("Failed to add test suite\n");
         CU_cleanup_registry();
@@ -627,185 +627,185 @@ int main()
 
     if (CU_add_test(
             test_suite,
-            "Rotate Shift | RLCA rotates A to the left with bit 7 into bit 0 and the C flag",
+            "Rotate instructions | RLCA rotates A to the left with bit 7 into bit 0 and the C flag",
             test_RLCA
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RLA rotates A register to the left with C flag into bit 0 and bit 7 into the C flag",
+            "Rotate instructions | RLA rotates A register to the left with C flag into bit 0 and bit 7 into the C flag",
             test_RLA
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RRCA rotates A to the right with bit 0 into bit 7 and into the C flag",
+            "Rotate instructions | RRCA rotates A to the right with bit 0 into bit 7 and into the C flag",
             test_RRCA
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RRA rotates A to the right with the C flag into bit 7 and bit 0 into C flag",
+            "Rotate instructions | RRA rotates A to the right with the C flag into bit 7 and bit 0 into C flag",
             test_RRA
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RLC_A rotates A to the left with bit 7 into bit 0 and also into C flag",
+            "Rotate instructions | RLC_A rotates A to the left with bit 7 into bit 0 and also into C flag",
             test_RLC_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RLC_B rotates B to the left with bit 7 into bit 0 and also into C flag",
+            "Rotate instructions | RLC_B rotates B to the left with bit 7 into bit 0 and also into C flag",
             test_RLC_B
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RLC_C rotates C to the left with bit 7 into bit 0 and also into C flag",
+            "Rotate instructions | RLC_C rotates C to the left with bit 7 into bit 0 and also into C flag",
             test_RLC_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RLC_D rotates D to the left with bit 7 into bit 0 and also into C flag",
+            "Rotate instructions | RLC_D rotates D to the left with bit 7 into bit 0 and also into C flag",
             test_RLC_D
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RLC_E rotates E to the left with bit 7 into bit 0 and also into C flag",
+            "Rotate instructions | RLC_E rotates E to the left with bit 7 into bit 0 and also into C flag",
             test_RLC_E
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RLC_H rotates H to the left with bit 7 into bit 0 and also into C flag",
+            "Rotate instructions | RLC_H rotates H to the left with bit 7 into bit 0 and also into C flag",
             test_RLC_H
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RLC_L rotates L to the left with bit 7 into bit 0 and also into C flag",
+            "Rotate instructions | RLC_L rotates L to the left with bit 7 into bit 0 and also into C flag",
             test_RLC_L
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RLC_B rotates byte at HL to the left with bit 7 into bit 0 and also into C flag",
+            "Rotate instructions | RLC_B rotates byte at HL to the left with bit 7 into bit 0 and also into C flag",
             test_RLC_HL
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RL_A rotates A to the left with C flag into bit 0 and bit 7 into C flag",
+            "Rotate instructions | RL_A rotates A to the left with C flag into bit 0 and bit 7 into C flag",
             test_RL_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RL_B rotates B to the left with C flag into bit 0 and bit 7 into C flag",
+            "Rotate instructions | RL_B rotates B to the left with C flag into bit 0 and bit 7 into C flag",
             test_RL_B
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RL_C rotates C to the left with C flag into bit 0 and bit 7 into C flag",
+            "Rotate instructions | RL_C rotates C to the left with C flag into bit 0 and bit 7 into C flag",
             test_RL_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RL_D rotates D to the left with C flag into bit 0 and bit 7 into C flag",
+            "Rotate instructions | RL_D rotates D to the left with C flag into bit 0 and bit 7 into C flag",
             test_RL_D
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RL_E rotates E to the left with C flag into bit 0 and bit 7 into C flag",
+            "Rotate instructions | RL_E rotates E to the left with C flag into bit 0 and bit 7 into C flag",
             test_RL_E
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RL_H rotates H to the left with C flag into bit 0 and bit 7 into C flag",
+            "Rotate instructions | RL_H rotates H to the left with C flag into bit 0 and bit 7 into C flag",
             test_RL_H
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RL_L rotates L to the left with C flag into bit 0 and bit 7 into C flag",
+            "Rotate instructions | RL_L rotates L to the left with C flag into bit 0 and bit 7 into C flag",
             test_RL_L
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RL_HL rotates HL to the left with C flag into bit 0 and bit 7 into C flag",
+            "Rotate instructions | RL_HL rotates HL to the left with C flag into bit 0 and bit 7 into C flag",
             test_RL_HL
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RRC_A rotates A to the right with bit 0 moved to bit 7 and into the C flag",
+            "Rotate instructions | RRC_A rotates A to the right with bit 0 moved to bit 7 and into the C flag",
             test_RRC_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RRC_B rotates B to the right with bit 0 moved to bit 7 and into the C flag",
+            "Rotate instructions | RRC_B rotates B to the right with bit 0 moved to bit 7 and into the C flag",
             test_RRC_B
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RRC_C rotates C to the right with bit 0 moved to bit 7 and into the C flag",
+            "Rotate instructions | RRC_C rotates C to the right with bit 0 moved to bit 7 and into the C flag",
             test_RRC_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RRC_D rotates D to the right with bit 0 moved to bit 7 and into the C flag",
+            "Rotate instructions | RRC_D rotates D to the right with bit 0 moved to bit 7 and into the C flag",
             test_RRC_D
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RRC_E rotates E to the right with bit 0 moved to bit 7 and into the C flag",
+            "Rotate instructions | RRC_E rotates E to the right with bit 0 moved to bit 7 and into the C flag",
             test_RRC_E
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RRC_H rotates H to the right with bit 0 moved to bit 7 and into the C flag",
+            "Rotate instructions | RRC_H rotates H to the right with bit 0 moved to bit 7 and into the C flag",
             test_RRC_H
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RRC_L rotates L to the right with bit 0 moved to bit 7 and into the C flag",
+            "Rotate instructions | RRC_L rotates L to the right with bit 0 moved to bit 7 and into the C flag",
             test_RRC_L
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RRC_HL rotates byte at HL to the right with bit 0 moved to bit 7 and into the C flag",
+            "Rotate instructions | RRC_HL rotates byte at HL to the right with bit 0 moved to bit 7 and into the C flag",
             test_RRC_HL
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RR_A rotates A to the right with the C flag into bit 7 and bit 0 into the C flag",
+            "Rotate instructions | RR_A rotates A to the right with the C flag into bit 7 and bit 0 into the C flag",
             test_RR_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RR_B rotates B to the right with the C flag into bit 7 and bit 0 into the C flag",
+            "Rotate instructions | RR_B rotates B to the right with the C flag into bit 7 and bit 0 into the C flag",
             test_RR_B
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RR_C rotates C to the right with the C flag into bit 7 and bit 0 into the C flag",
+            "Rotate instructions | RR_C rotates C to the right with the C flag into bit 7 and bit 0 into the C flag",
             test_RR_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RR_D rotates D to the right with the C flag into bit 7 and bit 0 into the C flag",
+            "Rotate instructions | RR_D rotates D to the right with the C flag into bit 7 and bit 0 into the C flag",
             test_RR_D
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RR_E rotates E to the right with the C flag into bit 7 and bit 0 into the C flag",
+            "Rotate instructions | RR_E rotates E to the right with the C flag into bit 7 and bit 0 into the C flag",
             test_RR_E
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RR_H rotates H to the right with the C flag into bit 7 and bit 0 into the C flag",
+            "Rotate instructions | RR_H rotates H to the right with the C flag into bit 7 and bit 0 into the C flag",
             test_RR_H
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RR_L rotates L to the right with the C flag into bit 7 and bit 0 into the C flag",
+            "Rotate instructions | RR_L rotates L to the right with the C flag into bit 7 and bit 0 into the C flag",
             test_RR_L
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Rotate Shift | RR_HL rotates byte at HL to the right with the C flag into bit 7 and bit 0 into the C flag",
+            "Rotate instructions | RR_HL rotates byte at HL to the right with the C flag into bit 7 and bit 0 into the C flag",
             test_RR_HL
         ) == NULL) {
-        printf("Failed to add test to rotate shift unit test suite\n");
+        printf("Failed to add test to rotate instruction unit test suite\n");
         CU_cleanup_registry();
         return CU_get_error();
     }
