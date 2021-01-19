@@ -333,6 +333,51 @@ void RR_L(CPU *);
 void RR_HL(CPU *);
 
 
+// ********************
+// Bit shift operations
+// ********************
+
+// SLA r
+void SLA_A(CPU *);
+void SLA_B(CPU *);
+void SLA_C(CPU *);
+void SLA_D(CPU *);
+void SLA_E(CPU *);
+void SLA_H(CPU *);
+void SLA_L(CPU *);
+void SLA_HL(CPU *);
+
+// SRA r
+void SRA_A(CPU *);
+void SRA_B(CPU *);
+void SRA_C(CPU *);
+void SRA_D(CPU *);
+void SRA_E(CPU *);
+void SRA_H(CPU *);
+void SRA_L(CPU *);
+void SRA_HL(CPU *);
+
+// SRL r
+void SRL_A(CPU *);
+void SRL_B(CPU *);
+void SRL_C(CPU *);
+void SRL_D(CPU *);
+void SRL_E(CPU *);
+void SRL_H(CPU *);
+void SRL_L(CPU *);
+void SRL_HL(CPU *);
+
+// SWAP r
+void SWAP_A(CPU *);
+void SWAP_B(CPU *);
+void SWAP_C(CPU *);
+void SWAP_D(CPU *);
+void SWAP_E(CPU *);
+void SWAP_H(CPU *);
+void SWAP_L(CPU *);
+void SWAP_HL(CPU *);
+
+
 // *****************************
 // Misc. Arithmetic Instructions
 // *****************************
@@ -365,11 +410,11 @@ static const OpcodeInstruction opcode_table[256] = {
 };
 
 static const OpcodeInstruction prefixed_opcode_table[256] = {
-/*           0x0      0x1      0x2      0x3      0x4      0x5       0x6     0x7      0x8      0x9      0xa      0xb      0xc      0xd      0xe      0xf */
+/*           0x0      0x1      0x2      0x3      0x4      0x5       0x6      0x7      0x8      0x9      0xa      0xb      0xc      0xd      0xe      0xf */
 /* 0 */   &RLC_B,  &RLC_C,  &RLC_D,  &RLC_E,  &RLC_H,  &RLC_L,  &RLC_HL,  &RLC_A,  &RRC_B,  &RRC_C,  &RRC_D,  &RRC_E,  &RRC_H,  &RRC_L, &RRC_HL,  &RRC_A,
-/* 1 */    &RL_B,   &RL_C,   &RL_D,   &RL_E,   &RL_H,   &RL_L,   &RL_HL,   &RL_A,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
-/* 2 */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
-/* 3 */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
+/* 1 */    &RL_B,   &RL_C,   &RL_D,   &RL_E,   &RL_H,   &RL_L,   &RL_HL,   &RL_A,   &RR_B,   &RR_C,   &RR_D,   &RR_E,   &RR_H,   &RR_L,  &RR_HL,   &RR_A,
+/* 2 */   &SLA_B,  &SLA_C,  &SLA_D,  &SLA_E,  &SLA_H,  &SLA_L,  &SLA_HL,  &SLA_A,  &SRA_B,  &SRA_C,  &SRA_D,  &SRA_E,  &SRA_H,  &SRA_L, &SRA_HL,  &SRA_A,
+/* 3 */  &SWAP_B, &SWAP_C, &SWAP_D, &SWAP_E, &SWAP_H, &SWAP_L, &SWAP_HL, &SWAP_A,  &SRL_B,  &SRL_C,  &SRL_D,  &SRL_E,  &SRL_H,  &SRL_L, &SRL_HL,  &SRL_A,
 /* 4 */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
 /* 5 */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
 /* 6 */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,

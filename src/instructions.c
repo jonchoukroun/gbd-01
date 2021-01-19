@@ -2002,6 +2002,493 @@ void RR_HL(CPU *cpu)
 }
 
 
+// **********************
+// Bit Shift Instructions
+// **********************
+
+// SLA r
+void SLA_A(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.A & 0b10000000) set_flag(cpu, C_FLAG);
+
+    cpu->registers.A <<= 1;
+    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SLA_B(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.B & 0b10000000) set_flag(cpu, C_FLAG);
+
+    cpu->registers.B <<= 1;
+    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SLA_C(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.C & 0b10000000) set_flag(cpu, C_FLAG);
+
+    cpu->registers.C <<= 1;
+    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SLA_D(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.D & 0b10000000) set_flag(cpu, C_FLAG);
+
+    cpu->registers.D <<= 1;
+    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SLA_E(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.E & 0b10000000) set_flag(cpu, C_FLAG);
+
+    cpu->registers.E <<= 1;
+    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SLA_H(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.H & 0b10000000) set_flag(cpu, C_FLAG);
+
+    cpu->registers.H <<= 1;
+    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SLA_L(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.L & 0b10000000) set_flag(cpu, C_FLAG);
+
+    cpu->registers.L <<= 1;
+    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SLA_HL(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    if (byte & 0b10000000) set_flag(cpu, C_FLAG);
+
+    byte <<= 1;
+    if (byte == 0) set_flag(cpu, Z_FLAG);
+
+    write_byte(cpu, byte, cpu->registers.HL);
+
+    cpu->t_cycles = 16;
+}
+
+// SRA r
+void SRA_A(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.A & 1) set_flag(cpu, C_FLAG);
+
+    cpu->registers.A >>= 1;
+    if (cpu->registers.A & 0b01000000) cpu->registers.A |= 0b10000000;
+    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRA_B(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.B & 1) set_flag(cpu, C_FLAG);
+
+    cpu->registers.B >>= 1;
+    if (cpu->registers.B & 0b01000000) cpu->registers.B |= 0b10000000;
+    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRA_C(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.C & 1) set_flag(cpu, C_FLAG);
+
+    cpu->registers.C >>= 1;
+    if (cpu->registers.C & 0b01000000) cpu->registers.C |= 0b10000000;
+    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRA_D(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.D & 1) set_flag(cpu, C_FLAG);
+
+    cpu->registers.D >>= 1;
+    if (cpu->registers.D & 0b01000000) cpu->registers.D |= 0b10000000;
+    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRA_E(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.E & 1) set_flag(cpu, C_FLAG);
+
+    cpu->registers.E >>= 1;
+    if (cpu->registers.E & 0b01000000) cpu->registers.E |= 0b10000000;
+    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRA_H(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.H & 1) set_flag(cpu, C_FLAG);
+
+    cpu->registers.H >>= 1;
+    if (cpu->registers.H & 0b01000000) cpu->registers.H |= 0b10000000;
+    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRA_L(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.L & 1) set_flag(cpu, C_FLAG);
+
+    cpu->registers.L >>= 1;
+    if (cpu->registers.L & 0b01000000) cpu->registers.L |= 0b10000000;
+    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRA_HL(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    if (byte & 1) set_flag(cpu, C_FLAG);
+
+    byte >>= 1;
+    if (byte & 0b01000000) byte |= 0b10000000;
+    if (byte == 0) set_flag(cpu, Z_FLAG);
+    write_byte(cpu, byte, cpu->registers.HL);
+
+    cpu->t_cycles = 16;
+}
+
+// SRL r
+void SRL_A(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.A & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.A >>= 1;
+    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRL_B(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.B & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.B >>= 1;
+    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRL_C(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.C & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.C >>= 1;
+    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRL_D(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.D & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.D >>= 1;
+    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRL_E(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.E & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.E >>= 1;
+    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRL_H(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.H & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.H >>= 1;
+    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRL_L(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    if (cpu->registers.L & 1) set_flag(cpu, C_FLAG);
+    cpu->registers.L >>= 1;
+    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SRL_HL(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    if (byte & 1) set_flag(cpu, C_FLAG);
+    byte >>= 1;
+    if (byte == 0) set_flag(cpu, Z_FLAG);
+    write_byte(cpu, byte, cpu->registers.HL);
+
+    cpu->t_cycles = 16;
+}
+
+// SWAP r
+uint8_t swap_byte(uint8_t n)
+{
+    return ((n & 0xf0) >> 4) | ((n & 0xf) << 4);
+}
+
+void SWAP_A(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    cpu->registers.A = swap_byte(cpu->registers.A);
+    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SWAP_B(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    cpu->registers.B = swap_byte(cpu->registers.B);
+    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SWAP_C(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    cpu->registers.C = swap_byte(cpu->registers.C);
+    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SWAP_D(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    cpu->registers.D = swap_byte(cpu->registers.D);
+    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SWAP_E(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    cpu->registers.E = swap_byte(cpu->registers.E);
+    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SWAP_H(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    cpu->registers.H = swap_byte(cpu->registers.H);
+    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SWAP_L(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    cpu->registers.L = swap_byte(cpu->registers.L);
+    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 8;
+}
+
+void SWAP_HL(CPU *cpu)
+{
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    byte = swap_byte(byte);
+    if (byte == 0) set_flag(cpu, Z_FLAG);
+    write_byte(cpu, byte, cpu->registers.HL);
+
+    cpu->t_cycles = 16;
+}
+
+
 // *****************************
 // Misc. Arithmetic Instructions
 // *****************************
