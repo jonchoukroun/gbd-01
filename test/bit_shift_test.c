@@ -624,7 +624,7 @@ int main()
             "Bit Shift Instruction | SWAP_HL swaps byte at HL's upper and lower bits and only affects Z flag",
             test_SWAP_HL
         ) == NULL) {
-        printf("Failed to add test to rotate shift unit test suite\n");
+        printf("Failed to add test to bit shift unit test suite\n");
         CU_cleanup_registry();
         return CU_get_error();
     }
