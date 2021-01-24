@@ -7,7 +7,7 @@ void test_LD_B_B(void)
     CPU cpu;
     uint8_t test_value = 0xa;
     cpu.registers.B = test_value;
-    LD_r_r1(&cpu, 0x40);
+    LD_r_r(&cpu, 0x40);
     CU_ASSERT_EQUAL(cpu.registers.B, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
@@ -18,7 +18,7 @@ void test_LD_B_C(void)
     uint8_t test_value = 0xa;
     cpu.registers.B = 0;
     cpu.registers.C = test_value;
-    LD_r_r1(&cpu, 0x41);
+    LD_r_r(&cpu, 0x41);
     CU_ASSERT_EQUAL(cpu.registers.B, test_value);
     CU_ASSERT_EQUAL(cpu.registers.C, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -30,7 +30,7 @@ void test_LD_B_D(void)
     uint8_t test_value = 0xa;
     cpu.registers.B = 0;
     cpu.registers.D = test_value;
-    LD_r_r1(&cpu, 0x42);
+    LD_r_r(&cpu, 0x42);
     CU_ASSERT_EQUAL(cpu.registers.B, test_value);
     CU_ASSERT_EQUAL(cpu.registers.D, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -42,7 +42,7 @@ void test_LD_B_E(void)
     uint8_t test_value = 0xa;
     cpu.registers.B = 0;
     cpu.registers.E = test_value;
-    LD_r_r1(&cpu, 0x43);
+    LD_r_r(&cpu, 0x43);
     CU_ASSERT_EQUAL(cpu.registers.B, test_value);
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -54,7 +54,7 @@ void test_LD_B_H(void)
     uint8_t test_value = 0xa;
     cpu.registers.B = 0;
     cpu.registers.H = test_value;
-    LD_r_r1(&cpu, 0x44);
+    LD_r_r(&cpu, 0x44);
     CU_ASSERT_EQUAL(cpu.registers.B, test_value);
     CU_ASSERT_EQUAL(cpu.registers.H, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -66,7 +66,7 @@ void test_LD_B_L(void)
     uint8_t test_value = 0xa;
     cpu.registers.B = 0;
     cpu.registers.L = test_value;
-    LD_r_r1(&cpu, 0x45);
+    LD_r_r(&cpu, 0x45);
     CU_ASSERT_EQUAL(cpu.registers.B, test_value);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -78,7 +78,7 @@ void test_LD_B_A(void)
     uint8_t test_value = 0xa;
     cpu.registers.B = 0;
     cpu.registers.A = test_value;
-    LD_r_r1(&cpu, 0x47);
+    LD_r_r(&cpu, 0x47);
     CU_ASSERT_EQUAL(cpu.registers.B, test_value);
     CU_ASSERT_EQUAL(cpu.registers.A, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -90,7 +90,7 @@ void test_LD_C_B(void)
     uint8_t test_value = 0x5c;
     cpu.registers.C = 0;
     cpu.registers.B = test_value;
-    LD_r_r1(&cpu, 0x48);
+    LD_r_r(&cpu, 0x48);
     CU_ASSERT_EQUAL(cpu.registers.C, test_value);
     CU_ASSERT_EQUAL(cpu.registers.B, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -101,7 +101,7 @@ void test_LD_C_C(void)
     CPU cpu;
     uint8_t test_value = 0x5c;
     cpu.registers.C = test_value;
-    LD_r_r1(&cpu, 0x49);
+    LD_r_r(&cpu, 0x49);
     CU_ASSERT_EQUAL(cpu.registers.C, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
@@ -112,7 +112,7 @@ void test_LD_C_D(void)
     uint8_t test_value = 0x5c;
     cpu.registers.C = 0;
     cpu.registers.D = test_value;
-    LD_r_r1(&cpu, 0x4a);
+    LD_r_r(&cpu, 0x4a);
     CU_ASSERT_EQUAL(cpu.registers.C, test_value);
     CU_ASSERT_EQUAL(cpu.registers.D, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -124,7 +124,7 @@ void test_LD_C_E(void)
     uint8_t test_value = 0x5c;
     cpu.registers.C = 0;
     cpu.registers.E = test_value;
-    LD_r_r1(&cpu, 0x4b);
+    LD_r_r(&cpu, 0x4b);
     CU_ASSERT_EQUAL(cpu.registers.C, test_value);
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -136,7 +136,7 @@ void test_LD_C_H(void)
     uint8_t test_value = 0x5c;
     cpu.registers.C = 0;
     cpu.registers.H = test_value;
-    LD_r_r1(&cpu, 0x4c);
+    LD_r_r(&cpu, 0x4c);
     CU_ASSERT_EQUAL(cpu.registers.C, test_value);
     CU_ASSERT_EQUAL(cpu.registers.H, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -148,7 +148,7 @@ void test_LD_C_L(void)
     uint8_t test_value = 0x5c;
     cpu.registers.C = 0;
     cpu.registers.L = test_value;
-    LD_r_r1(&cpu, 0x4d);
+    LD_r_r(&cpu, 0x4d);
     CU_ASSERT_EQUAL(cpu.registers.C, test_value);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -160,7 +160,7 @@ void test_LD_C_A(void)
     uint8_t test_value = 0x5c;
     cpu.registers.C = 0;
     cpu.registers.A = test_value;
-    LD_r_r1(&cpu, 0x4f);
+    LD_r_r(&cpu, 0x4f);
     CU_ASSERT_EQUAL(cpu.registers.C, test_value);
     CU_ASSERT_EQUAL(cpu.registers.A, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -172,7 +172,7 @@ void test_LD_D_B(void)
     uint8_t test_value = 0x01;
     cpu.registers.D = 0;
     cpu.registers.B = test_value;
-    LD_r_r1(&cpu, 0x50);
+    LD_r_r(&cpu, 0x50);
     CU_ASSERT_EQUAL(cpu.registers.D, test_value);
     CU_ASSERT_EQUAL(cpu.registers.B, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -184,7 +184,7 @@ void test_LD_D_C(void)
     uint8_t test_value = 0x01;
     cpu.registers.D = 0;
     cpu.registers.C = test_value;
-    LD_r_r1(&cpu, 0x51);
+    LD_r_r(&cpu, 0x51);
     CU_ASSERT_EQUAL(cpu.registers.D, test_value);
     CU_ASSERT_EQUAL(cpu.registers.C, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -196,7 +196,7 @@ void test_LD_D_D(void)
     uint8_t test_value = 0x01;
     cpu.registers.D = 0;
     cpu.registers.D = test_value;
-    LD_r_r1(&cpu, 0x52);
+    LD_r_r(&cpu, 0x52);
     CU_ASSERT_EQUAL(cpu.registers.D, test_value);
     CU_ASSERT_EQUAL(cpu.registers.D, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -208,7 +208,7 @@ void test_LD_D_E(void)
     uint8_t test_value = 0x01;
     cpu.registers.D = 0;
     cpu.registers.E = test_value;
-    LD_r_r1(&cpu, 0x53);
+    LD_r_r(&cpu, 0x53);
     CU_ASSERT_EQUAL(cpu.registers.D, test_value);
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -220,7 +220,7 @@ void test_LD_D_H(void)
     uint8_t test_value = 0x01;
     cpu.registers.D = 0;
     cpu.registers.H = test_value;
-    LD_r_r1(&cpu, 0x54);
+    LD_r_r(&cpu, 0x54);
     CU_ASSERT_EQUAL(cpu.registers.D, test_value);
     CU_ASSERT_EQUAL(cpu.registers.H, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -232,7 +232,7 @@ void test_LD_D_L(void)
     uint8_t test_value = 0x01;
     cpu.registers.D = 0;
     cpu.registers.L = test_value;
-    LD_r_r1(&cpu, 0x55);
+    LD_r_r(&cpu, 0x55);
     CU_ASSERT_EQUAL(cpu.registers.D, test_value);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -244,7 +244,7 @@ void test_LD_D_A(void)
     uint8_t test_value = 0x01;
     cpu.registers.D = 0;
     cpu.registers.A = test_value;
-    LD_r_r1(&cpu, 0x57);
+    LD_r_r(&cpu, 0x57);
     CU_ASSERT_EQUAL(cpu.registers.D, test_value);
     CU_ASSERT_EQUAL(cpu.registers.A, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -256,7 +256,7 @@ void test_LD_E_B(void)
     uint8_t test_value = 0xee;
     cpu.registers.E = 0;
     cpu.registers.B = test_value;
-    LD_r_r1(&cpu, 0x58);
+    LD_r_r(&cpu, 0x58);
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.registers.B, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -268,7 +268,7 @@ void test_LD_E_C(void)
     uint8_t test_value = 0xee;
     cpu.registers.E = 0;
     cpu.registers.C = test_value;
-    LD_r_r1(&cpu, 0x59);
+    LD_r_r(&cpu, 0x59);
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.registers.C, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -280,7 +280,7 @@ void test_LD_E_D(void)
     uint8_t test_value = 0xee;
     cpu.registers.E = 0;
     cpu.registers.D = test_value;
-    LD_r_r1(&cpu, 0x5a);
+    LD_r_r(&cpu, 0x5a);
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.registers.D, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -292,7 +292,7 @@ void test_LD_E_E(void)
     uint8_t test_value = 0xee;
     cpu.registers.E = 0;
     cpu.registers.E = test_value;
-    LD_r_r1(&cpu, 0x5b);
+    LD_r_r(&cpu, 0x5b);
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -304,7 +304,7 @@ void test_LD_E_H(void)
     uint8_t test_value = 0xee;
     cpu.registers.E = 0;
     cpu.registers.H = test_value;
-    LD_r_r1(&cpu, 0x5c);
+    LD_r_r(&cpu, 0x5c);
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.registers.H, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -316,7 +316,7 @@ void test_LD_E_L(void)
     uint8_t test_value = 0xee;
     cpu.registers.E = 0;
     cpu.registers.L = test_value;
-    LD_r_r1(&cpu, 0x5d);
+    LD_r_r(&cpu, 0x5d);
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -328,7 +328,7 @@ void test_LD_E_A(void)
     uint8_t test_value = 0xee;
     cpu.registers.E = 0;
     cpu.registers.A = test_value;
-    LD_r_r1(&cpu, 0x5f);
+    LD_r_r(&cpu, 0x5f);
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.registers.A, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -340,7 +340,7 @@ void test_LD_H_B(void)
     uint8_t test_value = 0xee;
     cpu.registers.H = 0;
     cpu.registers.B = test_value;
-    LD_r_r1(&cpu, 0x60);
+    LD_r_r(&cpu, 0x60);
     CU_ASSERT_EQUAL(cpu.registers.H, test_value);
     CU_ASSERT_EQUAL(cpu.registers.B, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -352,7 +352,7 @@ void test_LD_H_C(void)
     uint8_t test_value = 0xee;
     cpu.registers.H = 0;
     cpu.registers.C = test_value;
-    LD_r_r1(&cpu, 0x61);
+    LD_r_r(&cpu, 0x61);
     CU_ASSERT_EQUAL(cpu.registers.H, test_value);
     CU_ASSERT_EQUAL(cpu.registers.C, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -364,7 +364,7 @@ void test_LD_H_D(void)
     uint8_t test_value = 0xee;
     cpu.registers.H = 0;
     cpu.registers.D = test_value;
-    LD_r_r1(&cpu, 0x62);
+    LD_r_r(&cpu, 0x62);
     CU_ASSERT_EQUAL(cpu.registers.H, test_value);
     CU_ASSERT_EQUAL(cpu.registers.D, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -376,7 +376,7 @@ void test_LD_H_E(void)
     uint8_t test_value = 0xee;
     cpu.registers.H = 0;
     cpu.registers.E = test_value;
-    LD_r_r1(&cpu, 0x63);
+    LD_r_r(&cpu, 0x63);
     CU_ASSERT_EQUAL(cpu.registers.H, test_value);
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -388,7 +388,7 @@ void test_LD_H_H(void)
     uint8_t test_value = 0xee;
     cpu.registers.H = 0;
     cpu.registers.H = test_value;
-    LD_r_r1(&cpu, 0x64);
+    LD_r_r(&cpu, 0x64);
     CU_ASSERT_EQUAL(cpu.registers.H, test_value);
     CU_ASSERT_EQUAL(cpu.registers.H, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -400,7 +400,7 @@ void test_LD_H_L(void)
     uint8_t test_value = 0xee;
     cpu.registers.H = 0;
     cpu.registers.L = test_value;
-    LD_r_r1(&cpu, 0x65);
+    LD_r_r(&cpu, 0x65);
     CU_ASSERT_EQUAL(cpu.registers.H, test_value);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -412,7 +412,7 @@ void test_LD_H_A(void)
     uint8_t test_value = 0xee;
     cpu.registers.H = 0;
     cpu.registers.A = test_value;
-    LD_r_r1(&cpu, 0x67);
+    LD_r_r(&cpu, 0x67);
     CU_ASSERT_EQUAL(cpu.registers.H, test_value);
     CU_ASSERT_EQUAL(cpu.registers.A, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -424,7 +424,7 @@ void test_LD_L_B(void)
     uint8_t test_value = 0xee;
     cpu.registers.L = 0;
     cpu.registers.B = test_value;
-    LD_r_r1(&cpu, 0x68);
+    LD_r_r(&cpu, 0x68);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.registers.B, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -436,7 +436,7 @@ void test_LD_L_C(void)
     uint8_t test_value = 0xee;
     cpu.registers.L = 0;
     cpu.registers.C = test_value;
-    LD_r_r1(&cpu, 0x69);
+    LD_r_r(&cpu, 0x69);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.registers.C, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -448,7 +448,7 @@ void test_LD_L_D(void)
     uint8_t test_value = 0xee;
     cpu.registers.L = 0;
     cpu.registers.D = test_value;
-    LD_r_r1(&cpu, 0x6a);
+    LD_r_r(&cpu, 0x6a);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.registers.D, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -460,7 +460,7 @@ void test_LD_L_E(void)
     uint8_t test_value = 0xee;
     cpu.registers.L = 0;
     cpu.registers.E = test_value;
-    LD_r_r1(&cpu, 0x6b);
+    LD_r_r(&cpu, 0x6b);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -472,7 +472,7 @@ void test_LD_L_H(void)
     uint8_t test_value = 0xee;
     cpu.registers.L = 0;
     cpu.registers.H = test_value;
-    LD_r_r1(&cpu, 0x6c);
+    LD_r_r(&cpu, 0x6c);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.registers.H, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -484,7 +484,7 @@ void test_LD_L_L(void)
     uint8_t test_value = 0xee;
     cpu.registers.L = 0;
     cpu.registers.L = test_value;
-    LD_r_r1(&cpu, 0x6d);
+    LD_r_r(&cpu, 0x6d);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
@@ -496,102 +496,102 @@ void test_LD_L_A(void)
     uint8_t test_value = 0xee;
     cpu.registers.L = 0;
     cpu.registers.A = test_value;
-    LD_r_r1(&cpu, 0x6f);
+    LD_r_r(&cpu, 0x6f);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.registers.A, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-// void test_LD_A_n(void)
-// {
-//     CPU cpu;
-//     uint16_t PC = 0x1000;
-//     uint8_t value = 0xab;
-//     cpu.memory[PC] = value;
-//     cpu.PC = PC;
-//     LD_A_n(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.A, value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-//     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
-// }
+void test_LD_B_n(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x1010;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
+    LD_r_n(&cpu, 0x06);
+    CU_ASSERT_EQUAL(cpu.registers.B, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+}
 
-// void test_LD_B_n(void)
-// {
-//     CPU cpu;
-//     uint16_t PC = 0x1010;
-//     uint8_t value = 0xab;
-//     cpu.memory[PC] = value;
-//     cpu.PC = PC;
-//     LD_B_n(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.B, value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-//     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
-// }
+void test_LD_C_n(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x2000;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
+    LD_r_n(&cpu, 0x0e);
+    CU_ASSERT_EQUAL(cpu.registers.C, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+}
 
-// void test_LD_C_n(void)
-// {
-//     CPU cpu;
-//     uint16_t PC = 0x2000;
-//     uint8_t value = 0xab;
-//     cpu.memory[PC] = value;
-//     cpu.PC = PC;
-//     LD_C_n(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.C, value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-//     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
-// }
+void test_LD_D_n(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x1000;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
+    LD_r_n(&cpu, 0x16);
+    CU_ASSERT_EQUAL(cpu.registers.D, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+}
 
-// void test_LD_D_n(void)
-// {
-//     CPU cpu;
-//     uint16_t PC = 0x1000;
-//     uint8_t value = 0xab;
-//     cpu.memory[PC] = value;
-//     cpu.PC = PC;
-//     LD_D_n(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.D, value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-//     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
-// }
+void test_LD_E_n(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x1000;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
+    LD_r_n(&cpu, 0x1e);
+    CU_ASSERT_EQUAL(cpu.registers.E, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+}
 
-// void test_LD_E_n(void)
-// {
-//     CPU cpu;
-//     uint16_t PC = 0x1000;
-//     uint8_t value = 0xab;
-//     cpu.memory[PC] = value;
-//     cpu.PC = PC;
-//     LD_E_n(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.E, value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-//     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
-// }
+void test_LD_H_n(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x1000;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
+    LD_r_n(&cpu, 0x26);
+    CU_ASSERT_EQUAL(cpu.registers.H, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+}
 
-// void test_LD_H_n(void)
-// {
-//     CPU cpu;
-//     uint16_t PC = 0x1000;
-//     uint8_t value = 0xab;
-//     cpu.memory[PC] = value;
-//     cpu.PC = PC;
-//     LD_H_n(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.H, value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-//     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
-// }
+void test_LD_L_n(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x1000;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
+    LD_r_n(&cpu, 0x2e);
+    CU_ASSERT_EQUAL(cpu.registers.L, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+}
 
-// void test_LD_L_n(void)
-// {
-//     CPU cpu;
-//     uint16_t PC = 0x1000;
-//     uint8_t value = 0xab;
-//     cpu.memory[PC] = value;
-//     cpu.PC = PC;
-//     LD_L_n(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.L, value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-//     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
-// }
+void test_LD_A_n(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x1000;
+    uint8_t value = 0xab;
+    cpu.memory[PC] = value;
+    cpu.PC = PC;
+    LD_r_n(&cpu, 0x3e);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+}
 
 // void test_LD_A_HL(void)
 // {
@@ -1206,41 +1206,41 @@ int main(void)
             test_suite,
             "8 bit LD Instructions | LD_L_L loads register L value into register L and sets cycle",
             test_LD_L_L
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_A_n loads immediate value into register be and sets cycles",
-        //     test_LD_A_n
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_B_n loads immediate value into register be and sets cycles",
-        //     test_LD_B_n
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_C_n loads immediate value into register be and sets cycles",
-        //     test_LD_C_n
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_D_n loads immediate value into register be and sets cycles",
-        //     test_LD_D_n
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_E_n loads immediate value into register be and sets cycles",
-        //     test_LD_E_n
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_H_n loads immediate value into register be and sets cycles",
-        //     test_LD_H_n
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_L_n loads immediate value into register be and sets cycles",
-        //     test_LD_L_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_n loads immediate value into register be and sets cycles",
+            test_LD_A_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_B_n loads immediate value into register be and sets cycles",
+            test_LD_B_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_C_n loads immediate value into register be and sets cycles",
+            test_LD_C_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_D_n loads immediate value into register be and sets cycles",
+            test_LD_D_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_E_n loads immediate value into register be and sets cycles",
+            test_LD_E_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_H_n loads immediate value into register be and sets cycles",
+            test_LD_H_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_L_n loads immediate value into register be and sets cycles",
+            test_LD_L_n
         // ) == NULL ||
         // CU_add_test(
         //     test_suite,

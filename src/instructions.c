@@ -33,7 +33,7 @@ static const RegisterSet R_TABLE[8] = {
     &set_H, &set_L, &invalid, &set_A
 };
 
-void LD_r_r1(CPU *cpu, uint8_t opcode)
+void LD_r_r(CPU *cpu, uint8_t opcode)
 {
     uint8_t dest_code = ((opcode & 0b00111000) >> 3);
     uint8_t src_code = opcode & (0b00000111);
@@ -43,6 +43,16 @@ void LD_r_r1(CPU *cpu, uint8_t opcode)
     fn(cpu, src);
 
     cpu->t_cycles = 4;
+}
+
+void LD_r_n(CPU *cpu, uint8_t opcode)
+{
+    uint8_t r_code = ((opcode & 0b00111000) >> 3);
+
+    RegisterSet fn = R_TABLE[r_code];
+    fn(cpu, fetch_opcode(cpu));
+
+    cpu->t_cycles = 8;
 }
 
 void UNDEF(CPU *cpu, uint8_t opcode)
