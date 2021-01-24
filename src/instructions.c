@@ -61,6 +61,29 @@ void LD_r_n(CPU *cpu, uint8_t opcode)
     fn(cpu, fetch_opcode(cpu));
 }
 
+void LD_A_rr(CPU *cpu, uint8_t opcode)
+{
+    uint8_t byte;
+    switch (0xff & opcode) {
+        case 0xa:
+            byte = read_byte(cpu, cpu->registers.BC);
+            break;
+        case 0x1a:
+            byte = read_byte(cpu, cpu->registers.DE);
+            break;
+        case 0xf2:
+            byte = read_byte(cpu, (0xff00 + cpu->registers.C));
+            break;
+        default:
+            printf("Invalid register\n");
+            break;
+    }
+
+    set_A(cpu, byte);
+
+    cpu->t_cycles = 8;
+}
+
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
     printf("opcode 0x%x is undefined\n", opcode);

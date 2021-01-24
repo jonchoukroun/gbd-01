@@ -877,31 +877,45 @@ void test_LD_HL_n(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 12);
 }
 
-// void test_LD_A_BC(void)
-// {
-//     CPU cpu;
-//     uint16_t address = 0xabcd;
-//     uint8_t value = 0x0f;
-//     cpu.registers.A = 0;
-//     cpu.memory[address] = value;
-//     cpu.registers.BC = address;
-//     LD_A_BC(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.A, value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-// }
+void test_LD_A_BC(void)
+{
+    CPU cpu;
+    uint16_t address = 0xabcd;
+    uint8_t value = 0x0f;
+    cpu.registers.A = 0;
+    cpu.memory[address] = value;
+    cpu.registers.BC = address;
+    LD_A_rr(&cpu, 0x0a);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
 
-// void test_LD_A_DE(void)
-// {
-//     CPU cpu;
-//     uint16_t address = 0xabcd;
-//     uint8_t value = 0x0f;
-//     cpu.registers.A = 0;
-//     cpu.memory[address] = value;
-//     cpu.registers.DE = address;
-//     LD_A_DE(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.A, value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-// }
+void test_LD_A_DE(void)
+{
+    CPU cpu;
+    uint16_t address = 0xabcd;
+    uint8_t value = 0x0f;
+    cpu.registers.A = 0;
+    cpu.memory[address] = value;
+    cpu.registers.DE = address;
+    LD_A_rr(&cpu, 0x1a);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_LDH_A_C(void)
+{
+    CPU cpu;
+    uint8_t low_bit = 0x43;
+    uint16_t address = 0xff43;
+    uint8_t value = 0x1a;
+    cpu.registers.C = low_bit;
+    cpu.memory[address] = value;
+    cpu.registers.A = 0;
+    LD_A_rr(&cpu, 0xf2);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
 
 // void test_LD_BC_A(void)
 // {
@@ -957,20 +971,6 @@ void test_LD_HL_n(void)
 //     CU_ASSERT_EQUAL(read_byte(&cpu, 0x1234), value);
 //     CU_ASSERT_EQUAL(cpu.PC, PC + 2);
 //     CU_ASSERT_EQUAL(cpu.t_cycles, 16);
-// }
-
-// void test_LDH_A_C(void)
-// {
-//     CPU cpu;
-//     uint8_t low_bit = 0x43;
-//     uint16_t address = 0xff43;
-//     uint8_t value = 0x1a;
-//     cpu.registers.C = low_bit;
-//     cpu.memory[address] = value;
-//     cpu.registers.A = 0;
-//     LDH_A_C(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.A, value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 // }
 
 // void test_LDH_C_A(void)
@@ -1435,16 +1435,21 @@ int main(void)
             test_suite,
             "8 bit LD Instructions | LD_HL_n loads immediate value into address stored in HL",
             test_LD_HL_n
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_A_BC loads byte pointed to by BC register into register A",
-        //     test_LD_A_BC
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_A_DE loads byte pointed to by DE register into register A",
-        //     test_LD_A_DE
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_BC loads byte pointed to by BC register into register A",
+            test_LD_A_BC
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_DE loads byte pointed to by DE register into register A",
+            test_LD_A_DE
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LDH_A_C loads byte pointed to by register C into register A",
+            test_LDH_A_C
         // ) == NULL ||
         // CU_add_test(
         //     test_suite,
@@ -1465,11 +1470,6 @@ int main(void)
         //     test_suite,
         //     "8 bit LD Instructions | LD_nn_A loads value in register A into byte pointed to by immediate value",
         //     test_LD_nn_A
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LDH_A_C loads byte pointed to by register C into register A",
-        //     test_LDH_A_C
         // ) == NULL ||
         // CU_add_test(
         //     test_suite,
