@@ -34,7 +34,7 @@ static const OpcodeInstruction OPCODE_TABLE[256] = {
 /* 4 */   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,
 /* 5 */   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,
 /* 5 */   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,
-/* 7 */    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,
+/* 7 */   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &UNDEF,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,
 /* 8 */    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
 /* 9 */    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
 /* a */    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
