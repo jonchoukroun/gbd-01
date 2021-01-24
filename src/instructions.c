@@ -11,7 +11,7 @@ uint8_t fetch_r(CPU *cpu, uint8_t r)
         cpu->registers.E,
         cpu->registers.H,
         cpu->registers.L,
-        0,
+        cpu->memory[cpu->registers.HL],
         cpu->registers.A,
     };
 
@@ -42,7 +42,7 @@ void LD_r_r(CPU *cpu, uint8_t opcode)
     RegisterSet fn = R_TABLE[dest_code];
     fn(cpu, src);
 
-    cpu->t_cycles = 4;
+    cpu->t_cycles = src_code == 6 ? 8 : 4;
 }
 
 void LD_r_n(CPU *cpu, uint8_t opcode)

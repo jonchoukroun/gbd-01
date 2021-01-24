@@ -72,6 +72,20 @@ void test_LD_B_L(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
+void test_LD_B_HL(void)
+{
+    CPU cpu;
+    uint16_t address = 0x1000;
+    uint8_t value = 0xda;
+    cpu.registers.B = 0;
+    cpu.registers.HL = address;
+    cpu.memory[address] = value;
+    LD_r_r(&cpu, 0x46);
+    CU_ASSERT_EQUAL(cpu.registers.B, value);
+    CU_ASSERT_EQUAL(cpu.memory[address], value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
 void test_LD_B_A(void)
 {
     CPU cpu;
@@ -152,6 +166,20 @@ void test_LD_C_L(void)
     CU_ASSERT_EQUAL(cpu.registers.C, test_value);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_LD_C_HL(void)
+{
+    CPU cpu;
+    uint16_t address = 0x1000;
+    uint8_t value = 0xda;
+    cpu.registers.C = 0;
+    cpu.registers.HL = address;
+    cpu.memory[address] = value;
+    LD_r_r(&cpu, 0x4e);
+    CU_ASSERT_EQUAL(cpu.registers.C, value);
+    CU_ASSERT_EQUAL(cpu.memory[address], value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
 void test_LD_C_A(void)
@@ -238,6 +266,20 @@ void test_LD_D_L(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
+void test_LD_D_HL(void)
+{
+    CPU cpu;
+    uint16_t address = 0x1000;
+    uint8_t value = 0xda;
+    cpu.registers.D = 0;
+    cpu.registers.HL = address;
+    cpu.memory[address] = value;
+    LD_r_r(&cpu, 0x56);
+    CU_ASSERT_EQUAL(cpu.registers.D, value);
+    CU_ASSERT_EQUAL(cpu.memory[address], value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
 void test_LD_D_A(void)
 {
     CPU cpu;
@@ -320,6 +362,20 @@ void test_LD_E_L(void)
     CU_ASSERT_EQUAL(cpu.registers.E, test_value);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_LD_E_HL(void)
+{
+    CPU cpu;
+    uint16_t address = 0x1000;
+    uint8_t value = 0xda;
+    cpu.registers.E = 0;
+    cpu.registers.HL = address;
+    cpu.memory[address] = value;
+    LD_r_r(&cpu, 0x5e);
+    CU_ASSERT_EQUAL(cpu.registers.E, value);
+    CU_ASSERT_EQUAL(cpu.memory[address], value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
 void test_LD_E_A(void)
@@ -406,6 +462,19 @@ void test_LD_H_L(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
+void test_LD_H_HL(void)
+{
+    CPU cpu;
+    uint16_t address = 0x1000;
+    uint8_t value = 0xda;
+    cpu.registers.HL = address;
+    cpu.memory[address] = value;
+    LD_r_r(&cpu, 0x66);
+    CU_ASSERT_EQUAL(cpu.registers.H, value);
+    CU_ASSERT_EQUAL(cpu.memory[address], value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
 void test_LD_H_A(void)
 {
     CPU cpu;
@@ -490,6 +559,19 @@ void test_LD_L_L(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
+void test_LD_L_HL(void)
+{
+    CPU cpu;
+    uint16_t address = 0x1000;
+    uint8_t value = 0xda;
+    cpu.registers.HL = address;
+    cpu.memory[address] = value;
+    LD_r_r(&cpu, 0x6e);
+    CU_ASSERT_EQUAL(cpu.registers.L, value);
+    CU_ASSERT_EQUAL(cpu.memory[address], value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
 void test_LD_L_A(void)
 {
     CPU cpu;
@@ -498,6 +580,104 @@ void test_LD_L_A(void)
     cpu.registers.A = test_value;
     LD_r_r(&cpu, 0x6f);
     CU_ASSERT_EQUAL(cpu.registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_LD_A_B(void)
+{
+    CPU cpu;
+    uint8_t test_value = 0x23;
+    cpu.registers.A = 0;
+    cpu.registers.B = test_value;
+    LD_r_r(&cpu, 0x78);
+    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_LD_A_C(void)
+{
+    CPU cpu;
+    uint8_t test_value = 0x23;
+    cpu.registers.A = 0;
+    cpu.registers.C = test_value;
+    LD_r_r(&cpu, 0x78);
+    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_LD_A_D(void)
+{
+    CPU cpu;
+    uint8_t test_value = 0x23;
+    cpu.registers.A = 0;
+    cpu.registers.D = test_value;
+    LD_r_r(&cpu, 0x78);
+    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_LD_A_E(void)
+{
+    CPU cpu;
+    uint8_t test_value = 0x23;
+    cpu.registers.A = 0;
+    cpu.registers.E = test_value;
+    LD_r_r(&cpu, 0x78);
+    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_LD_A_H(void)
+{
+    CPU cpu;
+    uint8_t test_value = 0x23;
+    cpu.registers.A = 0;
+    cpu.registers.H = test_value;
+    LD_r_r(&cpu, 0x78);
+    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_LD_A_L(void)
+{
+    CPU cpu;
+    uint8_t test_value = 0x23;
+    cpu.registers.A = 0;
+    cpu.registers.L = test_value;
+    LD_r_r(&cpu, 0x78);
+    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_LD_A_HL(void)
+{
+    CPU cpu;
+    uint16_t address = 0x1000;
+    uint8_t value = 0xda;
+    cpu.registers.A = 0;
+    cpu.registers.HL = address;
+    cpu.memory[address] = value;
+    LD_r_r(&cpu, 0x7e);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.memory[address], value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_LD_A_A(void)
+{
+    CPU cpu;
+    uint8_t test_value = 0x23;
+    cpu.registers.A = 0;
+    cpu.registers.A = test_value;
+    LD_r_r(&cpu, 0x78);
+    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
     CU_ASSERT_EQUAL(cpu.registers.A, test_value);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
@@ -592,102 +772,6 @@ void test_LD_A_n(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
 }
-
-// void test_LD_A_HL(void)
-// {
-//     CPU cpu;
-//     uint16_t address = 0x1000;
-//     uint8_t value = 0xda;
-//     cpu.registers.A = 0;
-//     cpu.registers.HL = address;
-//     cpu.memory[address] = value;
-//     LD_A_HL(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.A, value);
-//     CU_ASSERT_EQUAL(cpu.memory[address], value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-// }
-
-// void test_LD_B_HL(void)
-// {
-//     CPU cpu;
-//     uint16_t address = 0x1000;
-//     uint8_t value = 0xda;
-//     cpu.registers.B = 0;
-//     cpu.registers.HL = address;
-//     cpu.memory[address] = value;
-//     LD_B_HL(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.B, value);
-//     CU_ASSERT_EQUAL(cpu.memory[address], value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-// }
-
-// void test_LD_C_HL(void)
-// {
-//     CPU cpu;
-//     uint16_t address = 0x1000;
-//     uint8_t value = 0xda;
-//     cpu.registers.C = 0;
-//     cpu.registers.HL = address;
-//     cpu.memory[address] = value;
-//     LD_C_HL(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.C, value);
-//     CU_ASSERT_EQUAL(cpu.memory[address], value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-// }
-
-// void test_LD_D_HL(void)
-// {
-//     CPU cpu;
-//     uint16_t address = 0x1000;
-//     uint8_t value = 0xda;
-//     cpu.registers.D = 0;
-//     cpu.registers.HL = address;
-//     cpu.memory[address] = value;
-//     LD_D_HL(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.D, value);
-//     CU_ASSERT_EQUAL(cpu.memory[address], value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-// }
-
-// void test_LD_E_HL(void)
-// {
-//     CPU cpu;
-//     uint16_t address = 0x1000;
-//     uint8_t value = 0xda;
-//     cpu.registers.E = 0;
-//     cpu.registers.HL = address;
-//     cpu.memory[address] = value;
-//     LD_E_HL(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.E, value);
-//     CU_ASSERT_EQUAL(cpu.memory[address], value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-// }
-
-// void test_LD_H_HL(void)
-// {
-//     CPU cpu;
-//     uint16_t address = 0x1000;
-//     uint8_t value = 0xda;
-//     cpu.registers.HL = address;
-//     cpu.memory[address] = value;
-//     LD_H_HL(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.H, value);
-//     CU_ASSERT_EQUAL(cpu.memory[address], value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-// }
-
-// void test_LD_L_HL(void)
-// {
-//     CPU cpu;
-//     uint16_t address = 0x1000;
-//     uint8_t value = 0xda;
-//     cpu.registers.HL = address;
-//     cpu.memory[address] = value;
-//     LD_L_HL(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.L, value);
-//     CU_ASSERT_EQUAL(cpu.memory[address], value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-// }
 
 // void test_LD_HL_A(void)
 // {
@@ -999,11 +1083,6 @@ int main(void)
 
     if (CU_add_test(
             test_suite,
-            "8 bit LD Instructions | LD_B_A loads register A value into register B and sets cycles",
-            test_LD_B_A
-        ) == NULL ||
-        CU_add_test(
-            test_suite,
             "8 bit LD Instructions | LD_B_B loadss register B value into register B and sets cycles",
             test_LD_B_B
         ) == NULL ||
@@ -1034,8 +1113,13 @@ int main(void)
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit LD Instructions | LD_C_A loads register A value into register C and sets cycles",
-            test_LD_C_A
+            "8 bit LD Instructions | LD_B_HL loads value in address stored in HL, to register B and sets cycles",
+            test_LD_B_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_B_A loads register A value into register B and sets cycles",
+            test_LD_B_A
         ) == NULL ||
         CU_add_test(
             test_suite,
@@ -1069,8 +1153,13 @@ int main(void)
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit LD Instructions | LD_D_A loads register A value into register D and sets cycles",
-            test_LD_D_A
+            "8 bit LD Instructions | LD_C_HL loads value in address stored in HL, to register C and sets cycles",
+            test_LD_C_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_C_A loads register A value into register C and sets cycles",
+            test_LD_C_A
         ) == NULL ||
         CU_add_test(
             test_suite,
@@ -1104,8 +1193,13 @@ int main(void)
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit LD Instructions | LD_E_A loads register A value into register E and sets cycle",
-            test_LD_E_A
+            "8 bit LD Instructions | LD_D_HL loads value in address stored in HL, to register D and sets cycles",
+            test_LD_D_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_D_A loads register A value into register D and sets cycles",
+            test_LD_D_A
         ) == NULL ||
         CU_add_test(
             test_suite,
@@ -1139,8 +1233,13 @@ int main(void)
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit LD Instructions | LD_H_A loads register A value into register H and sets cycle",
-            test_LD_H_A
+            "8 bit LD Instructions | LD_E_HL loads value in address stored in HL, to register E and sets cycles",
+            test_LD_E_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_E_A loads register A value into register E and sets cycle",
+            test_LD_E_A
         ) == NULL ||
         CU_add_test(
             test_suite,
@@ -1174,8 +1273,13 @@ int main(void)
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit LD Instructions | LD_L_A loads register A value into register L and sets cycle",
-            test_LD_L_A
+            "8 bit LD Instructions | LD_H_HL loads value in address stored in HL, to register H and sets cycles",
+            test_LD_H_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_H_A loads register A value into register H and sets cycle",
+            test_LD_H_A
         ) == NULL ||
         CU_add_test(
             test_suite,
@@ -1206,6 +1310,56 @@ int main(void)
             test_suite,
             "8 bit LD Instructions | LD_L_L loads register L value into register L and sets cycle",
             test_LD_L_L
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_L_HL loads value in address stored in HL, to register L and sets cycles",
+            test_LD_L_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_L_A loads register A value into register L and sets cycle",
+            test_LD_L_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_B loads register B value into register A and sets cycle",
+            test_LD_A_B
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_C loads register C value into register A and sets cycle",
+            test_LD_A_C
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_D loads register D value into register A and sets cycle",
+            test_LD_A_D
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_E loads register E value into register A and sets cycle",
+            test_LD_A_E
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_H loads register H value into register A and sets cycle",
+            test_LD_A_H
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_L loads register L value into register A and sets cycle",
+            test_LD_A_L
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_HL loads value in address stored in HL, to register A and sets cycles",
+            test_LD_A_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_A loads register A value into register A and sets cycle",
+            test_LD_A_A
         ) == NULL ||
         CU_add_test(
             test_suite,
@@ -1241,41 +1395,6 @@ int main(void)
             test_suite,
             "8 bit LD Instructions | LD_L_n loads immediate value into register be and sets cycles",
             test_LD_L_n
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_A_HL loads value in address stored in HL, to register A and sets cycles",
-        //     test_LD_A_HL
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_B_HL loads value in address stored in HL, to register B and sets cycles",
-        //     test_LD_B_HL
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_C_HL loads value in address stored in HL, to register C and sets cycles",
-        //     test_LD_C_HL
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_D_HL loads value in address stored in HL, to register D and sets cycles",
-        //     test_LD_D_HL
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_E_HL loads value in address stored in HL, to register E and sets cycles",
-        //     test_LD_E_HL
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_H_HL loads value in address stored in HL, to register H and sets cycles",
-        //     test_LD_H_HL
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_L_HL loads value in address stored in HL, to register L and sets cycles",
-        //     test_LD_L_HL
         // ) == NULL ||
         // CU_add_test(
         //     test_suite,
