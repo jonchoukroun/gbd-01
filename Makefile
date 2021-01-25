@@ -20,7 +20,7 @@ CFLAGS +=  -Wstrict-prototypes
 CFLAGS +=  -Wundef
 CFLAGS +=  -Wold-style-definition
 
-_OBJ = instructions.o cpu.o main.o
+_OBJ = 8bit_LD_instructions.o cpu.o main.o
 OBJ = $(patsubst %,$(BUILD_DIR)%,$(_OBJ))
 
 $(TARGET): $(OBJ)
@@ -79,7 +79,7 @@ $(TEST_RESULTS)test_results.txt: $(TEST_OBJ)
 $(TEST_BUILD_DIR)cpu_test.o: $(TEST_DIR)cpu_test.c
 	$(CC) $< $(SOURCE_DIR)cpu.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
 
-INSTRUCTIONS_TEST_COMPILE_OPTS = $(CC) $< $(SOURCE_DIR)cpu.c $(SOURCE_DIR)instructions.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
+INSTRUCTIONS_TEST_COMPILE_OPTS = $(CC) $< $(SOURCE_DIR)cpu.c $(SOURCE_DIR)8bit_LD_instructions.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
 
 $(TEST_BUILD_DIR)LD_r_r_test.o: $(TEST_DIR)LD_r_r_test.c
 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
