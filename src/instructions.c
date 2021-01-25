@@ -23,14 +23,9 @@ uint8_t fetch_r(CPU *cpu, uint8_t r)
         cpu->registers.E,
         cpu->registers.H,
         cpu->registers.L,
-        read_byte(cpu, cpu->registers.HL),
+        0,
         cpu->registers.A,
-        read_byte(cpu, cpu->registers.BC),
-        read_byte(cpu, cpu->registers.DE)
     };
-
-    cpu->t_cycles += 4;
-    if (r == reg_HL || r == reg_BC || r == reg_DE) cpu->t_cycles += 4;
 
     return registers[r];
 }
@@ -60,18 +55,27 @@ static const RegisterSet R_TABLE[8] = {
 
 void LD_r_r(CPU *cpu, uint8_t opcode)
 {
-    cpu->t_cycles = 0;
     uint8_t dest_code = ((opcode & 0b00111000) >> 3);
     uint8_t src_code = opcode & (0b00000111);
     uint8_t src = fetch_r(cpu, src_code);
 
     RegisterSet set_R = R_TABLE[dest_code];
     set_R(cpu, src);
+
+    cpu->t_cycles = 4;
+}
+
+void LD_r_HL(CPU *cpu, uint8_t opcode)
+{
+    uint8_t dest_code = ((opcode & 0b00111000) >> 3);
+    RegisterSet set_R = R_TABLE[dest_code];
+    set_R(cpu, read_byte(cpu, cpu->registers.HL));
+
+    cpu->t_cycles = 8;
 }
 
 void LD_r_n(CPU *cpu, uint8_t opcode)
 {
-    cpu->t_cycles = 0;
     uint8_t r = (opcode & 0b00111000) >> 3;
     RegisterSet set_R = R_TABLE[r];
     set_R(cpu, fetch_opcode(cpu));

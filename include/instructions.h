@@ -12,9 +12,16 @@ typedef void (*OpcodeInstruction)(CPU *, uint8_t opcode);
 /**
  * Load into 1st register 2nd register's value
  * No flag effects
- * 4 T-cycles (8 when looading into/from memory byte pointed to from HL)
+ * 4 T-cycles
  **/
 void LD_r_r(CPU *, uint8_t);
+
+/**
+ * Load memory contents pointed to from register HL into register
+ * No flag effects
+ * 8 T-cyles
+ **/
+void LD_r_HL(CPU *, uint8_t);
 
 /**
  * Load into register immediate unsigned value
@@ -67,10 +74,10 @@ static const OpcodeInstruction OPCODE_TABLE[256] = {
 /* 1 */    &UNDEF,   &UNDEF, &LD_IR_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,
 /* 2 */    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,   &UNDEF,   &UNDEF, &LD_A_HLI,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,
 /* 3 */    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF, &LD_A_HLD,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,
-/* 4 */   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,
-/* 5 */   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,
-/* 5 */   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,
-/* 7 */   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &UNDEF,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,
+/* 4 */   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,
+/* 5 */   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,
+/* 5 */   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,
+/* 7 */   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,
 /* 8 */    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
 /* 9 */    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
 /* a */    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
