@@ -92,8 +92,8 @@ typedef enum {
 
 uint8_t fetch_opcode(CPU *);
 
-uint8_t read_byte(CPU *, uint16_t);
-uint16_t read_word(CPU *, uint16_t);
+uint8_t read_byte(CPU *, uint16_t addr);
+uint16_t read_word(CPU *, uint16_t addr);
 void write_byte(CPU *, uint8_t byte, uint16_t address);
 void write_word(CPU *, uint16_t word, uint16_t address);
 

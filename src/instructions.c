@@ -2,6 +2,18 @@
 #include <limits.h>
 #include "instructions.h"
 
+/**
+ * Access register bitmaps directly
+ **/
+typedef enum {
+    reg_B, reg_C, reg_D, reg_E,
+    reg_H, reg_L, reg_HL, reg_A,
+    reg_BC, reg_DE
+} REGISTER_MAP;
+
+/**
+ * Return value in registers based on bit code from opcode
+ **/
 uint8_t fetch_r(CPU *cpu, uint8_t r)
 {
     uint8_t registers[] = {
@@ -11,23 +23,31 @@ uint8_t fetch_r(CPU *cpu, uint8_t r)
         cpu->registers.E,
         cpu->registers.H,
         cpu->registers.L,
-        cpu->memory[cpu->registers.HL],
+        read_byte(cpu, cpu->registers.HL),
         cpu->registers.A,
+        read_byte(cpu, cpu->registers.BC),
+        read_byte(cpu, cpu->registers.DE)
     };
-    if (r == 6) cpu->t_cycles += 4;
+
+    cpu->t_cycles += 4;
+    if (r == reg_HL || r == reg_BC || r == reg_DE) cpu->t_cycles += 4;
 
     return registers[r];
 }
 
-typedef void (*RegisterSet)(CPU *, uint8_t);
+/**
+ * Set values to 8-bit registers
+ * and memory pointed to by address in HL.
+ * Accessible as function pointers in bitmap below.
+ **/
+typedef void (*RegisterSet)(CPU *, uint8_t value);
 void set_B(CPU *cpu, uint8_t n) { cpu->registers.B = n; }
 void set_C(CPU *cpu, uint8_t n) { cpu->registers.C = n; }
 void set_D(CPU *cpu, uint8_t n) { cpu->registers.D = n; }
 void set_E(CPU *cpu, uint8_t n) { cpu->registers.E = n; }
 void set_H(CPU *cpu, uint8_t n) { cpu->registers.H = n; }
 void set_L(CPU *cpu, uint8_t n) { cpu->registers.L = n; }
-void set_HL(CPU *cpu, uint8_t n)
-{
+void set_HL(CPU *cpu, uint8_t n) {
     write_byte(cpu, n, cpu->registers.HL);
     cpu->t_cycles += 4;
 }
@@ -45,34 +65,38 @@ void LD_r_r(CPU *cpu, uint8_t opcode)
     uint8_t src_code = opcode & (0b00000111);
     uint8_t src = fetch_r(cpu, src_code);
 
-    RegisterSet fn = R_TABLE[dest_code];
-    fn(cpu, src);
-
-    cpu->t_cycles += 4;
+    RegisterSet set_R = R_TABLE[dest_code];
+    set_R(cpu, src);
 }
 
 void LD_r_n(CPU *cpu, uint8_t opcode)
 {
     cpu->t_cycles = 0;
-    uint8_t r_code = ((opcode & 0b00111000) >> 3);
-    cpu->t_cycles += 8;
-
-    RegisterSet fn = R_TABLE[r_code];
-    fn(cpu, fetch_opcode(cpu));
+    uint8_t r = (opcode & 0b00111000) >> 3;
+    RegisterSet set_R = R_TABLE[r];
+    set_R(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+    if (r == reg_HL) cpu->t_cycles += 4;
 }
 
 void LD_A_rr(CPU *cpu, uint8_t opcode)
 {
-    uint8_t byte;
+    cpu->t_cycles = 0;
+    uint8_t byte = 0;
     switch (0xff & opcode) {
-        case 0xa:
-            byte = read_byte(cpu, cpu->registers.BC);
+        case 0x0a:
+            byte = fetch_r(cpu, reg_BC);
             break;
         case 0x1a:
-            byte = read_byte(cpu, cpu->registers.DE);
+            byte = fetch_r(cpu, reg_DE);
+            break;
+        case 0xf0:
+            byte = read_byte(cpu, 0xff00 + fetch_opcode(cpu));
+            cpu->t_cycles = 12;
             break;
         case 0xf2:
-            byte = read_byte(cpu, (0xff00 + cpu->registers.C));
+            byte = read_byte(cpu, 0xff00 + fetch_r(cpu, reg_C));
+            cpu->t_cycles += 4;
             break;
         default:
             printf("Invalid register\n");
@@ -80,11 +104,19 @@ void LD_A_rr(CPU *cpu, uint8_t opcode)
     }
 
     set_A(cpu, byte);
+}
 
-    cpu->t_cycles = 8;
+void LD_IR_A(CPU *cpu, uint8_t opcode)
+{
+    cpu->t_cycles = 0;
+    (void)opcode;
+    uint8_t A = fetch_r(cpu, reg_A);
+    uint16_t addr = 0xff00 + fetch_r(cpu, reg_C);
+    write_byte(cpu, A, addr);
 }
 
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
+    (void)cpu;
     printf("opcode 0x%x is undefined\n", opcode);
 }

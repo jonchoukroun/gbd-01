@@ -3,7 +3,7 @@
 
 #include "cpu.h"
 
-typedef void (*OpcodeInstruction)(CPU *, uint8_t);
+typedef void (*OpcodeInstruction)(CPU *, uint8_t opcode);
 
 // ***********************
 // 8-bit load instructions
@@ -12,23 +12,39 @@ typedef void (*OpcodeInstruction)(CPU *, uint8_t);
 /**
  * Load into 1st register 2nd register's value
  * No flag effects
- * 4 t cycles (8 when looading into/from memory byte pointed to from HL)
+ * 4 T-cycles (8 when looading into/from memory byte pointed to from HL)
  **/
 void LD_r_r(CPU *, uint8_t);
 
 /**
  * Load into register immediate unsigned value
  * No flag effects
- * 8 t cycles (12 when loading from memory byte pointed to from HL)
+ * 8 T-cycles (12 when loading from memory byte pointed to from HL)
  **/
 void LD_r_n(CPU *, uint8_t);
 
 /**
  * Load memory contents into register A
  * No flag effects
- * 8 t cycles
-**/
+ * 8 T-cycles
+ **/
 void LD_A_rr(CPU *, uint8_t);
+
+
+/**
+ * Load A register value into internal RAM
+ * No flag effects
+ * 8 T-cycles
+ **/
+void LD_IR_A(CPU *, uint8_t);
+
+/**
+ * Convert immediate value to internal RAM address (0xff00 - 0xffff)
+ * and load into register A
+ * No flag effects
+ * 8 T-cycles
+ **/
+void LD_A_nn(CPU *, uint8_t);
 
 void UNDEF(CPU *, uint8_t);
 
@@ -48,8 +64,8 @@ static const OpcodeInstruction OPCODE_TABLE[256] = {
 /* b */    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
 /* c */    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
 /* d */    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
-/* e */    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
-/* f */    &UNDEF,   &UNDEF, &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
+/* e */    &UNDEF,   &UNDEF, &LD_IR_A,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
+/* f */  &LD_A_rr,   &UNDEF, &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
 };
 
 #endif
