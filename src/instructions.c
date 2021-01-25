@@ -76,36 +76,41 @@ void LD_r_HL(CPU *cpu, uint8_t opcode)
 
 void LD_r_n(CPU *cpu, uint8_t opcode)
 {
+    cpu->t_cycles = 8;
     uint8_t r = (opcode & 0b00111000) >> 3;
     RegisterSet set_R = R_TABLE[r];
     set_R(cpu, fetch_opcode(cpu));
+}
+
+void LD_HL_r(CPU *cpu, uint8_t opcode)
+{
+    uint8_t r_code = opcode & 0b00000111;
+    write_byte(cpu, fetch_r(cpu, r_code), cpu->registers.HL);
     cpu->t_cycles = 8;
-    if (r == reg_HL) cpu->t_cycles += 4;
 }
 
 void LD_A_rr(CPU *cpu, uint8_t opcode)
 {
-    cpu->t_cycles = 0;
+    cpu->t_cycles = 8;
     uint8_t byte = 0;
     switch (0xff & opcode) {
         case 0x0a:
-            byte = fetch_r(cpu, reg_BC);
+            byte = read_byte(cpu, cpu->registers.BC);
             break;
         case 0x1a:
-            byte = fetch_r(cpu, reg_DE);
+            byte = read_byte(cpu, cpu->registers.DE);
             break;
         case 0xf0:
             byte = read_byte(cpu, 0xff00 + fetch_opcode(cpu));
-            cpu->t_cycles += 12;
+            cpu->t_cycles += 4;
             break;
         case 0xf2:
             byte = read_byte(cpu, 0xff00 + fetch_r(cpu, reg_C));
-            cpu->t_cycles += 4;
             break;
         case 0xfa: {
             uint16_t addr = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
             byte = read_byte(cpu, addr);
-            cpu->t_cycles += 16;
+            cpu->t_cycles += 8;
             break;
         }
         default:
@@ -116,29 +121,27 @@ void LD_A_rr(CPU *cpu, uint8_t opcode)
     set_A(cpu, byte);
 }
 
-void LD_IR_A(CPU *cpu, uint8_t opcode)
+void LD_rr_A(CPU *cpu, uint8_t opcode)
 {
-    cpu->t_cycles = 0;
+    cpu->t_cycles = 8;
     uint16_t addr = 0;
     switch (0xff & opcode) {
         case 0x02:
             addr = cpu->registers.BC;
-            cpu->t_cycles += 4;
             break;
         case 0x12:
             addr = cpu->registers.DE;
-            cpu->t_cycles += 4;
             break;
         case 0xe0:
             addr = 0xff00 + fetch_opcode(cpu);
-            cpu->t_cycles += 8;
+            cpu->t_cycles += 4;
             break;
         case 0xe2:
             addr = 0xff00 + fetch_r(cpu, reg_C);
             break;
         case 0xea:
             addr = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
-            cpu->t_cycles += 12;
+            cpu->t_cycles += 8;
             break;
         default:
             printf("Invalid write destination\n");
@@ -150,17 +153,33 @@ void LD_IR_A(CPU *cpu, uint8_t opcode)
 void LD_A_HLI(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
-    cpu->t_cycles = 0;
-    set_A(cpu, fetch_r(cpu, reg_HL));
+    set_A(cpu, read_byte(cpu, cpu->registers.HL));
     cpu->registers.HL++;
+    cpu->t_cycles = 8;
 }
 
 void LD_A_HLD(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
-    cpu->t_cycles = 0;
-    set_A(cpu, fetch_r(cpu, reg_HL));
+    set_A(cpu, read_byte(cpu, cpu->registers.HL));
     cpu->registers.HL--;
+    cpu->t_cycles = 8;
+}
+
+void LD_HLI_A(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    write_byte(cpu, fetch_r(cpu, reg_A), cpu->registers.HL);
+    cpu->registers.HL++;
+    cpu->t_cycles = 8;
+}
+
+void LD_HLD_A(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    write_byte(cpu, fetch_r(cpu, reg_A), cpu->registers.HL);
+    cpu->registers.HL--;
+    cpu->t_cycles = 8;
 }
 
 void UNDEF(CPU *cpu, uint8_t opcode)

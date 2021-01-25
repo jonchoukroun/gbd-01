@@ -40,7 +40,13 @@ TEST_RESULTS = test/results/
 TEST_LIBS = cunit
 
 _TEST_OBJ = cpu_test.o
-_TEST_OBJ += 8bit_load_test.o
+_TEST_OBJ += LD_r_r_test.o
+_TEST_OBJ += LD_r_n_test.o
+_TEST_OBJ += LD_r_HL_test.o
+_TEST_OBJ += LD_HL_r_test.o
+_TEST_OBJ += LD_A_rr_test.o
+_TEST_OBJ += LD_rr_A_test.o
+_TEST_OBJ += LD_HL_ID_test.o
 # _TEST_OBJ += 16bit_load_test.o
 # _TEST_OBJ += 8bit_ALU_test.o
 # _TEST_OBJ += 16bit_ALU_test.o
@@ -75,7 +81,25 @@ $(TEST_BUILD_DIR)cpu_test.o: $(TEST_DIR)cpu_test.c
 
 INSTRUCTIONS_TEST_COMPILE_OPTS = $(CC) $< $(SOURCE_DIR)cpu.c $(SOURCE_DIR)instructions.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
 
-$(TEST_BUILD_DIR)8bit_load_test.o: $(TEST_DIR)8bit_load_test.c
+$(TEST_BUILD_DIR)LD_r_r_test.o: $(TEST_DIR)LD_r_r_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
+$(TEST_BUILD_DIR)LD_r_n_test.o: $(TEST_DIR)LD_r_n_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
+$(TEST_BUILD_DIR)LD_r_HL_test.o: $(TEST_DIR)LD_r_HL_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
+$(TEST_BUILD_DIR)LD_HL_r_test.o: $(TEST_DIR)LD_HL_r_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
+$(TEST_BUILD_DIR)LD_A_rr_test.o: $(TEST_DIR)LD_A_rr_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
+$(TEST_BUILD_DIR)LD_rr_A_test.o: $(TEST_DIR)LD_rr_A_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
+$(TEST_BUILD_DIR)LD_HL_ID_test.o: $(TEST_DIR)LD_HL_ID_test.c
 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
 
 # $(TEST_BUILD_DIR)16bit_load_test.o: $(TEST_DIR)16bit_load_test.c
