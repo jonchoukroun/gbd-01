@@ -930,7 +930,7 @@ void test_LD_IR_A(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
-void test_LD_A_nn(void)
+void test_LD_A_0xFFn(void)
 {
     CPU cpu;
     uint16_t PC = 0x2020;
@@ -944,101 +944,101 @@ void test_LD_A_nn(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 12);
 }
 
-// void test_LD_BC_A(void)
-// {
-//     CPU cpu;
-//     uint16_t address = 0x4f18;
-//     uint8_t value = 0x12;
-//     cpu.registers.A = value;
-//     cpu.memory[address] = 0;
-//     cpu.registers.BC = address;
-//     LD_BC_A(&cpu);
-//     CU_ASSERT_EQUAL(cpu.memory[cpu.registers.BC], value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-// }
+void test_LDH_n_A(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x1000;
+    uint8_t value = 0x32;
+    cpu.PC = PC;
+    cpu.memory[PC] = 0x89;
+    cpu.registers.A = value;
+    LD_IR_A(&cpu, 0xe0);
+    CU_ASSERT_EQUAL(cpu.memory[0xff89], value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+}
 
-// void test_LD_DE_A(void)
-// {
-//     CPU cpu;
-//     uint16_t address = 0x4f18;
-//     uint8_t value = 0x12;
-//     cpu.registers.A = value;
-//     cpu.memory[address] = 0;
-//     cpu.registers.DE = address;
-//     LD_DE_A(&cpu);
-//     CU_ASSERT_EQUAL(cpu.memory[cpu.registers.DE], value);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-// }
+void test_LD_A_nn(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x1001;
+    cpu.PC = PC;
+    uint8_t value = 0x23;
+    cpu.memory[PC] = 0xab;
+    cpu.memory[PC + 1] = 0xcd;
+    cpu.memory[0xabcd] = value;
+    LD_A_rr(&cpu, 0xfa);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 2);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+}
 
-// void test_LD_A_nn(void)
-// {
-//     CPU cpu;
-//     uint16_t PC = 0x1001;
-//     cpu.PC = PC;
-//     uint8_t value = 0x23;
-//     cpu.memory[PC] = 0xab;
-//     cpu.memory[PC + 1] = 0xcd;
-//     cpu.memory[0xabcd] = value;
-//     LD_A_nn(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.A, value);
-//     CU_ASSERT_EQUAL(cpu.PC, PC + 2);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 16);
-// }
+void test_LD_nn_A(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x2010;
+    cpu.PC = PC;
+    uint8_t value = 0xfa;
+    cpu.memory[PC] = 0x12;
+    cpu.memory[PC + 1] = 0x34;
+    cpu.registers.A = value;
+    LD_IR_A(&cpu, 0xea);
+    CU_ASSERT_EQUAL(read_byte(&cpu, 0x1234), value);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 2);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+}
 
-// void test_LD_nn_A(void)
-// {
-//     CPU cpu;
-//     uint16_t PC = 0x2010;
-//     cpu.PC = PC;
-//     uint8_t value = 0xfa;
-//     cpu.memory[PC] = 0x12;
-//     cpu.memory[PC + 1] = 0x34;
-//     cpu.registers.A = value;
-//     LD_nn_A(&cpu);
-//     CU_ASSERT_EQUAL(read_byte(&cpu, 0x1234), value);
-//     CU_ASSERT_EQUAL(cpu.PC, PC + 2);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 16);
-// }
+void test_LD_A_HLI(void)
+{
+    CPU cpu;
+    uint16_t HL = 0x1234;
+    uint8_t value = 0xab;
+    cpu.registers.HL = HL;
+    cpu.memory[HL] = value;
+    LD_A_HLI(&cpu, 0x2a);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.registers.HL, HL + 1);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
 
-// void test_LDH_n_A(void)
-// {
-//     CPU cpu;
-//     uint16_t PC = 0x1000;
-//     uint8_t value = 0x32;
-//     cpu.PC = PC;
-//     cpu.memory[PC] = 0x89;
-//     cpu.registers.A = value;
-//     LDH_n_A(&cpu);
-//     CU_ASSERT_EQUAL(cpu.memory[0xff89], value);
-//     CU_ASSERT_EQUAL(cpu.PC, PC + 1);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 12);
-// }
+void test_LD_A_HLD(void)
+{
+    CPU cpu;
+    uint16_t HL = 0x1234;
+    uint8_t value = 0xab;
+    cpu.registers.HL = HL;
+    cpu.memory[HL] = value;
+    LD_A_HLD(&cpu, 0x3a);
+    CU_ASSERT_EQUAL(cpu.registers.A, value);
+    CU_ASSERT_EQUAL(cpu.registers.HL, HL - 1);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
 
-// void test_LD_A_HLI(void)
-// {
-//     CPU cpu;
-//     uint16_t HL = 0x1234;
-//     uint8_t value = 0xab;
-//     cpu.registers.HL = HL;
-//     cpu.memory[HL] = value;
-//     LD_A_HLI(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.A, value);
-//     CU_ASSERT_EQUAL(cpu.registers.HL, HL + 1);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-// }
+void test_LD_BC_A(void)
+{
+    CPU cpu;
+    uint16_t address = 0x4f18;
+    uint8_t value = 0x12;
+    cpu.registers.A = value;
+    cpu.memory[address] = 0;
+    cpu.registers.BC = address;
+    LD_IR_A(&cpu, 0x02);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.BC], value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
 
-// void test_LD_A_HLD(void)
-// {
-//     CPU cpu;
-//     uint16_t HL = 0x1234;
-//     uint8_t value = 0xab;
-//     cpu.registers.HL = HL;
-//     cpu.memory[HL] = value;
-//     LD_A_HLD(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.A, value);
-//     CU_ASSERT_EQUAL(cpu.registers.HL, HL - 1);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-// }
+void test_LD_DE_A(void)
+{
+    CPU cpu;
+    uint16_t address = 0x34ba;
+    uint8_t value = 0x8c;
+    cpu.registers.A = value;
+    cpu.memory[address] = 0;
+    cpu.registers.DE = address;
+    LD_IR_A(&cpu, 0x12);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.DE], value);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
 
 // void test_LD_HLI_A(void)
 // {
@@ -1457,43 +1457,43 @@ int main(void)
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit LD Instructions | LD_A_nn loads byte at extended address from next PC into A",
+            "8 bit LD Instructions | LD_A_0xFFn loads byte at extended address from next PC into A",
+            test_LD_A_0xFFn
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LDH_n_A loads value in register A into byte pointed to by extended address from next PC",
+            test_LDH_n_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_nn loads byte pointed to by immediate value into register A",
             test_LD_A_nn
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_BC_A loads value in register A into byte pointed to by register BC",
-        //     test_LD_BC_A
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_DE_A loads value in register A into byte pointed to by register DE",
-        //     test_LD_DE_A
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_A_nn loads byte pointed to by immediate value into register A",
-        //     test_LD_A_nn
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_nn_A loads value in register A into byte pointed to by immediate value",
-        //     test_LD_nn_A
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LDH_n_A loads value in register A into byte pointed to by extended address from next PC",
-        //     test_LDH_n_A
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_A_HLI loads byte at address in HL then increments HL",
-        //     test_LD_A_HLI
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "8 bit LD Instructions | LD_A_HLD loads byte at address in HL then decrements HL",
-        //     test_LD_A_HLD
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_nn_A loads value in register A into byte pointed to by immediate value",
+            test_LD_nn_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_HLI loads byte at address in HL then increments HL",
+            test_LD_A_HLI
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_A_HLD loads byte at address in HL then decrements HL",
+            test_LD_A_HLD
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_BC_A loads value in register A into byte pointed to by register BC",
+            test_LD_BC_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit LD Instructions | LD_DE_A loads value in register A into byte pointed to by register DE",
+            test_LD_DE_A
         // ) == NULL ||
         // CU_add_test(
         //     test_suite,

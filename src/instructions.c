@@ -92,14 +92,20 @@ void LD_A_rr(CPU *cpu, uint8_t opcode)
             break;
         case 0xf0:
             byte = read_byte(cpu, 0xff00 + fetch_opcode(cpu));
-            cpu->t_cycles = 12;
+            cpu->t_cycles += 12;
             break;
         case 0xf2:
             byte = read_byte(cpu, 0xff00 + fetch_r(cpu, reg_C));
             cpu->t_cycles += 4;
             break;
+        case 0xfa: {
+            uint16_t addr = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+            byte = read_byte(cpu, addr);
+            cpu->t_cycles += 16;
+            break;
+        }
         default:
-            printf("Invalid register\n");
+            printf("Invalid read source\n");
             break;
     }
 
@@ -109,10 +115,48 @@ void LD_A_rr(CPU *cpu, uint8_t opcode)
 void LD_IR_A(CPU *cpu, uint8_t opcode)
 {
     cpu->t_cycles = 0;
+    uint16_t addr = 0;
+    switch (0xff & opcode) {
+        case 0x02:
+            addr = cpu->registers.BC;
+            cpu->t_cycles += 4;
+            break;
+        case 0x12:
+            addr = cpu->registers.DE;
+            cpu->t_cycles += 4;
+            break;
+        case 0xe0:
+            addr = 0xff00 + fetch_opcode(cpu);
+            cpu->t_cycles += 8;
+            break;
+        case 0xe2:
+            addr = 0xff00 + fetch_r(cpu, reg_C);
+            break;
+        case 0xea:
+            addr = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+            cpu->t_cycles += 12;
+            break;
+        default:
+            printf("Invalid write destination\n");
+            break;
+    }
+    write_byte(cpu, fetch_r(cpu, reg_A), addr);
+}
+
+void LD_A_HLI(CPU *cpu, uint8_t opcode)
+{
     (void)opcode;
-    uint8_t A = fetch_r(cpu, reg_A);
-    uint16_t addr = 0xff00 + fetch_r(cpu, reg_C);
-    write_byte(cpu, A, addr);
+    cpu->t_cycles = 0;
+    set_A(cpu, fetch_r(cpu, reg_HL));
+    cpu->registers.HL++;
+}
+
+void LD_A_HLD(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    cpu->t_cycles = 0;
+    set_A(cpu, fetch_r(cpu, reg_HL));
+    cpu->registers.HL--;
 }
 
 void UNDEF(CPU *cpu, uint8_t opcode)
