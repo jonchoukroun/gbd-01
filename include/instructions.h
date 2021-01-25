@@ -79,26 +79,59 @@ void LD_HLI_A(CPU *, uint8_t);
  **/
 void LD_HLD_A(CPU *, uint8_t);
 
+
+// ************************
+// 16-bit load instructions
+// ************************
+
+/**
+ * Load 2 bytes of immediate data into register rr
+ * No flag effects
+ * 12 T-cycles
+ **/
+void LD_rr_nn(CPU *, uint8_t);
+
+/**
+ * Load HL value into SP
+ * No flag effects
+ * 8 T-cycles
+ **/
+void LD_SP_HL(CPU *, uint8_t);
+
+/**
+ * Pushes contents of register pair onto memory stack.
+ * No flag effects
+ * 16 T-cycles
+ **/
+void PUSH_rr(CPU *, uint8_t);
+
+/**
+ * Pops contents of memory stack onto register pair.
+ * NO flag effects
+ * 16 T-cycles
+ **/
+void POP_rr(CPU *, uint8_t);
+
 void UNDEF(CPU *, uint8_t);
 
 static const OpcodeInstruction OPCODE_TABLE[256] = {
-/*            0x0       0x1        0x2       0x3       0x4       0x5       0x6       0x7       0x8       0x9        0xa       0xb       0xc       0xd       0xe       0xf */
-/* 0 */    &UNDEF,   &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,
-/* 1 */    &UNDEF,   &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,
-/* 2 */    &UNDEF,   &UNDEF, &LD_HLI_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,   &UNDEF,   &UNDEF, &LD_A_HLI,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,
-/* 3 */    &UNDEF,   &UNDEF, &LD_HLD_A,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF, &LD_A_HLD,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,
-/* 4 */   &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,
-/* 5 */   &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,
-/* 5 */   &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,
-/* 7 */   &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,  &LD_r_r,  &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,
-/* 8 */    &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
-/* 9 */    &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
-/* a */    &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
-/* b */    &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
-/* c */    &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
-/* d */    &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
-/* e */  &LD_rr_A,   &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
-/* f */  &LD_A_rr,   &UNDEF,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
+/*            0x0        0x1        0x2       0x3       0x4       0x5       0x6       0x7       0x8        0x9        0xa       0xb       0xc       0xd       0xe       0xf */
+/* 0 */    &UNDEF, &LD_rr_nn,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,
+/* 1 */    &UNDEF, &LD_rr_nn,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,
+/* 2 */    &UNDEF, &LD_rr_nn, &LD_HLI_A,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,   &UNDEF,    &UNDEF, &LD_A_HLI,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,
+/* 3 */    &UNDEF, &LD_rr_nn, &LD_HLD_A,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF, &LD_A_HLD,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_r_n,   &UNDEF,
+/* 4 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,
+/* 5 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,
+/* 5 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,
+/* 7 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r, &LD_r_HL,  &LD_r_r,
+/* 8 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
+/* 9 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
+/* a */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
+/* b */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
+/* c */    &UNDEF,   &POP_rr,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_rr,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
+/* d */    &UNDEF,   &POP_rr,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_rr,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
+/* e */  &LD_rr_A,   &POP_rr,  &LD_rr_A,   &UNDEF,   &UNDEF, &PUSH_rr,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
+/* f */  &LD_A_rr,   &POP_rr,  &LD_A_rr,   &UNDEF,   &UNDEF, &PUSH_rr,   &UNDEF,   &UNDEF,   &UNDEF, &LD_SP_HL,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,
 };
 
 #endif

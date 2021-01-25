@@ -20,7 +20,7 @@ CFLAGS +=  -Wstrict-prototypes
 CFLAGS +=  -Wundef
 CFLAGS +=  -Wold-style-definition
 
-_OBJ = 8bit_LD_instructions.o cpu.o main.o
+_OBJ = instructions.o cpu.o main.o
 OBJ = $(patsubst %,$(BUILD_DIR)%,$(_OBJ))
 
 $(TARGET): $(OBJ)
@@ -47,7 +47,8 @@ _TEST_OBJ += LD_HL_r_test.o
 _TEST_OBJ += LD_A_rr_test.o
 _TEST_OBJ += LD_rr_A_test.o
 _TEST_OBJ += LD_HL_ID_test.o
-# _TEST_OBJ += 16bit_load_test.o
+_TEST_OBJ += LD_rr_nn_test.o
+_TEST_OBJ += PP_rr_test.o
 # _TEST_OBJ += 8bit_ALU_test.o
 # _TEST_OBJ += 16bit_ALU_test.o
 # _TEST_OBJ += misc_arithmetic_test.o
@@ -79,7 +80,7 @@ $(TEST_RESULTS)test_results.txt: $(TEST_OBJ)
 $(TEST_BUILD_DIR)cpu_test.o: $(TEST_DIR)cpu_test.c
 	$(CC) $< $(SOURCE_DIR)cpu.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
 
-INSTRUCTIONS_TEST_COMPILE_OPTS = $(CC) $< $(SOURCE_DIR)cpu.c $(SOURCE_DIR)8bit_LD_instructions.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
+INSTRUCTIONS_TEST_COMPILE_OPTS = $(CC) $< $(SOURCE_DIR)cpu.c $(SOURCE_DIR)instructions.c -I$(INCLUDE_DIR) -l$(TEST_LIBS) -o $@
 
 $(TEST_BUILD_DIR)LD_r_r_test.o: $(TEST_DIR)LD_r_r_test.c
 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
@@ -102,8 +103,11 @@ $(TEST_BUILD_DIR)LD_rr_A_test.o: $(TEST_DIR)LD_rr_A_test.c
 $(TEST_BUILD_DIR)LD_HL_ID_test.o: $(TEST_DIR)LD_HL_ID_test.c
 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
 
-# $(TEST_BUILD_DIR)16bit_load_test.o: $(TEST_DIR)16bit_load_test.c
-# 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+$(TEST_BUILD_DIR)LD_rr_nn_test.o: $(TEST_DIR)LD_rr_nn_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
+$(TEST_BUILD_DIR)PP_rr_test.o: $(TEST_DIR)PP_rr_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
 
 # $(TEST_BUILD_DIR)8bit_ALU_test.o: $(TEST_DIR)8bit_ALU_test.c
 # 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
