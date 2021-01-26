@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include "instructions.h"
 
-// *****************
+// **************************************************
 // Utility Functions
-// *****************
+// **************************************************
 
 /**
  * Access register bitmaps directly
@@ -64,9 +64,9 @@ static const RegSet_8 R_TABLE_8[8] = {
 #define MASK_R16  48     // 0b00 110 000
 
 
-// ***********************
+// **************************************************
 // 8-bit load instructions
-// ***********************
+// **************************************************
 
 void LD_r_r(CPU *cpu, uint8_t opcode)
 {
@@ -198,9 +198,9 @@ void LD_HLD_A(CPU *cpu, uint8_t opcode)
 }
 
 
-// ************************
+// **************************************************
 // 16-bit load instructions
-// ************************
+// **************************************************
 
 /**
  * Return value in 16-bit registers based on bit code from opcode
@@ -270,9 +270,9 @@ void POP_rr(CPU *cpu, uint8_t opcode)
 }
 
 
-// **********************
+// **************************************************
 // 8-bit ALU instructions
-// **********************
+// **************************************************
 
 /**
  * Add value n into register A
@@ -308,6 +308,27 @@ void ADD_A_n(CPU *cpu, uint8_t opcode)
 void ADD_A_HL(CPU *cpu, uint8_t opcode)
 {
     add_A_n(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
+}
+
+void ADC_A_r(CPU *cpu, uint8_t opcode)
+{
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    add_A_n(cpu, fetch_r8(cpu, opcode & SRC_MASK) + carry);
+    cpu->t_cycles = 4;
+}
+
+void ADC_A_n(CPU *cpu, uint8_t opcode)
+{
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    add_A_n(cpu, fetch_opcode(cpu) + carry);
+    cpu->t_cycles = 8;
+}
+
+void ADC_A_HL(CPU *cpu, uint8_t opcode)
+{
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    add_A_n(cpu, read_byte(cpu, cpu->registers.HL) + carry);
     cpu->t_cycles = 8;
 }
 

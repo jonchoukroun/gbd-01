@@ -50,6 +50,7 @@ _TEST_OBJ += LD_HL_ID_test.o
 _TEST_OBJ += LD_rr_nn_test.o
 _TEST_OBJ += PP_rr_test.o
 _TEST_OBJ += ADD_8_test.o
+_TEST_OBJ += ADC_8_test.o
 # _TEST_OBJ += 16bit_ALU_test.o
 # _TEST_OBJ += misc_arithmetic_test.o
 # _TEST_OBJ += rotate_test.o
@@ -110,6 +111,9 @@ $(TEST_BUILD_DIR)PP_rr_test.o: $(TEST_DIR)PP_rr_test.c
 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
 
 $(TEST_BUILD_DIR)ADD_8_test.o: $(TEST_DIR)ADD_8_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
+$(TEST_BUILD_DIR)ADC_8_test.o: $(TEST_DIR)ADC_8_test.c
 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
 
 # $(TEST_BUILD_DIR)16bit_ALU_test.o: $(TEST_DIR)16bit_ALU_test.c
