@@ -100,5 +100,6 @@ void write_word(CPU *, uint16_t word, uint16_t address);
 uint8_t get_flag(CPU *, FlagPosition);
 void set_flag(CPU *, FlagPosition);
 void clear_flag(CPU *, FlagPosition);
+void reset_flags(CPU *);
 
 #endif

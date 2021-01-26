@@ -69,3 +69,8 @@ void clear_flag(CPU *cpu, FlagPosition flag)
 {
     cpu->registers.F &= ~(0b1 << flag);
 }
+
+void reset_flags(CPU *cpu)
+{
+    cpu->registers.F = 0;
+}
