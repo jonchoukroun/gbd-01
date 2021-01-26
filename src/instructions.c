@@ -274,10 +274,16 @@ void POP_rr(CPU *cpu, uint8_t opcode)
 // 8-bit ALU instructions
 // **********************
 
-void ADD_A_r(CPU *cpu, uint8_t opcode)
+/**
+ * Add value n into register A
+ * Set Z flag if sum is 0 (or 0xff + 1)
+ * Clear N flag
+ * Set H flag on carry from 3rd bit (> 0xf)
+ * Set C flag on carry from 7th bit (> 0xff)
+ **/
+void add_A_n(CPU *cpu, uint8_t n)
 {
     uint8_t A = fetch_r8(cpu, reg_A);
-    uint8_t n = fetch_r8(cpu, opcode & SRC_MASK);
 
     reset_flags(cpu);
     if (((A + n) & 0xff) == 0) set_flag(cpu, Z_FLAG);
@@ -285,8 +291,24 @@ void ADD_A_r(CPU *cpu, uint8_t opcode)
     if (0xff - A <= n) set_flag(cpu, C_FLAG);
 
     set_A(cpu, A + n);
+}
 
+void ADD_A_r(CPU *cpu, uint8_t opcode)
+{
+    add_A_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
     cpu->t_cycles = 4;
+}
+
+void ADD_A_n(CPU *cpu, uint8_t opcode)
+{
+    add_A_n(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+}
+
+void ADD_A_HL(CPU *cpu, uint8_t opcode)
+{
+    add_A_n(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
 }
 
 void UNDEF(CPU *cpu, uint8_t opcode)

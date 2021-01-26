@@ -73,6 +73,34 @@ void test_ADD_A_A(void)
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
+void test_ADD_A_n(void)
+{
+    CPU cpu;
+    uint16_t PC = 0x0100;
+    cpu.PC = PC;
+    cpu.memory[PC] = 0xda;
+    cpu.registers.A = 0xef;
+    cpu.registers.F = 0b11110000;
+    ADD_A_n(&cpu, 0xc6);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0xc9);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00110000);
+    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_ADD_A_HL(void)
+{
+    CPU cpu;
+    uint16_t addr = 0x0100;
+    cpu.registers.A = 0x12;
+    cpu.registers.HL = addr;
+    cpu.registers.F = 0b00000000;
+    cpu.memory[cpu.registers.HL] = 0x23;
+    ADD_A_HL(&cpu, 0x86);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x35);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
 
 int main()
 {
@@ -81,7 +109,7 @@ int main()
         return CU_get_error();
     }
 
-    CU_Suite *test_suite = CU_add_suite("ADD_A_r Instruction unit tests", NULL, NULL);
+    CU_Suite *test_suite = CU_add_suite("8-bit ADD Instructions unit tests", NULL, NULL);
     if (test_suite == NULL) {
         printf("Failed to add test suite\n");
         CU_cleanup_registry();
@@ -90,40 +118,50 @@ int main()
 
     if (CU_add_test(
             test_suite,
-            "ADD_A_r Instruction | ADD_A_B adds value in register B to register A",
+            "8-bit ADD Instructions | ADD_A_B adds value in register B to register A",
             test_ADD_A_B
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "ADD_A_r Instruction | ADD_A_C adds C into A and sets carry flag when result is over 0xff",
+            "8-bit ADD Instructions | ADD_A_C adds C into A and sets carry flag when result is over 0xff",
             test_ADD_A_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "ADD_A_r Instruction | ADD_A_D adds D into A",
+            "8-bit ADD Instructions | ADD_A_D adds D into A",
             test_ADD_A_D
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "ADD_A_r Instruction | ADD_A_E adds E into A",
+            "8-bit ADD Instructions | ADD_A_E adds E into A",
             test_ADD_A_E
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "ADD_A_r Instruction | ADD_A_H adds H into A",
+            "8-bit ADD Instructions | ADD_A_H adds H into A",
             test_ADD_A_H
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "ADD_A_r Instruction | ADD_A_L adds L into A",
+            "8-bit ADD Instructions | ADD_A_L adds L into A",
             test_ADD_A_L
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "ADD_A_r Instruction | ADD_A_A doubles A register value and ignores carry flag",
+            "8-bit ADD Instructions | ADD_A_A doubles A register value and ignores carry flag",
             test_ADD_A_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit ALU | ADD_A_n adds immediate value to register A",
+            test_ADD_A_n
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "8 bit ALU | ADD_A_HL adds value in register HL to register A",
+            test_ADD_A_HL
         ) == NULL) {
-        printf("Failed to add test to arithmetic unit test suite\n");
+        printf("Failed to add test to 8-bit ADD Instructions unit test suite\n");
         CU_cleanup_registry();
         return CU_get_error();
     }
