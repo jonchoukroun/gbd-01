@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include "instructions.h"
 
-// ***********************
-// 8-bit load instructions
-// ***********************
+// *****************
+// Utility Functions
+// *****************
 
 /**
  * Access register bitmaps directly
@@ -56,10 +56,22 @@ static const RegSet_8 R_TABLE_8[8] = {
     &set_H, &set_L, &set_at_HL, &set_A
 };
 
+/**
+ * Masks for decoding opcode into registers
+ **/
+#define DEST_MASK 56     // 0b00 111 000
+#define SRC_MASK   7     // 0b00 000 111
+#define MASK_R16  48     // 0b00 110 000
+
+
+// ***********************
+// 8-bit load instructions
+// ***********************
+
 void LD_r_r(CPU *cpu, uint8_t opcode)
 {
-    uint8_t dest_code = ((opcode & 0b00111000) >> 3);
-    uint8_t src_code = opcode & (0b00000111);
+    uint8_t dest_code = ((opcode & DEST_MASK) >> 3);
+    uint8_t src_code = opcode & SRC_MASK;
     uint8_t src = fetch_r8(cpu, src_code);
 
     RegSet_8 set_R = R_TABLE_8[dest_code];
@@ -70,7 +82,7 @@ void LD_r_r(CPU *cpu, uint8_t opcode)
 
 void LD_r_HL(CPU *cpu, uint8_t opcode)
 {
-    uint8_t dest_code = ((opcode & 0b00111000) >> 3);
+    uint8_t dest_code = ((opcode & DEST_MASK) >> 3);
     RegSet_8 set_R = R_TABLE_8[dest_code];
     set_R(cpu, read_byte(cpu, cpu->registers.HL));
 
@@ -80,14 +92,14 @@ void LD_r_HL(CPU *cpu, uint8_t opcode)
 void LD_r_n(CPU *cpu, uint8_t opcode)
 {
     cpu->t_cycles = 8;
-    uint8_t r = (opcode & 0b00111000) >> 3;
+    uint8_t r = (opcode & DEST_MASK) >> 3;
     RegSet_8 set_R = R_TABLE_8[r];
     set_R(cpu, fetch_opcode(cpu));
 }
 
 void LD_HL_r(CPU *cpu, uint8_t opcode)
 {
-    uint8_t r_code = opcode & 0b00000111;
+    uint8_t r_code = opcode & SRC_MASK;
     write_byte(cpu, fetch_r8(cpu, r_code), cpu->registers.HL);
     cpu->t_cycles = 8;
 }
@@ -222,7 +234,7 @@ static const RegSet_16 R_TABLE_16[] = {
 void LD_rr_nn(CPU *cpu, uint8_t opcode)
 {
     uint16_t nn = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
-    RegSet_16 set_RR = R_TABLE_16[(opcode & 0b00110000) >> 4];
+    RegSet_16 set_RR = R_TABLE_16[(opcode & MASK_R16) >> 4];
     set_RR(cpu, nn);
     cpu->t_cycles = 12;
 }
@@ -236,7 +248,7 @@ void LD_SP_HL(CPU *cpu, uint8_t opcode)
 
 void PUSH_rr(CPU *cpu, uint8_t opcode)
 {
-    uint16_t rr = fetch_r16(cpu, (opcode & 0b00110000) >> 4);
+    uint16_t rr = fetch_r16(cpu, (opcode & MASK_R16) >> 4);
     cpu->SP--;
     cpu->memory[cpu->SP] = rr & 0xff;
     cpu->SP--;
@@ -251,7 +263,7 @@ void POP_rr(CPU *cpu, uint8_t opcode)
     cpu->SP++;
     uint8_t high = cpu->memory[cpu->SP];
     cpu->SP++;
-    RegSet_16 set_RR = R_TABLE_16[(opcode & 0b00110000) >> 4];
+    RegSet_16 set_RR = R_TABLE_16[(opcode & MASK_R16) >> 4];
     set_RR(cpu, (high << 8) | low);
 
     cpu->t_cycles = 12;
