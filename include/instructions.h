@@ -112,6 +112,18 @@ void PUSH_rr(CPU *, uint8_t);
  **/
 void POP_rr(CPU *, uint8_t);
 
+
+// **********************
+// 8-bit ALU instructions
+// **********************
+
+/**
+ * Add value in register r to register A
+ * Clears N flag, conditionally sets Z, H, and C flags
+ * 4 T-cycles
+ **/
+void ADD_A_r(CPU *, uint8_t);
+
 void UNDEF(CPU *, uint8_t);
 
 static const OpcodeInstruction OPCODE_TABLE[256] = {

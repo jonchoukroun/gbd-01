@@ -269,6 +269,26 @@ void POP_rr(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 12;
 }
 
+
+// **********************
+// 8-bit ALU instructions
+// **********************
+
+void ADD_A_r(CPU *cpu, uint8_t opcode)
+{
+    uint8_t A = fetch_r8(cpu, reg_A);
+    uint8_t n = fetch_r8(cpu, opcode & SRC_MASK);
+
+    reset_flags(cpu);
+    if (((A + n) & 0xff) == 0) set_flag(cpu, Z_FLAG);
+    if ((A & 0xf) + (n & 0xf) > 0xf) set_flag(cpu, H_FLAG);
+    if (0xff - A <= n) set_flag(cpu, C_FLAG);
+
+    set_A(cpu, A + n);
+
+    cpu->t_cycles = 4;
+}
+
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
     (void)cpu;
