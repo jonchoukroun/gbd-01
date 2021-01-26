@@ -157,7 +157,7 @@ int main(void)
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit LD Instructions | LD_HL_n loads immediate value into address stored in HL",
+            "LD_r_n Instructions | LD_HL_n loads immediate value into address stored in HL",
             test_LD_HL_n
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");

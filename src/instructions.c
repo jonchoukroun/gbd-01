@@ -7,11 +7,11 @@
 
 /**
  * Access register bitmaps directly
+ * Note: reg_HL is invalid
  **/
 typedef enum {
     reg_B, reg_C, reg_D, reg_E,
     reg_H, reg_L, reg_HL, reg_A,
-    reg_BC, reg_DE
 } REGISTER_MAP;
 
 /**
