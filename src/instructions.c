@@ -509,20 +509,20 @@ void XOR_HL(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 8;
 }
 
-void CP_A_r(CPU *cpu, uint8_t opcode)
+void CP_r(CPU *cpu, uint8_t opcode)
 {
     sub_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
     cpu->t_cycles = 4;
 }
 
-void CP_A_n(CPU *cpu, uint8_t opcode)
+void CP_n(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     sub_n(cpu, fetch_opcode(cpu));
     cpu->t_cycles = 8;
 }
 
-void CP_A_HL(CPU *cpu, uint8_t opcode)
+void CP_HL(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     sub_n(cpu, read_byte(cpu, cpu->registers.HL));
