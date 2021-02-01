@@ -293,20 +293,20 @@ void add_n(CPU *cpu, uint8_t n)
     set_A(cpu, A + n);
 }
 
-void ADD_A_r(CPU *cpu, uint8_t opcode)
+void ADD_r(CPU *cpu, uint8_t opcode)
 {
     add_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
     cpu->t_cycles = 4;
 }
 
-void ADD_A_n(CPU *cpu, uint8_t opcode)
+void ADD_n(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     add_n(cpu, fetch_opcode(cpu));
     cpu->t_cycles = 8;
 }
 
-void ADD_A_HL(CPU *cpu, uint8_t opcode)
+void ADD_HL(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     add_n(cpu, read_byte(cpu, cpu->registers.HL));
