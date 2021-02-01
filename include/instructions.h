@@ -164,21 +164,21 @@ void ADC_HL(CPU *, uint8_t);
  * Set N flag, conditionally set Z, H, and C flags
  * 4 T-cycles
  **/
-void SUB_A_r(CPU *, uint8_t);
+void SUB_r(CPU *, uint8_t);
 
 /**
  * Subtract immediate value from register A
  * Set N flag, conditionally set Z, H, and C flags
  * 8 T-cycles
  **/
-void SUB_A_n(CPU *, uint8_t);
+void SUB_n(CPU *, uint8_t);
 
 /**
  * Subtract memory contents at address in HL from register A
  * Set N flag, conditionally set Z, H, and C flags
  * 8 T-cycles
  **/
-void SUB_A_HL(CPU *, uint8_t);
+void SUB_HL(CPU *, uint8_t);
 
 /**
  * Subtract value in register and C flag from register A
@@ -298,11 +298,11 @@ static const OpcodeInstruction OPCODE_TABLE[256] = {
 /* 5 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
 /* 7 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
 /* 8 */    &ADD_r,    &ADD_r,    &ADD_r,   &ADD_r,   &ADD_r,   &ADD_r,   &ADD_HL,   &ADD_r,   &ADC_r,    &ADC_r,    &ADC_r,   &ADC_r,   &ADC_r,   &ADC_r,   &ADC_HL,   &ADC_r,
-/* 9 */  &SUB_A_r,  &SUB_A_r,  &SUB_A_r, &SUB_A_r, &SUB_A_r, &SUB_A_r, &SUB_A_HL, &SUB_A_r, &SBC_A_r,  &SBC_A_r,  &SBC_A_r, &SBC_A_r, &SBC_A_r, &SBC_A_r, &SBC_A_HL, &SBC_A_r,
+/* 9 */    &SUB_r,    &SUB_r,    &SUB_r,   &SUB_r,   &SUB_r,   &SUB_r,   &SUB_HL,   &SUB_r, &SBC_A_r,  &SBC_A_r,  &SBC_A_r, &SBC_A_r, &SBC_A_r, &SBC_A_r, &SBC_A_HL, &SBC_A_r,
 /* a */  &AND_A_r,  &AND_A_r,  &AND_A_r, &AND_A_r, &AND_A_r, &AND_A_r, &AND_A_HL, &AND_A_r, &XOR_A_r,  &XOR_A_r,  &XOR_A_r, &XOR_A_r, &XOR_A_r, &XOR_A_r, &XOR_A_HL, &XOR_A_r,
 /* b */   &OR_A_r,   &OR_A_r,   &OR_A_r,  &OR_A_r,  &OR_A_r,  &OR_A_r,  &OR_A_HL,  &OR_A_r,  &CP_A_r,   &CP_A_r,   &CP_A_r,  &CP_A_r,  &CP_A_r,  &CP_A_r,  &CP_A_HL,  &CP_A_r,
 /* c */    &UNDEF,   &POP_rr,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_rr,    &ADD_n,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &ADC_n,   &UNDEF,
-/* d */    &UNDEF,   &POP_rr,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_rr,  &SUB_A_n,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &SBC_A_n,   &UNDEF,
+/* d */    &UNDEF,   &POP_rr,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_rr,    &SUB_n,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &SBC_A_n,   &UNDEF,
 /* e */  &LD_rr_A,   &POP_rr,  &LD_rr_A,   &UNDEF,   &UNDEF, &PUSH_rr,  &AND_A_n,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,  &XOR_A_n,   &UNDEF,
 /* f */  &LD_A_rr,   &POP_rr,  &LD_A_rr,   &UNDEF,   &UNDEF, &PUSH_rr,   &OR_A_n,   &UNDEF,   &UNDEF, &LD_SP_HL,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,   &CP_A_n,   &UNDEF,
 };
