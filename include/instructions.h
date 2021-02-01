@@ -206,21 +206,21 @@ void SBC_HL(CPU *, uint8_t);
  * Set H flag, clear N and C flgs, conditionally set Z flag
  * 4 T-cycles
  **/
-void AND_A_r(CPU *, uint8_t);
+void AND_r(CPU *, uint8_t);
 
 /**
  * Store logical AND of register A and immediate value into register A
  * Set H flag, clear N and C flgs, conditionally set Z flag
  * 8 T-cycles
  **/
-void AND_A_n(CPU *, uint8_t);
+void AND_n(CPU *, uint8_t);
 
 /**
  * Store logical AND of register A and memory contents at address in HL into register A
  * Set H flag, clear N and C flgs, conditionally set Z flag
  * 8 T-cycles
  **/
-void AND_A_HL(CPU *, uint8_t);
+void AND_HL(CPU *, uint8_t);
 
 /**
  * Store logical OR of register A and register value into register A
@@ -299,11 +299,11 @@ static const OpcodeInstruction OPCODE_TABLE[256] = {
 /* 7 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
 /* 8 */    &ADD_r,    &ADD_r,    &ADD_r,   &ADD_r,   &ADD_r,   &ADD_r,   &ADD_HL,   &ADD_r,   &ADC_r,    &ADC_r,    &ADC_r,   &ADC_r,   &ADC_r,   &ADC_r,   &ADC_HL,   &ADC_r,
 /* 9 */    &SUB_r,    &SUB_r,    &SUB_r,   &SUB_r,   &SUB_r,   &SUB_r,   &SUB_HL,   &SUB_r,   &SBC_r,    &SBC_r,    &SBC_r,   &SBC_r,   &SBC_r,   &SBC_r,   &SBC_HL,   &SBC_r,
-/* a */  &AND_A_r,  &AND_A_r,  &AND_A_r, &AND_A_r, &AND_A_r, &AND_A_r, &AND_A_HL, &AND_A_r, &XOR_A_r,  &XOR_A_r,  &XOR_A_r, &XOR_A_r, &XOR_A_r, &XOR_A_r, &XOR_A_HL, &XOR_A_r,
+/* a */    &AND_r,    &AND_r,    &AND_r,   &AND_r,   &AND_r,   &AND_r,   &AND_HL,   &AND_r, &XOR_A_r,  &XOR_A_r,  &XOR_A_r, &XOR_A_r, &XOR_A_r, &XOR_A_r, &XOR_A_HL, &XOR_A_r,
 /* b */   &OR_A_r,   &OR_A_r,   &OR_A_r,  &OR_A_r,  &OR_A_r,  &OR_A_r,  &OR_A_HL,  &OR_A_r,  &CP_A_r,   &CP_A_r,   &CP_A_r,  &CP_A_r,  &CP_A_r,  &CP_A_r,  &CP_A_HL,  &CP_A_r,
 /* c */    &UNDEF,   &POP_rr,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_rr,    &ADD_n,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &ADC_n,   &UNDEF,
 /* d */    &UNDEF,   &POP_rr,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_rr,    &SUB_n,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &SBC_n,   &UNDEF,
-/* e */  &LD_rr_A,   &POP_rr,  &LD_rr_A,   &UNDEF,   &UNDEF, &PUSH_rr,  &AND_A_n,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,  &XOR_A_n,   &UNDEF,
+/* e */  &LD_rr_A,   &POP_rr,  &LD_rr_A,   &UNDEF,   &UNDEF, &PUSH_rr,    &AND_n,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,  &XOR_A_n,   &UNDEF,
 /* f */  &LD_A_rr,   &POP_rr,  &LD_A_rr,   &UNDEF,   &UNDEF, &PUSH_rr,   &OR_A_n,   &UNDEF,   &UNDEF, &LD_SP_HL,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,   &CP_A_n,   &UNDEF,
 };
 

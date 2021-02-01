@@ -419,20 +419,20 @@ void and_n(CPU *cpu, uint8_t n)
     set_A(cpu, n & A);
 }
 
-void AND_A_r(CPU *cpu, uint8_t opcode)
+void AND_r(CPU *cpu, uint8_t opcode)
 {
     and_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
     cpu->t_cycles = 4;
 }
 
-void AND_A_n(CPU *cpu, uint8_t opcode)
+void AND_n(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     and_n(cpu, fetch_opcode(cpu));
     cpu->t_cycles = 8;
 }
 
-void AND_A_HL(CPU *cpu, uint8_t opcode)
+void AND_HL(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     and_n(cpu, read_byte(cpu, cpu->registers.HL));
