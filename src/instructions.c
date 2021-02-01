@@ -313,14 +313,14 @@ void ADD_HL(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 8;
 }
 
-void ADC_A_r(CPU *cpu, uint8_t opcode)
+void ADC_r(CPU *cpu, uint8_t opcode)
 {
     uint8_t carry = get_flag(cpu, C_FLAG);
     add_n(cpu, fetch_r8(cpu, opcode & SRC_MASK) + carry);
     cpu->t_cycles = 4;
 }
 
-void ADC_A_n(CPU *cpu, uint8_t opcode)
+void ADC_n(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     uint8_t carry = get_flag(cpu, C_FLAG);
@@ -328,7 +328,7 @@ void ADC_A_n(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 8;
 }
 
-void ADC_A_HL(CPU *cpu, uint8_t opcode)
+void ADC_HL(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     uint8_t carry = get_flag(cpu, C_FLAG);
