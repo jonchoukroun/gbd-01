@@ -340,8 +340,8 @@ void ADC_A_HL(CPU *cpu, uint8_t opcode)
  * Subtract value n from register A
  * Set N flag
  * Set Z flag if difference is 0
- * Set H flag on borrow from 3rd bit
- * Set C flag on borrow from 7th bit
+ * Set H flag on borrow from 4rd bit
+ * Set C flag if n is greater than A
  **/
 void sub_n(CPU *cpu, uint8_t n)
 {
@@ -373,6 +373,26 @@ void SUB_A_HL(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     sub_n(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
+}
+
+void SBC_A_r(CPU *cpu, uint8_t opcode)
+{
+    sub_n(cpu, fetch_r8(cpu, opcode & SRC_MASK) + get_flag(cpu, C_FLAG));
+    cpu->t_cycles = 4;
+}
+
+void SBC_A_n(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    sub_n(cpu, fetch_opcode(cpu) + get_flag(cpu, C_FLAG));
+    cpu->t_cycles = 8;
+}
+
+void SBC_A_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    sub_n(cpu, read_byte(cpu, cpu->registers.HL) + get_flag(cpu, C_FLAG));
     cpu->t_cycles = 8;
 }
 
