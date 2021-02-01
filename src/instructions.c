@@ -454,20 +454,20 @@ void or_n(CPU *cpu, uint8_t n)
     set_A(cpu, A | n);
 }
 
-void OR_A_r(CPU *cpu, uint8_t opcode)
+void OR_r(CPU *cpu, uint8_t opcode)
 {
     or_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
     cpu->t_cycles = 4;
 }
 
-void OR_A_n(CPU *cpu, uint8_t opcode)
+void OR_n(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     or_n(cpu, fetch_opcode(cpu));
     cpu->t_cycles = 8;
 }
 
-void OR_A_HL(CPU *cpu, uint8_t opcode)
+void OR_HL(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     or_n(cpu, read_byte(cpu, cpu->registers.HL));
@@ -489,20 +489,20 @@ void xor_n(CPU *cpu, uint8_t n)
     set_A(cpu, A | n);
 }
 
-void XOR_A_r(CPU *cpu, uint8_t opcode)
+void XOR_r(CPU *cpu, uint8_t opcode)
 {
     or_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
     cpu->t_cycles = 4;
 }
 
-void XOR_A_n(CPU *cpu, uint8_t opcode)
+void XOR_n(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     or_n(cpu, fetch_opcode(cpu));
     cpu->t_cycles = 8;
 }
 
-void XOR_A_HL(CPU *cpu, uint8_t opcode)
+void XOR_HL(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     or_n(cpu, read_byte(cpu, cpu->registers.HL));

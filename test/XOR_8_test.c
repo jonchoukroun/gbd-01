@@ -2,95 +2,95 @@
 #include <CUnit/Basic.h>
 #include "instructions.h"
 
-void test_XOR_A_A(void)
+void test_XOR_A(void)
 {
     CPU cpu;
     cpu.registers.A = 0x23;
-    XOR_A_r(&cpu, 0xaf);
+    XOR_r(&cpu, 0xaf);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x23);
     CU_ASSERT_EQUAL(cpu.registers.F, 0);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_XOR_A_B(void)
+void test_XOR_B(void)
 {
     CPU cpu;
     cpu.registers.A = 0xaa;
     cpu.registers.B = 0x11;
-    XOR_A_r(&cpu, 0xa8);
+    XOR_r(&cpu, 0xa8);
     CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_XOR_A_C(void)
+void test_XOR_C(void)
 {
     CPU cpu;
     cpu.registers.A = 0xaa;
     cpu.registers.C = 0x11;
-    XOR_A_r(&cpu, 0xa9);
+    XOR_r(&cpu, 0xa9);
     CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_XOR_A_D(void)
+void test_XOR_D(void)
 {
     CPU cpu;
     cpu.registers.A = 0xaa;
     cpu.registers.D = 0x11;
-    XOR_A_r(&cpu, 0xaa);
+    XOR_r(&cpu, 0xaa);
     CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_XOR_A_E(void)
+void test_XOR_E(void)
 {
     CPU cpu;
     cpu.registers.A = 0xaa;
     cpu.registers.E = 0x11;
-    XOR_A_r(&cpu, 0xab);
+    XOR_r(&cpu, 0xab);
     CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_XOR_A_H(void)
+void test_XOR_H(void)
 {
     CPU cpu;
     cpu.registers.A = 0xaa;
     cpu.registers.H = 0x11;
-    XOR_A_r(&cpu, 0xac);
+    XOR_r(&cpu, 0xac);
     CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_XOR_A_L(void)
+void test_XOR_L(void)
 {
     CPU cpu;
     cpu.registers.A = 0xaa;
     cpu.registers.L = 0x11;
-    XOR_A_r(&cpu, 0xad);
+    XOR_r(&cpu, 0xad);
     CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_XOR_A_n(void)
+void test_XOR_n(void)
 {
     CPU cpu;
     cpu.registers.A = 0x0;
     cpu.PC = 0x500;
     cpu.memory[cpu.PC] = 0x5;
-    XOR_A_n(&cpu, 0xee);
+    XOR_n(&cpu, 0xee);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x5);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
-void test_XOR_A_HL(void)
+void test_XOR_HL(void)
 {
     CPU cpu;
     uint8_t value = 0x5a;
@@ -98,7 +98,7 @@ void test_XOR_A_HL(void)
     cpu.registers.HL = address;
     cpu.memory[address] = value;
     cpu.registers.A = 0x12;
-    XOR_A_HL(&cpu, 0xae);
+    XOR_HL(&cpu, 0xae);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x5a)
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
@@ -120,48 +120,48 @@ int main()
 
     if (CU_add_test(
             test_suite,
-            "8 bit XOR Instructions | XOR_A_A leaves A as is",
-            test_XOR_A_A
+            "8 bit XOR Instructions | XOR_A leaves A as is",
+            test_XOR_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit XOR Instructions | XOR_A_B sets A to bitwise or with B",
-            test_XOR_A_B
+            "8 bit XOR Instructions | XOR_B sets A to bitwise or with B",
+            test_XOR_B
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit XOR Instructions | XOR_A_C sets A to bitwise or with C",
-            test_XOR_A_C
+            "8 bit XOR Instructions | XOR_C sets A to bitwise or with C",
+            test_XOR_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit XOR Instructions | XOR_A_D sets A to bitwise or with D",
-            test_XOR_A_D
+            "8 bit XOR Instructions | XOR_D sets A to bitwise or with D",
+            test_XOR_D
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit XOR Instructions | XOR_A_E sets A to bitwise or with E",
-            test_XOR_A_E
+            "8 bit XOR Instructions | XOR_E sets A to bitwise or with E",
+            test_XOR_E
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit XOR Instructions | XOR_A_H sets A to bitwise or with H",
-            test_XOR_A_H
+            "8 bit XOR Instructions | XOR_H sets A to bitwise or with H",
+            test_XOR_H
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit XOR Instructions | XOR_A_L sets A to bitwise or with L",
-            test_XOR_A_L
+            "8 bit XOR Instructions | XOR_L sets A to bitwise or with L",
+            test_XOR_L
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit XOR Instructions | XOR_A_n sets A to bitwise or with immediate value",
-            test_XOR_A_n
+            "8 bit XOR Instructions | XOR_n sets A to bitwise or with immediate value",
+            test_XOR_n
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit XOR Instructions | XOR_A_HL sets A to bitwise or with byte in address at HL",
-            test_XOR_A_HL
+            "8 bit XOR Instructions | XOR_HL sets A to bitwise or with byte in address at HL",
+            test_XOR_HL
         ) == NULL) {
         printf("Failed to add test to 8-bit XOR Instructions unit test suite\n");
         CU_cleanup_registry();

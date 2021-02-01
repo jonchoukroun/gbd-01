@@ -2,95 +2,95 @@
 #include <CUnit/Basic.h>
 #include "instructions.h"
 
-void test_OR_A_A(void)
+void test_OR_A(void)
 {
     CPU cpu;
     cpu.registers.A = 0x23;
-    OR_A_r(&cpu, 0xb7);
+    OR_r(&cpu, 0xb7);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x23);
     CU_ASSERT_EQUAL(cpu.registers.F, 0);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_OR_A_B(void)
+void test_OR_B(void)
 {
     CPU cpu;
     cpu.registers.A = 0xaa;
     cpu.registers.B = 0x11;
-    OR_A_r(&cpu, 0xb0);
+    OR_r(&cpu, 0xb0);
     CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_OR_A_C(void)
+void test_OR_C(void)
 {
     CPU cpu;
     cpu.registers.A = 0xaa;
     cpu.registers.C = 0x11;
-    OR_A_r(&cpu, 0xb1);
+    OR_r(&cpu, 0xb1);
     CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_OR_A_D(void)
+void test_OR_D(void)
 {
     CPU cpu;
     cpu.registers.A = 0xaa;
     cpu.registers.D = 0x11;
-    OR_A_r(&cpu, 0xb2);
+    OR_r(&cpu, 0xb2);
     CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_OR_A_E(void)
+void test_OR_E(void)
 {
     CPU cpu;
     cpu.registers.A = 0xaa;
     cpu.registers.E = 0x11;
-    OR_A_r(&cpu, 0xb3);
+    OR_r(&cpu, 0xb3);
     CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_OR_A_H(void)
+void test_OR_H(void)
 {
     CPU cpu;
     cpu.registers.A = 0xaa;
     cpu.registers.H = 0x11;
-    OR_A_r(&cpu, 0xb4);
+    OR_r(&cpu, 0xb4);
     CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_OR_A_L(void)
+void test_OR_L(void)
 {
     CPU cpu;
     cpu.registers.A = 0xaa;
     cpu.registers.L = 0x11;
-    OR_A_r(&cpu, 0xb5);
+    OR_r(&cpu, 0xb5);
     CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
-void test_OR_A_n(void)
+void test_OR_n(void)
 {
     CPU cpu;
     cpu.registers.A = 0x0;
     cpu.PC = 0x500;
     cpu.memory[cpu.PC] = 0x5;
-    OR_A_n(&cpu, 0xf6);
+    OR_n(&cpu, 0xf6);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x5);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
-void test_OR_A_HL(void)
+void test_OR_HL(void)
 {
     CPU cpu;
     uint8_t value = 0x5a;
@@ -98,7 +98,7 @@ void test_OR_A_HL(void)
     cpu.registers.HL = address;
     cpu.memory[address] = value;
     cpu.registers.A = 0x12;
-    OR_A_HL(&cpu, 0xb6);
+    OR_HL(&cpu, 0xb6);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x5a)
     CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
@@ -120,48 +120,48 @@ int main()
 
     if (CU_add_test(
             test_suite,
-            "8 bit OR Instructions | OR_A_A leaves A as is",
-            test_OR_A_A
+            "8 bit OR Instructions | OR_A leaves A as is",
+            test_OR_A
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit OR Instructions | OR_A_B sets A to bitwise or with B",
-            test_OR_A_B
+            "8 bit OR Instructions | OR_B sets A to bitwise or with B",
+            test_OR_B
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit OR Instructions | OR_A_C sets A to bitwise or with C",
-            test_OR_A_C
+            "8 bit OR Instructions | OR_C sets A to bitwise or with C",
+            test_OR_C
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit OR Instructions | OR_A_D sets A to bitwise or with D",
-            test_OR_A_D
+            "8 bit OR Instructions | OR_D sets A to bitwise or with D",
+            test_OR_D
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit OR Instructions | OR_A_E sets A to bitwise or with E",
-            test_OR_A_E
+            "8 bit OR Instructions | OR_E sets A to bitwise or with E",
+            test_OR_E
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit OR Instructions | OR_A_H sets A to bitwise or with H",
-            test_OR_A_H
+            "8 bit OR Instructions | OR_H sets A to bitwise or with H",
+            test_OR_H
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit OR Instructions | OR_A_L sets A to bitwise or with L",
-            test_OR_A_L
+            "8 bit OR Instructions | OR_L sets A to bitwise or with L",
+            test_OR_L
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit OR Instructions | OR_A_n sets A to bitwise or with immediate value",
-            test_OR_A_n
+            "8 bit OR Instructions | OR_n sets A to bitwise or with immediate value",
+            test_OR_n
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit OR Instructions | OR_A_HL sets A to bitwise or with byte in address at HL",
-            test_OR_A_HL
+            "8 bit OR Instructions | OR_HL sets A to bitwise or with byte in address at HL",
+            test_OR_HL
         ) == NULL) {
         printf("Failed to add test to 8-bit OR Instructions unit test suite\n");
         CU_cleanup_registry();
