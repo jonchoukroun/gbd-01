@@ -379,14 +379,14 @@ void SUB_HL(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 8;
 }
 
-void SBC_A_r(CPU *cpu, uint8_t opcode)
+void SBC_r(CPU *cpu, uint8_t opcode)
 {
     uint8_t diff = sub_n(cpu, fetch_r8(cpu, opcode & SRC_MASK) + get_flag(cpu, C_FLAG));
     set_A(cpu, diff);
     cpu->t_cycles = 4;
 }
 
-void SBC_A_n(CPU *cpu, uint8_t opcode)
+void SBC_n(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     uint8_t diff = sub_n(cpu, fetch_opcode(cpu) + get_flag(cpu, C_FLAG));
@@ -394,7 +394,7 @@ void SBC_A_n(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 8;
 }
 
-void SBC_A_HL(CPU *cpu, uint8_t opcode)
+void SBC_HL(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
     uint8_t diff = sub_n(cpu, read_byte(cpu, cpu->registers.HL) + get_flag(cpu, C_FLAG));
