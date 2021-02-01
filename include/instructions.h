@@ -201,6 +201,90 @@ void SBC_A_n(CPU *, uint8_t);
  **/
 void SBC_A_HL(CPU *, uint8_t);
 
+/**
+ * Set logical AND of register value and register A
+ * Set H flag, clear N and C flgs, conditionally set Z flag
+ * 4 T-cycles
+ **/
+void AND_A_r(CPU *, uint8_t);
+
+/**
+ * Store logical AND of register A and immediate value into register A
+ * Set H flag, clear N and C flgs, conditionally set Z flag
+ * 8 T-cycles
+ **/
+void AND_A_n(CPU *, uint8_t);
+
+/**
+ * Store logical AND of register A and memory contents at address in HL into register A
+ * Set H flag, clear N and C flgs, conditionally set Z flag
+ * 8 T-cycles
+ **/
+void AND_A_HL(CPU *, uint8_t);
+
+/**
+ * Store logical OR of register A and register value into register A
+ * Clear N, H, and C flags, conditionally set Z flag
+ * 4 T-cycles
+ **/
+void OR_A_r(CPU *, uint8_t);
+
+/**
+ * Store logical OR of register A and immediate value into register A
+ * Clear N, H, and C flags, conditionally set Z flag
+ * 8 T-Cycles
+ **/
+void OR_A_n(CPU *, uint8_t);
+
+/**
+ * Store logical OR of register A and memory contents at address in HL into register A
+ * Clear N, H, and C flags, conditionally set Z flag
+ * 8 T-Cycles
+ **/
+void OR_A_HL(CPU *, uint8_t);
+
+/**
+ * Store logical XOR of register A and register value into register A
+ * Clear N, H, and C flags, conditionally set Z flag
+ * 4 T-cycles
+ **/
+void XOR_A_r(CPU *, uint8_t);
+
+/**
+ * Store logical XOR of register A and immediate value into register A
+ * Clear N, H, and C flags, conditionally set Z flag
+ * 8 T-Cycles
+ **/
+void XOR_A_n(CPU *, uint8_t);
+
+/**
+ * Store logical XOR of register A and memory contents at address in HL into register A
+ * Clear N, H, and C flags, conditionally set Z flag
+ * 8 T-Cycles
+ **/
+void XOR_A_HL(CPU *, uint8_t);
+
+/**
+ * Compare difference between register A and register value (don't store)
+ * Set N flag, conditionally set Z, H, and C flags
+ * 4 T-cycles
+ **/
+void CP_A_r(CPU *, uint8_t);
+
+/**
+ * Compare difference between register A and immediate value (don't store)
+ * Set N flag, conditionally set Z, H, and C flags
+ * 8 T-cycles
+ **/
+void CP_A_n(CPU *, uint8_t);
+
+/**
+ * Compare difference between register A and memory contents add address in HL (don't store)
+ * Set N flag, conditionally set Z, H, and C flags
+ * 8 T-cycles
+ **/
+void CP_A_HL(CPU *, uint8_t);
+
 void UNDEF(CPU *, uint8_t);
 
 static const OpcodeInstruction OPCODE_TABLE[256] = {
@@ -215,12 +299,12 @@ static const OpcodeInstruction OPCODE_TABLE[256] = {
 /* 7 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
 /* 8 */  &ADD_A_r,  &ADD_A_r,  &ADD_A_r, &ADD_A_r, &ADD_A_r, &ADD_A_r, &ADD_A_HL, &ADD_A_r, &ADC_A_r,  &ADC_A_r,  &ADC_A_r, &ADC_A_r, &ADC_A_r, &ADC_A_r, &ADC_A_HL, &ADC_A_r,
 /* 9 */  &SUB_A_r,  &SUB_A_r,  &SUB_A_r, &SUB_A_r, &SUB_A_r, &SUB_A_r, &SUB_A_HL, &SUB_A_r, &SBC_A_r,  &SBC_A_r,  &SBC_A_r, &SBC_A_r, &SBC_A_r, &SBC_A_r, &SBC_A_HL, &SBC_A_r,
-/* a */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* b */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* a */  &AND_A_r,  &AND_A_r,  &AND_A_r, &AND_A_r, &AND_A_r, &AND_A_r, &AND_A_HL, &AND_A_r, &XOR_A_r,  &XOR_A_r,  &XOR_A_r, &XOR_A_r, &XOR_A_r, &XOR_A_r, &XOR_A_HL, &XOR_A_r,
+/* b */   &OR_A_r,   &OR_A_r,   &OR_A_r,  &OR_A_r,  &OR_A_r,  &OR_A_r,  &OR_A_HL,  &OR_A_r,  &CP_A_r,   &CP_A_r,   &CP_A_r,  &CP_A_r,  &CP_A_r,  &CP_A_r,  &CP_A_HL,  &CP_A_r,
 /* c */    &UNDEF,   &POP_rr,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_rr,  &ADD_A_n,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &ADC_A_n,   &UNDEF,
 /* d */    &UNDEF,   &POP_rr,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_rr,  &SUB_A_n,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &SBC_A_n,   &UNDEF,
-/* e */  &LD_rr_A,   &POP_rr,  &LD_rr_A,   &UNDEF,   &UNDEF, &PUSH_rr,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* f */  &LD_A_rr,   &POP_rr,  &LD_A_rr,   &UNDEF,   &UNDEF, &PUSH_rr,    &UNDEF,   &UNDEF,   &UNDEF, &LD_SP_HL,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* e */  &LD_rr_A,   &POP_rr,  &LD_rr_A,   &UNDEF,   &UNDEF, &PUSH_rr,  &AND_A_n,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,  &XOR_A_n,   &UNDEF,
+/* f */  &LD_A_rr,   &POP_rr,  &LD_A_rr,   &UNDEF,   &UNDEF, &PUSH_rr,   &OR_A_n,   &UNDEF,   &UNDEF, &LD_SP_HL,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,   &CP_A_n,   &UNDEF,
 };
 
 #endif

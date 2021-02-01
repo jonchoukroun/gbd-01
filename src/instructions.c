@@ -337,13 +337,13 @@ void ADC_A_HL(CPU *cpu, uint8_t opcode)
 }
 
 /**
- * Subtract value n from register A
+ * Return difference between register A and value n
  * Set N flag
  * Set Z flag if difference is 0
  * Set H flag on borrow from 4rd bit
  * Set C flag if n is greater than A
  **/
-void sub_n(CPU *cpu, uint8_t n)
+uint8_t sub_n(CPU *cpu, uint8_t n)
 {
     uint8_t A = fetch_r8(cpu, reg_A);
 
@@ -353,46 +353,179 @@ void sub_n(CPU *cpu, uint8_t n)
     if ((n & 0xf) > (A & 0xf)) set_flag(cpu, H_FLAG);
     if (n > A) set_flag(cpu, C_FLAG);
 
-    set_A(cpu, A - n);
+    return A - n;
 }
 
 void SUB_A_r(CPU *cpu, uint8_t opcode)
 {
-    sub_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
+    uint8_t diff = sub_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
+    set_A(cpu, diff);
     cpu->t_cycles = 4;
 }
 
 void SUB_A_n(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
-    sub_n(cpu, fetch_opcode(cpu));
+    uint8_t diff = sub_n(cpu, fetch_opcode(cpu));
+    set_A(cpu, diff);
     cpu->t_cycles = 8;
 }
 
 void SUB_A_HL(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
-    sub_n(cpu, read_byte(cpu, cpu->registers.HL));
+    uint8_t diff = sub_n(cpu, read_byte(cpu, cpu->registers.HL));
+    set_A(cpu, diff);
     cpu->t_cycles = 8;
 }
 
 void SBC_A_r(CPU *cpu, uint8_t opcode)
 {
-    sub_n(cpu, fetch_r8(cpu, opcode & SRC_MASK) + get_flag(cpu, C_FLAG));
+    uint8_t diff = sub_n(cpu, fetch_r8(cpu, opcode & SRC_MASK) + get_flag(cpu, C_FLAG));
+    set_A(cpu, diff);
     cpu->t_cycles = 4;
 }
 
 void SBC_A_n(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
-    sub_n(cpu, fetch_opcode(cpu) + get_flag(cpu, C_FLAG));
+    uint8_t diff = sub_n(cpu, fetch_opcode(cpu) + get_flag(cpu, C_FLAG));
+    set_A(cpu, diff);
     cpu->t_cycles = 8;
 }
 
 void SBC_A_HL(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
-    sub_n(cpu, read_byte(cpu, cpu->registers.HL) + get_flag(cpu, C_FLAG));
+    uint8_t diff = sub_n(cpu, read_byte(cpu, cpu->registers.HL) + get_flag(cpu, C_FLAG));
+    set_A(cpu, diff);
+    cpu->t_cycles = 8;
+}
+
+/**
+ * Set logical AND of register A and n
+ * Clear N and C flags
+ * Set H flag
+ * Set Z flag if A & n is 0
+ **/
+void and_n(CPU *cpu, uint8_t n)
+{
+    uint8_t A = fetch_r8(cpu, reg_A);
+
+    reset_flags(cpu);
+    set_flag(cpu, H_FLAG);
+    if ((n & A) == 0) set_flag(cpu, Z_FLAG);
+
+    set_A(cpu, n & A);
+}
+
+void AND_A_r(CPU *cpu, uint8_t opcode)
+{
+    and_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
+    cpu->t_cycles = 4;
+}
+
+void AND_A_n(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    and_n(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+}
+
+void AND_A_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    and_n(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
+}
+
+/**
+ * Set logical OR of register A and n
+ * Clear N, H, and C flags
+ * Set Z flag if A & n is 0
+ **/
+void or_n(CPU *cpu, uint8_t n)
+{
+    uint8_t A = fetch_r8(cpu, reg_A);
+
+    reset_flags(cpu);
+    if ((A | n) == 0) set_flag(cpu, Z_FLAG);
+
+    set_A(cpu, A | n);
+}
+
+void OR_A_r(CPU *cpu, uint8_t opcode)
+{
+    or_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
+    cpu->t_cycles = 4;
+}
+
+void OR_A_n(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    or_n(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+}
+
+void OR_A_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    or_n(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
+}
+
+/**
+ * Set logical XOR of register A and n
+ * Clear N, H, and C flags
+ * Set Z flag if A & n is 0
+ **/
+void xor_n(CPU *cpu, uint8_t n)
+{
+    uint8_t A = fetch_r8(cpu, reg_A);
+
+    reset_flags(cpu);
+    if ((A ^ n) == 0) set_flag(cpu, Z_FLAG);
+
+    set_A(cpu, A | n);
+}
+
+void XOR_A_r(CPU *cpu, uint8_t opcode)
+{
+    or_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
+    cpu->t_cycles = 4;
+}
+
+void XOR_A_n(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    or_n(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+}
+
+void XOR_A_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    or_n(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
+}
+
+void CP_A_r(CPU *cpu, uint8_t opcode)
+{
+    sub_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
+    cpu->t_cycles = 4;
+}
+
+void CP_A_n(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    sub_n(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+}
+
+void CP_A_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    sub_n(cpu, read_byte(cpu, cpu->registers.HL));
     cpu->t_cycles = 8;
 }
 

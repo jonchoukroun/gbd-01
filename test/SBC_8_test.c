@@ -162,12 +162,12 @@ int main()
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit ALU | SBC_A_n adds immediate value and carry flag to A register value",
+            "8 bit SBC Instructions | SBC_A_n adds immediate value and carry flag to A register value",
             test_SBC_A_n
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit ALU | SBC_A_HL adds value pointed to from HL register and carry flag to A register value",
+            "8 bit SBC Instructions | SBC_A_HL adds value pointed to from HL register and carry flag to A register value",
             test_SBC_A_HL
         ) == NULL) {
         printf("Failed to add test to 8-bit SBC Instructions unit test suite\n");

@@ -189,12 +189,12 @@ int main()
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit ALU | ADC_A_n adds immediate value and carry flag to A register value",
+            "8 bit ADC Instructions | ADC_A_n adds immediate value and carry flag to A register value",
             test_ADC_A_n
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "8 bit ALU | ADC_A_HL adds value pointed to from HL register and carry flag to A register value",
+            "8 bit ADC Instructions | ADC_A_HL adds value pointed to from HL register and carry flag to A register value",
             test_ADC_A_HL
         ) == NULL) {
         printf("Failed to add test to 8-bit ADC Instructions unit test suite\n");
