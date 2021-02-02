@@ -529,6 +529,36 @@ void CP_HL(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 8;
 }
 
+void INC_r(CPU *cpu, uint8_t opcode)
+{
+    uint8_t r_code = (opcode & DEST_MASK) >> 3;
+    uint8_t r = fetch_r8(cpu, r_code);
+
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, H_FLAG);
+    if ((r & 0xf) == 0xf) set_flag(cpu, H_FLAG);
+    if (r == 0xff) set_flag(cpu, Z_FLAG);
+
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r + 1);
+
+    cpu->t_cycles = 4;
+}
+
+void INC_HL(CPU *cpu, uint8_t opcode)
+{
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, H_FLAG);
+    if ((byte & 0xf) == 0xf) set_flag(cpu, H_FLAG);
+    if (byte == 0xff) set_flag(cpu, Z_FLAG);
+
+    write_byte(cpu, byte + 1, cpu->registers.HL);
+
+    cpu->t_cycles = 8;
+}
+
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
     (void)cpu;
