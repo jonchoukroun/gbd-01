@@ -313,14 +313,48 @@ void DEC_r(CPU *, uint8_t);
  **/
 void DEC_HL(CPU *, uint8_t);
 
+
+// **************************************************
+// 16-bit arithmetic instructions
+// **************************************************
+
+/**
+ * Add register pair value to register HL
+ * Clear N flag, ignore Z flag, conditionally Z and H flag
+ * 8 T-cycles
+ **/
+void ADD_rr(CPU *, uint8_t);
+
+/**
+ * Add immediate signed value to SP
+ * Clears Z and N flags, conditionally sets H and C flags
+ * 16 T-cycles
+ **/
+void ADD_e(CPU *, uint8_t);
+
+/**
+ * Increment the value in register pair
+ * Ignore all flags
+ * 8 T-cycles
+ **/
+void INC_rr(CPU *, uint8_t);
+
+/**
+ * Decrement the value in register pair
+ * Ignore all flags
+ * 8 T-cycles
+ **/
+void DEC_rr(CPU *, uint8_t);
+
+
 void UNDEF(CPU *, uint8_t);
 
 static const OpcodeInstruction OPCODE_TABLE[256] = {
 /*            0x0        0x1        0x2       0x3       0x4       0x5        0x6       0x7       0x8        0x9        0xa       0xb       0xc       0xd        0xe       0xf */
-/* 0 */    &UNDEF, &LD_rr_nn,  &LD_rr_A,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_A_rr,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
-/* 1 */    &UNDEF, &LD_rr_nn,  &LD_rr_A,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_A_rr,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
-/* 2 */    &UNDEF, &LD_rr_nn, &LD_HLI_A,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,   &UNDEF,    &UNDEF, &LD_A_HLI,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
-/* 3 */    &UNDEF, &LD_rr_nn, &LD_HLD_A,   &UNDEF,  &INC_HL,  &DEC_HL,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF, &LD_A_HLD,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
+/* 0 */    &UNDEF, &LD_rr_nn,  &LD_rr_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,   &UNDEF,   &ADD_rr,  &LD_A_rr,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
+/* 1 */    &UNDEF, &LD_rr_nn,  &LD_rr_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,   &UNDEF,   &ADD_rr,  &LD_A_rr,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
+/* 2 */    &UNDEF, &LD_rr_nn, &LD_HLI_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,   &UNDEF,   &ADD_rr, &LD_A_HLI,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
+/* 3 */    &UNDEF, &LD_rr_nn, &LD_HLD_A,  &INC_rr,  &INC_HL,  &DEC_HL,    &UNDEF,   &UNDEF,   &UNDEF,   &ADD_rr, &LD_A_HLD,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
 /* 4 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
 /* 5 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
 /* 5 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
@@ -331,7 +365,7 @@ static const OpcodeInstruction OPCODE_TABLE[256] = {
 /* b */     &OR_r,     &OR_r,     &OR_r,    &OR_r,    &OR_r,    &OR_r,    &OR_HL,    &OR_r,    &CP_r,     &CP_r,     &CP_r,    &CP_r,    &CP_r,    &CP_r,    &CP_HL,    &CP_r,
 /* c */    &UNDEF,   &POP_rr,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_rr,    &ADD_n,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &ADC_n,   &UNDEF,
 /* d */    &UNDEF,   &POP_rr,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_rr,    &SUB_n,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &SBC_n,   &UNDEF,
-/* e */  &LD_rr_A,   &POP_rr,  &LD_rr_A,   &UNDEF,   &UNDEF, &PUSH_rr,    &AND_n,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,    &XOR_n,   &UNDEF,
+/* e */  &LD_rr_A,   &POP_rr,  &LD_rr_A,   &UNDEF,   &UNDEF, &PUSH_rr,    &AND_n,   &UNDEF,   &ADD_e,    &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,    &XOR_n,   &UNDEF,
 /* f */  &LD_A_rr,   &POP_rr,  &LD_A_rr,   &UNDEF,   &UNDEF, &PUSH_rr,     &OR_n,   &UNDEF,   &UNDEF, &LD_SP_HL,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,     &CP_n,   &UNDEF,
 };
 

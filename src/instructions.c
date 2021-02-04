@@ -204,6 +204,7 @@ void LD_HLD_A(CPU *cpu, uint8_t opcode)
 
 /**
  * Return value in 16-bit registers based on bit code from opcode
+ * Specific to register pair fetches for 8-bit operations
  **/
 uint16_t fetch_r16(CPU *cpu, uint8_t r)
 {
@@ -548,6 +549,7 @@ void INC_r(CPU *cpu, uint8_t opcode)
 
 void INC_HL(CPU *cpu, uint8_t opcode)
 {
+    (void)opcode;
     uint8_t byte = read_byte(cpu, cpu->registers.HL);
 
     clear_flag(cpu, Z_FLAG);
@@ -580,6 +582,7 @@ void DEC_r(CPU *cpu, uint8_t opcode)
 
 void DEC_HL(CPU *cpu, uint8_t opcode)
 {
+    (void)opcode;
     uint8_t byte = read_byte(cpu, cpu->registers.HL);
 
     clear_flag(cpu, Z_FLAG);
@@ -589,6 +592,84 @@ void DEC_HL(CPU *cpu, uint8_t opcode)
     if (byte == 0x1) set_flag(cpu, Z_FLAG);
 
     write_byte(cpu, byte - 1, cpu->registers.HL);
+
+    cpu->t_cycles = 8;
+}
+
+
+// **************************************************
+// 16-bit load instructions
+// **************************************************
+
+/**
+ * Return value in 16-bit registers based on bit code from opcode
+ * Specific to register pair fetches for 16-bit operations
+ **/
+uint16_t fetch_register_pairs(CPU *cpu, uint8_t rr) {
+    uint16_t REGISTER_PAIRS[] = {
+            cpu->registers.BC,
+            cpu->registers.DE,
+            cpu->registers.HL,
+            cpu->SP
+    };
+
+    return REGISTER_PAIRS[rr];
+}
+
+void ADD_rr(CPU *cpu, uint8_t opcode)
+{
+    uint16_t rr = fetch_register_pairs(cpu, (opcode & MASK_R16) >> 4);
+    uint16_t HL = cpu->registers.HL;
+
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
+    if ((rr & 0xf00) + (HL & 0xf00) > 0xf00) set_flag(cpu, H_FLAG);
+    if (0xffff - rr < HL) set_flag(cpu, C_FLAG);
+
+    set_HL(cpu, rr + cpu->registers.HL);
+
+    cpu->t_cycles = 8;
+}
+
+void ADD_e(CPU *cpu, uint8_t opcode)
+{
+    reset_flags(cpu);
+
+    uint8_t e = fetch_opcode(cpu);
+    if (0b10000000 & e) {
+        e = (~e) + 1;
+        if ((cpu->SP & 0xf) < (e & 0xf)) set_flag(cpu, H_FLAG);
+        if ((cpu->SP & 0xff) < e) set_flag(cpu, C_FLAG);
+
+        cpu->SP -= e;
+    } else {
+        if ((cpu->SP & 0xf) + (e & 0xf) > 0xf) set_flag(cpu, H_FLAG);
+        if (0xff - e < (cpu->SP & 0xff)) set_flag(cpu, C_FLAG);
+
+        cpu->SP += e;
+    }
+
+    cpu->t_cycles = 16;
+}
+
+
+void INC_rr(CPU *cpu, uint8_t opcode)
+{
+    uint8_t rr_code = (opcode & MASK_R16) >> 4;
+    uint16_t rr = fetch_register_pairs(cpu, rr_code);
+    RegSet_16 set_RR = R_TABLE_16[rr_code];
+    set_RR(cpu, rr + 1);
+
+    cpu->t_cycles = 8;
+}
+
+void DEC_rr(CPU *cpu, uint8_t opcode)
+{
+    uint8_t rr_code = (opcode & MASK_R16) >> 4;
+    uint16_t rr = fetch_register_pairs(cpu, rr_code);
+    RegSet_16 set_RR = R_TABLE_16[rr_code];
+    set_RR(cpu, rr - 1);
 
     cpu->t_cycles = 8;
 }
