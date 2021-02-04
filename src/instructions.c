@@ -634,6 +634,7 @@ void ADD_rr(CPU *cpu, uint8_t opcode)
 
 void ADD_e(CPU *cpu, uint8_t opcode)
 {
+    (void)opcode;
     reset_flags(cpu);
 
     uint8_t e = fetch_opcode(cpu);
