@@ -52,7 +52,7 @@ void test_INC_E(void)
     cpu.registers.E = 0x05;
     cpu.registers.F = 0;
     INC_r(&cpu, 0x1c);
-    CU_ASSERT_EQUAL(cpu.registers.B, 0x06);
+    CU_ASSERT_EQUAL(cpu.registers.E, 0x06);
     CU_ASSERT_EQUAL(cpu.registers.F, 0);
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }

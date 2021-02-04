@@ -295,18 +295,32 @@ void INC_r(CPU *, uint8_t);
 /**
  * Increment memory contents at address in HL by 1
  * Clear N flag, ignore C flag, conditionally set Z and H flags
- * 4 T-cycles
+ * 8 T-cycles
  **/
 void INC_HL(CPU *, uint8_t);
+
+/**
+ * Decrement register value by 1
+ * Set N flag, ignore C flag, conditionally set Z and H flags
+ * 4 T-cycles
+ **/
+void DEC_r(CPU *, uint8_t);
+
+/**
+ * Decrement memory contents at address in HL by 1
+ * Set N flag, ignore C flag, conditionally set Z and H flags
+ * 8 T-cycles
+ **/
+void DEC_HL(CPU *, uint8_t);
 
 void UNDEF(CPU *, uint8_t);
 
 static const OpcodeInstruction OPCODE_TABLE[256] = {
 /*            0x0        0x1        0x2       0x3       0x4       0x5        0x6       0x7       0x8        0x9        0xa       0xb       0xc       0xd        0xe       0xf */
-/* 0 */    &UNDEF, &LD_rr_nn,  &LD_rr_A,   &UNDEF,   &INC_r,   &UNDEF,   &LD_r_n,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_A_rr,   &UNDEF,   &INC_r,   &UNDEF,   &LD_r_n,   &UNDEF,
-/* 1 */    &UNDEF, &LD_rr_nn,  &LD_rr_A,   &UNDEF,   &INC_r,   &UNDEF,   &LD_r_n,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_A_rr,   &UNDEF,   &INC_r,   &UNDEF,   &LD_r_n,   &UNDEF,
-/* 2 */    &UNDEF, &LD_rr_nn, &LD_HLI_A,   &UNDEF,   &INC_r,   &UNDEF,   &LD_r_n,   &UNDEF,   &UNDEF,    &UNDEF, &LD_A_HLI,   &UNDEF,   &INC_r,   &UNDEF,   &LD_r_n,   &UNDEF,
-/* 3 */    &UNDEF, &LD_rr_nn, &LD_HLD_A,   &UNDEF,  &INC_HL,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF, &LD_A_HLD,   &UNDEF,   &INC_r,   &UNDEF,   &LD_r_n,   &UNDEF,
+/* 0 */    &UNDEF, &LD_rr_nn,  &LD_rr_A,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_A_rr,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
+/* 1 */    &UNDEF, &LD_rr_nn,  &LD_rr_A,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,   &UNDEF,    &UNDEF,  &LD_A_rr,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
+/* 2 */    &UNDEF, &LD_rr_nn, &LD_HLI_A,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,   &UNDEF,    &UNDEF, &LD_A_HLI,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
+/* 3 */    &UNDEF, &LD_rr_nn, &LD_HLD_A,   &UNDEF,  &INC_HL,  &DEC_HL,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF, &LD_A_HLD,   &UNDEF,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
 /* 4 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
 /* 5 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
 /* 5 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,

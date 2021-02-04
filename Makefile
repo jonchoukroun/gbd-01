@@ -58,6 +58,7 @@ _TEST_OBJ += OR_8_test.o
 _TEST_OBJ += XOR_8_test.o
 _TEST_OBJ += CP_8_test.o
 _TEST_OBJ += INC_test.o
+_TEST_OBJ += DEC_test.o
 # _TEST_OBJ += 16bit_ALU_test.o
 # _TEST_OBJ += misc_arithmetic_test.o
 # _TEST_OBJ += rotate_test.o
@@ -142,6 +143,9 @@ $(TEST_BUILD_DIR)CP_8_test.o: $(TEST_DIR)CP_8_test.c
 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
 
 $(TEST_BUILD_DIR)INC_test.o: $(TEST_DIR)INC_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
+$(TEST_BUILD_DIR)DEC_test.o: $(TEST_DIR)DEC_test.c
 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
 
 # $(TEST_BUILD_DIR)16bit_ALU_test.o: $(TEST_DIR)16bit_ALU_test.c
