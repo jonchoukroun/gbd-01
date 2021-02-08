@@ -675,6 +675,119 @@ void DEC_rr(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 8;
 }
 
+
+// **************************************************
+// Rotate shift instructions
+// **************************************************
+
+/**
+ * Bit masks for 8-bit value
+ **/
+#define BIT7_MASK 128
+#define BIT0_MASK 1
+
+void RLCA(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    reset_flags(cpu);
+    uint8_t A = fetch_r8(cpu, reg_A);
+    if (A & BIT7_MASK) set_flag(cpu, C_FLAG);
+    set_A(cpu, (A << 1 | A >> 7));
+    cpu->t_cycles = 4;
+}
+
+void RLA(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    reset_flags(cpu);
+    uint8_t A = fetch_r8(cpu, reg_A);
+    if (A & BIT7_MASK) set_flag(cpu, C_FLAG);
+    A <<= 1;
+    A |= carry;
+    set_A(cpu, A);
+    cpu->t_cycles = 4;
+}
+
+void RRCA(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    reset_flags(cpu);
+    uint8_t A = fetch_r8(cpu, reg_A);
+    if (A & BIT0_MASK) set_flag(cpu, C_FLAG);
+    set_A(cpu, (A << 7 | A >> 1));
+    cpu->t_cycles = 4;
+}
+
+void RRA(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    reset_flags(cpu);
+    uint8_t A = fetch_r8(cpu, reg_A);
+    if (A & BIT0_MASK) set_flag(cpu, C_FLAG);
+    A >>= 1;
+    A |= (carry << 7);
+    set_A(cpu, A);
+    cpu->t_cycles = 4;
+}
+
+void RLC(CPU *cpu, uint8_t opcode)
+{
+    reset_flags(cpu);
+    uint8_t r_code = opcode & SRC_MASK;
+    uint8_t r = fetch_r8(cpu, r_code);
+    if (r & BIT7_MASK) set_flag(cpu, C_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    r = (r << 1 | r >> 7);
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    set_R(cpu, r);
+
+    cpu->t_cycles = 8;
+}
+
+void RLC_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    reset_flags(cpu);
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    if (byte & BIT7_MASK) set_flag(cpu, C_FLAG);
+    byte = (byte << 1 | byte >> 7);
+    if (byte == 0) set_flag(cpu, Z_FLAG);
+    write_byte(cpu, byte, cpu->registers.HL);
+
+    cpu->t_cycles = 16;
+}
+
+void RL(CPU *cpu, uint8_t opcode)
+{
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    reset_flags(cpu);
+    uint8_t r_code = (opcode & SRC_MASK);
+    uint8_t r = fetch_r8(cpu, r_code);
+    if (r & BIT7_MASK) set_flag(cpu, C_FLAG);
+    r <<= 1;
+    r |= carry;
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r);
+    cpu->t_cycles = 8;
+}
+
+void RL_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    reset_flags(cpu);
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    if (byte & BIT7_MASK) set_flag(cpu, C_FLAG);
+    byte <<= 1;
+    byte |= carry;
+    if (byte == 0) set_flag(cpu, Z_FLAG);
+    write_byte(cpu, byte, cpu->registers.HL);
+    cpu->t_cycles = 16;
+}
+
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
     (void)cpu;
