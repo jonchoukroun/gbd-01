@@ -415,6 +415,22 @@ void RL(CPU *, uint8_t);
  **/
 void RL_HL(CPU *, uint8_t);
 
+/**
+ * Rotate contents of register to the right
+ * Place C flag into bit 7 and bit 0 into C flag
+ * Clear N and H flags, conditionally set Z flag
+ * 8 T-cycles, prefixed opcode table
+ **/
+void RR(CPU *, uint8_t);
+
+/**
+ * Rotate memory contents at address pointed to by HL to the right
+ * Place C flag into bit 7 and bit 0 into C flag
+ * Clear N and H flags, conditionally set Z flag
+ * 16 T-cycles, prefixed opcode table
+ **/
+void RR_HL(CPU *, uint8_t);
+
 void UNDEF(CPU *, uint8_t);
 
 static const OpcodeInstruction OPCODE_TABLE[256] = {
@@ -440,7 +456,7 @@ static const OpcodeInstruction OPCODE_TABLE[256] = {
 static const OpcodeInstruction PREFIXED_TABLE[256] = {
 /*            0x0        0x1        0x2       0x3       0x4       0x5        0x6       0x7       0x8        0x9        0xa       0xb       0xc       0xd        0xe       0xf */
 /* 0 */      &RLC,      &RLC,      &RLC,     &RLC,     &RLC,     &RLC,   &RLC_HL,     &RLC,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* 1 */       &RL,       &RL,       &RL,      &RL,      &RL,      &RL,    &RL_HL,      &RL,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* 1 */       &RL,       &RL,       &RL,      &RL,      &RL,      &RL,    &RL_HL,      &RL,      &RR,       &RR,       &RR,      &RR,      &RR,      &RR,    &RR_HL,      &RR,
 /* 2 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* 3 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* 4 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,

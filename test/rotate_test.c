@@ -391,6 +391,143 @@ void test_RL_HL(void)
     CU_ASSERT_EQUAL(cpu.registers.F, 0);
 }
 
+void test_RR_A(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x01;
+    cpu.registers.F = 0;
+    RR(&cpu, 0x1f);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+
+    cpu.registers.A = 0x11;
+    cpu.registers.F = 0b00010000;
+    RR(&cpu, 0x1f);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x88);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+}
+
+void test_RR_B(void)
+{
+    CPU cpu;
+    cpu.registers.B = 0x01;
+    cpu.registers.F = 0;
+    RR(&cpu, 0x18);
+    CU_ASSERT_EQUAL(cpu.registers.B, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+
+    cpu.registers.B = 0x11;
+    cpu.registers.F = 0b00010000;
+    RR(&cpu, 0x18);
+    CU_ASSERT_EQUAL(cpu.registers.B, 0x88);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+}
+
+void test_RR_C(void)
+{
+    CPU cpu;
+    cpu.registers.C = 0x01;
+    cpu.registers.F = 0;
+    RR(&cpu, 0x19);
+    CU_ASSERT_EQUAL(cpu.registers.C, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+
+    cpu.registers.C = 0x11;
+    cpu.registers.F = 0b00010000;
+    RR(&cpu, 0x19);
+    CU_ASSERT_EQUAL(cpu.registers.C, 0x88);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+}
+
+void test_RR_D(void)
+{
+    CPU cpu;
+    cpu.registers.D = 0x01;
+    cpu.registers.F = 0;
+    RR(&cpu, 0x1a);
+    CU_ASSERT_EQUAL(cpu.registers.D, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+
+    cpu.registers.D = 0x11;
+    cpu.registers.F = 0b00010000;
+    RR(&cpu, 0x1a);
+    CU_ASSERT_EQUAL(cpu.registers.D, 0x88);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+}
+
+void test_RR_E(void)
+{
+    CPU cpu;
+    cpu.registers.E = 0x01;
+    cpu.registers.F = 0;
+    RR(&cpu, 0x1b);
+    CU_ASSERT_EQUAL(cpu.registers.E, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+
+    cpu.registers.E = 0x11;
+    cpu.registers.F = 0b00010000;
+    RR(&cpu, 0x1b);
+    CU_ASSERT_EQUAL(cpu.registers.E, 0x88);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+}
+
+void test_RR_H(void)
+{
+    CPU cpu;
+    cpu.registers.H = 0x01;
+    cpu.registers.F = 0;
+    RR(&cpu, 0x1c);
+    CU_ASSERT_EQUAL(cpu.registers.H, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+
+    cpu.registers.H = 0x11;
+    cpu.registers.F = 0b00010000;
+    RR(&cpu, 0x1c);
+    CU_ASSERT_EQUAL(cpu.registers.H, 0x88);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+}
+
+void test_RR_L(void)
+{
+    CPU cpu;
+    cpu.registers.L = 0x01;
+    cpu.registers.F = 0;
+    RR(&cpu, 0x1d);
+    CU_ASSERT_EQUAL(cpu.registers.L, 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+
+    cpu.registers.L = 0x11;
+    cpu.registers.F = 0b00010000;
+    RR(&cpu, 0x1d);
+    CU_ASSERT_EQUAL(cpu.registers.L, 0x88);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+}
+
+void test_RR_HL(void)
+{
+    CPU cpu;
+    cpu.registers.HL = 0x5432;
+    cpu.registers.F = 0;
+    cpu.memory[cpu.registers.HL] = 0x8a;
+    RR_HL(&cpu, 0x1e);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+
+    cpu.memory[cpu.registers.HL] = 0x11;
+    cpu.registers.F = 0b00010000;
+    RR_HL(&cpu, 0x1e);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0x88);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+}
+
 // void test_RRC_A(void)
 // {
 //     CPU cpu;
@@ -486,142 +623,6 @@ void test_RL_HL(void)
 //     CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
 // }
 
-// void test_RR_A(void)
-// {
-//     CPU cpu;
-//     cpu.registers.A = 0x01;
-//     cpu.registers.F = 0;
-//     RR_A(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.A, 0);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-
-//     cpu.registers.A = 0x11;
-//     cpu.registers.F = 0b00010000;
-//     RR_A(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.A, 0x88);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
-// }
-
-// void test_RR_B(void)
-// {
-//     CPU cpu;
-//     cpu.registers.B = 0x01;
-//     cpu.registers.F = 0;
-//     RR_B(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.B, 0);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-
-//     cpu.registers.B = 0x11;
-//     cpu.registers.F = 0b00010000;
-//     RR_B(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.B, 0x88);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
-// }
-
-// void test_RR_C(void)
-// {
-//     CPU cpu;
-//     cpu.registers.C = 0x01;
-//     cpu.registers.F = 0;
-//     RR_C(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.C, 0);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-
-//     cpu.registers.C = 0x11;
-//     cpu.registers.F = 0b00010000;
-//     RR_C(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.C, 0x88);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
-// }
-
-// void test_RR_D(void)
-// {
-//     CPU cpu;
-//     cpu.registers.D = 0x01;
-//     cpu.registers.F = 0;
-//     RR_D(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.D, 0);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-
-//     cpu.registers.D = 0x11;
-//     cpu.registers.F = 0b00010000;
-//     RR_D(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.D, 0x88);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
-// }
-
-// void test_RR_E(void)
-// {
-//     CPU cpu;
-//     cpu.registers.E = 0x01;
-//     cpu.registers.F = 0;
-//     RR_E(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.E, 0);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-
-//     cpu.registers.E = 0x11;
-//     cpu.registers.F = 0b00010000;
-//     RR_E(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.E, 0x88);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
-// }
-
-// void test_RR_H(void)
-// {
-//     CPU cpu;
-//     cpu.registers.H = 0x01;
-//     cpu.registers.F = 0;
-//     RR_H(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.H, 0);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-
-//     cpu.registers.H = 0x11;
-//     cpu.registers.F = 0b00010000;
-//     RR_H(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.H, 0x88);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
-// }
-
-// void test_RR_L(void)
-// {
-//     CPU cpu;
-//     cpu.registers.L = 0x01;
-//     cpu.registers.F = 0;
-//     RR_L(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.L, 0);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-
-//     cpu.registers.L = 0x11;
-//     cpu.registers.F = 0b00010000;
-//     RR_L(&cpu);
-//     CU_ASSERT_EQUAL(cpu.registers.L, 0x88);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
-// }
-
-// void test_RR_HL(void)
-// {
-//     CPU cpu;
-//     cpu.registers.HL = 0x5432;
-//     cpu.registers.F = 0;
-//     cpu.memory[cpu.registers.HL] = 0x8a;
-//     RR_HL(&cpu);
-//     CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0x45);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0);
-//     CU_ASSERT_EQUAL(cpu.t_cycles, 16);
-
-//     cpu.memory[cpu.registers.HL] = 0x11;
-//     cpu.registers.F = 0b00010000;
-//     RR_HL(&cpu);
-//     CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0x88);
-//     CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
-// }
 
 int main()
 {
@@ -736,6 +737,46 @@ int main()
             test_suite,
             "Rotate instructions | RL_HL rotates HL to the left with C flag into bit 0 and bit 7 into C flag",
             test_RL_HL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate instructions | RR_A rotates A to the right with the C flag into bit 7 and bit 0 into the C flag",
+            test_RR_A
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate instructions | RR_B rotates B to the right with the C flag into bit 7 and bit 0 into the C flag",
+            test_RR_B
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate instructions | RR_C rotates C to the right with the C flag into bit 7 and bit 0 into the C flag",
+            test_RR_C
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate instructions | RR_D rotates D to the right with the C flag into bit 7 and bit 0 into the C flag",
+            test_RR_D
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate instructions | RR_E rotates E to the right with the C flag into bit 7 and bit 0 into the C flag",
+            test_RR_E
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate instructions | RR_H rotates H to the right with the C flag into bit 7 and bit 0 into the C flag",
+            test_RR_H
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate instructions | RR_L rotates L to the right with the C flag into bit 7 and bit 0 into the C flag",
+            test_RR_L
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Rotate instructions | RR_HL rotates byte at HL to the right with the C flag into bit 7 and bit 0 into the C flag",
+            test_RR_HL
         // ) == NULL ||
         // CU_add_test(
         //     test_suite,
@@ -776,46 +817,6 @@ int main()
         //     test_suite,
         //     "Rotate instructions | RRC_HL rotates byte at HL to the right with bit 0 moved to bit 7 and into the C flag",
         //     test_RRC_HL
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RR_A rotates A to the right with the C flag into bit 7 and bit 0 into the C flag",
-        //     test_RR_A
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RR_B rotates B to the right with the C flag into bit 7 and bit 0 into the C flag",
-        //     test_RR_B
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RR_C rotates C to the right with the C flag into bit 7 and bit 0 into the C flag",
-        //     test_RR_C
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RR_D rotates D to the right with the C flag into bit 7 and bit 0 into the C flag",
-        //     test_RR_D
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RR_E rotates E to the right with the C flag into bit 7 and bit 0 into the C flag",
-        //     test_RR_E
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RR_H rotates H to the right with the C flag into bit 7 and bit 0 into the C flag",
-        //     test_RR_H
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RR_L rotates L to the right with the C flag into bit 7 and bit 0 into the C flag",
-        //     test_RR_L
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RR_HL rotates byte at HL to the right with the C flag into bit 7 and bit 0 into the C flag",
-        //     test_RR_HL
         ) == NULL) {
         printf("Failed to add test to rotate instruction unit test suite\n");
         CU_cleanup_registry();

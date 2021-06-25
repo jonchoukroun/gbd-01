@@ -788,6 +788,34 @@ void RL_HL(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 16;
 }
 
+void RR(CPU *cpu, uint8_t opcode)
+{
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    reset_flags(cpu);
+    uint8_t r_code = (opcode & SRC_MASK);
+    uint8_t r = fetch_r8(cpu, r_code);
+    if (r & BIT_0_MASK) set_flag(cpu, C_FLAG);
+    r >>= 1;
+    r |= (carry << 7);
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r);
+    cpu->t_cycles = 8;
+}
+
+void RR_HL(CPU *cpu, uint8_t opcode)
+{
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    reset_flags(cpu);
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    if (byte & BIT_0_MASK) set_flag(cpu, C_FLAG);
+    byte >>= 1;
+    byte |= (carry << 7);
+    if (byte == 0) set_flag(cpu, Z_FLAG);
+    write_byte(cpu, byte, cpu->registers.HL);
+    cpu->t_cycles = 16;
+}
+
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
     (void)cpu;
