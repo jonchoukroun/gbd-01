@@ -137,10 +137,76 @@ void test_SLA_HL(void)
 void test_SRA_B(void)
 {
     CPU cpu;
-    cpu.registers.B = 0x8A;
+    cpu.registers.B = 0x8a;
     cpu.registers.F = 0;
     SRA(&cpu, 0x28);
-    CU_ASSERT_EQUAL(cpu.registers.B, 0xC5);
+    CU_ASSERT_EQUAL(cpu.registers.B, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRA_C(void)
+{
+    CPU cpu;
+    cpu.registers.C = 0x8a;
+    cpu.registers.F = 0;
+    SRA(&cpu, 0x29);
+    CU_ASSERT_EQUAL(cpu.registers.C, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRA_D(void)
+{
+    CPU cpu;
+    cpu.registers.D = 0x8a;
+    cpu.registers.F = 0;
+    SRA(&cpu, 0x2a);
+    CU_ASSERT_EQUAL(cpu.registers.D, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRA_E(void)
+{
+    CPU cpu;
+    cpu.registers.E = 0x8a;
+    cpu.registers.F = 0;
+    SRA(&cpu, 0x2b);
+    CU_ASSERT_EQUAL(cpu.registers.E, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRA_H(void)
+{
+    CPU cpu;
+    cpu.registers.H = 0x8a;
+    cpu.registers.F = 0;
+    SRA(&cpu, 0x2c);
+    CU_ASSERT_EQUAL(cpu.registers.H, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRA_L(void)
+{
+    CPU cpu;
+    cpu.registers.L = 0x8a;
+    cpu.registers.F = 0;
+    SRA(&cpu, 0x2d);
+    CU_ASSERT_EQUAL(cpu.registers.L, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRA_A(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x8a;
+    cpu.registers.F = 0;
+    SRA(&cpu, 0x2f);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0x45);
     CU_ASSERT_EQUAL(cpu.registers.F, 0);
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
@@ -203,6 +269,36 @@ int main()
         test_suite,
         "Shift instructions | SRA_B shifts contents in register B right and into C flag",
         test_SRA_B
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRA_C shifts contents in register C right and into C flag",
+        test_SRA_C
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRA_D shifts contents in register D right and into C flag",
+        test_SRA_D
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRA_E shifts contents in register E right and into C flag",
+        test_SRA_E
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRA_H shifts contents in register H right and into C flag",
+        test_SRA_H
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRA_L shifts contents in register L right and into C flag",
+        test_SRA_L
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRA_A shifts contents in register A right and into C flag",
+        test_SRA_A
     ) == NULL) {
         printf("Failed to add test to Shift instructions unit test suite\n");
         CU_cleanup_registry();
