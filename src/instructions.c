@@ -843,6 +843,43 @@ void RR_HL(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 16;
 }
 
+void SLA(CPU *cpu, uint8_t opcode)
+{
+    reset_flags(cpu);
+    uint8_t r_code = (opcode & SRC_MASK);
+    uint8_t r = fetch_r8(cpu, r_code);
+    if (r & BIT_7_MASK) set_flag(cpu, C_FLAG);
+    r <<= 1;
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r);
+    cpu->t_cycles = 8;
+}
+
+void SLA_HL(CPU *cpu, uint8_t opcode)
+{
+    reset_flags(cpu);
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    if (byte & BIT_7_MASK) set_flag(cpu, C_FLAG);
+    byte <<= 1;
+    if (byte == 0) set_flag(cpu, Z_FLAG);
+    write_byte(cpu, byte, cpu->registers.HL);
+    cpu->t_cycles = 16;
+}
+
+void SRA(CPU *cpu, uint8_t opcode)
+{
+    reset_flags(cpu);
+    uint8_t r_code = (opcode & SRC_MASK);
+    uint8_t r = fetch_r8(cpu, r_code);
+    if (r & BIT_0_MASK) set_flag(cpu, C_FLAG);
+    r >>= 1;
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r);
+    cpu->t_cycles = 8;
+}
+
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
     (void)cpu;

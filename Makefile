@@ -62,6 +62,7 @@ _TEST_OBJ += DEC_test.o
 _TEST_OBJ += 16bit_ALU_test.o
 # _TEST_OBJ += misc_arithmetic_test.o
 _TEST_OBJ += rotate_test.o
+_TEST_OBJ += shift_test.o
 # _TEST_OBJ += bit_shift_test.o
 
 TEST_OBJ = $(patsubst %,$(TEST_BUILD_DIR)%,$(_TEST_OBJ))
@@ -155,6 +156,9 @@ $(TEST_BUILD_DIR)16bit_ALU_test.o: $(TEST_DIR)16bit_ALU_test.c
 # 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
 
 $(TEST_BUILD_DIR)rotate_test.o: $(TEST_DIR)rotate_test.c
+	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
+
+$(TEST_BUILD_DIR)shift_test.o: $(TEST_DIR)shift_test.c
 	$(INSTRUCTIONS_TEST_COMPILE_OPTS)
 
 # $(TEST_BUILD_DIR)bit_shift_test.o: $(TEST_DIR)bit_shift_test.c
