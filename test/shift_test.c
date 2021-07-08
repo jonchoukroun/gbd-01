@@ -140,7 +140,7 @@ void test_SRA_B(void)
     cpu.registers.B = 0x8a;
     cpu.registers.F = 0;
     SRA(&cpu, 0x28);
-    CU_ASSERT_EQUAL(cpu.registers.B, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.B, 0xc5);
     CU_ASSERT_EQUAL(cpu.registers.F, 0);
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
@@ -151,7 +151,7 @@ void test_SRA_C(void)
     cpu.registers.C = 0x8a;
     cpu.registers.F = 0;
     SRA(&cpu, 0x29);
-    CU_ASSERT_EQUAL(cpu.registers.C, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.C, 0xc5);
     CU_ASSERT_EQUAL(cpu.registers.F, 0);
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
@@ -162,7 +162,7 @@ void test_SRA_D(void)
     cpu.registers.D = 0x8a;
     cpu.registers.F = 0;
     SRA(&cpu, 0x2a);
-    CU_ASSERT_EQUAL(cpu.registers.D, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.D, 0xc5);
     CU_ASSERT_EQUAL(cpu.registers.F, 0);
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
@@ -173,7 +173,7 @@ void test_SRA_E(void)
     cpu.registers.E = 0x8a;
     cpu.registers.F = 0;
     SRA(&cpu, 0x2b);
-    CU_ASSERT_EQUAL(cpu.registers.E, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.E, 0xc5);
     CU_ASSERT_EQUAL(cpu.registers.F, 0);
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
@@ -184,7 +184,7 @@ void test_SRA_H(void)
     cpu.registers.H = 0x8a;
     cpu.registers.F = 0;
     SRA(&cpu, 0x2c);
-    CU_ASSERT_EQUAL(cpu.registers.H, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.H, 0xc5);
     CU_ASSERT_EQUAL(cpu.registers.F, 0);
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
@@ -195,7 +195,7 @@ void test_SRA_L(void)
     cpu.registers.L = 0x8a;
     cpu.registers.F = 0;
     SRA(&cpu, 0x2d);
-    CU_ASSERT_EQUAL(cpu.registers.L, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.L, 0xc5);
     CU_ASSERT_EQUAL(cpu.registers.F, 0);
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
@@ -206,9 +206,116 @@ void test_SRA_A(void)
     cpu.registers.A = 0x8a;
     cpu.registers.F = 0;
     SRA(&cpu, 0x2f);
+    CU_ASSERT_EQUAL(cpu.registers.A, 0xc5);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRA_HL(void)
+{
+    CPU cpu;
+    cpu.registers.HL = 0x2342;
+    cpu.memory[cpu.registers.HL] = 0x01;
+    cpu.registers.F = 0;
+    SRA_HL(&cpu, 0x2e);
+    CU_ASSERT_EQUAL(cpu.registers.HL, 0x2342);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+}
+
+void test_SRL_B(void)
+{
+    CPU cpu;
+    cpu.registers.B = 0x8a;
+    cpu.registers.F = 0;
+    SRL(&cpu, 0x38);
+    CU_ASSERT_EQUAL(cpu.registers.B, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRL_C(void)
+{
+    CPU cpu;
+    cpu.registers.C = 0x8a;
+    cpu.registers.F = 0;
+    SRL(&cpu, 0x39);
+    CU_ASSERT_EQUAL(cpu.registers.C, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRL_D(void)
+{
+    CPU cpu;
+    cpu.registers.D = 0x8a;
+    cpu.registers.F = 0;
+    SRL(&cpu, 0x3a);
+    CU_ASSERT_EQUAL(cpu.registers.D, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRL_E(void)
+{
+    CPU cpu;
+    cpu.registers.E = 0x8a;
+    cpu.registers.F = 0;
+    SRL(&cpu, 0x3b);
+    CU_ASSERT_EQUAL(cpu.registers.E, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRL_H(void)
+{
+    CPU cpu;
+    cpu.registers.H = 0x8a;
+    cpu.registers.F = 0;
+    SRL(&cpu, 0x3c);
+    CU_ASSERT_EQUAL(cpu.registers.H, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRL_L(void)
+{
+    CPU cpu;
+    cpu.registers.L = 0x8a;
+    cpu.registers.F = 0;
+    SRL(&cpu, 0x3d);
+    CU_ASSERT_EQUAL(cpu.registers.L, 0x45);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRL_A(void)
+{
+    CPU cpu;
+    cpu.registers.A = 0x8a;
+    cpu.registers.F = 0;
+    SRL(&cpu, 0x3f);
     CU_ASSERT_EQUAL(cpu.registers.A, 0x45);
     CU_ASSERT_EQUAL(cpu.registers.F, 0);
     CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void test_SRL_HL(void)
+{
+    CPU cpu;
+    cpu.registers.HL = 0x2341;
+    cpu.memory[cpu.registers.HL] = 0x01;
+    cpu.registers.F = 0;
+    SRL_HL(&cpu, 0x3e);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0x0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+
+    cpu.memory[cpu.registers.HL] = 0xff;
+    SRL_HL(&cpu, 0x3e);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0x7f);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
 }
 
 int main()
@@ -299,6 +406,51 @@ int main()
         test_suite,
         "Shift instructions | SRA_A shifts contents in register A right and into C flag",
         test_SRA_A
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRA_HL shifts contents in register HL right and into C flag",
+        test_SRA_HL
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRL_B shifts contents in register B right and into C flag",
+        test_SRL_B
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRL_C shifts contents in register C right and into C flag",
+        test_SRL_C
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRL_D shifts contents in register D right and into C flag",
+        test_SRL_D
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRL_E shifts contents in register E right and into C flag",
+        test_SRL_E
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRL_H shifts contents in register H right and into C flag",
+        test_SRL_H
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRL_L shifts contents in register L right and into C flag",
+        test_SRL_L
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRL_A shifts contents in register A right and into C flag",
+        test_SRL_A
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Shift instructions | SRL_HL shifts contents in register HL right and into C flag",
+        test_SRL_HL
     ) == NULL) {
         printf("Failed to add test to Shift instructions unit test suite\n");
         CU_cleanup_registry();

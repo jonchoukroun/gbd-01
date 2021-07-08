@@ -464,12 +464,36 @@ void SLA(CPU *, uint8_t);
 void SLA_HL(CPU *, uint8_t);
 
 /**
- * Shift the contents of register right
- * Place bit 0 in C flag
+ * Arithmetic shift the contents of register right
+ * Place bit 0 in C flag, leave original value in bit 7
  * Reset N and H flags, conditionally set Z flag
  * 8 T-cycles, prefixed opcode table
  **/
 void SRA(CPU *, uint8_t);
+
+/**
+ * Arithmetic shift the memory contents at address pointed to by HL right
+ * Place bit 0 in C flag, leave original value in bit 7
+ * Reset N and H flags, conditionally set Z flag
+ * 16 T-cycles, prefixed opcode table
+ **/
+void SRA_HL(CPU *, uint8_t);
+
+/**
+ * Logical shift the contents of register right
+ * Place bit 0 in C flag, reset bit 7
+ * Reset N and H flags, conditionally set Z flag
+ * 8 T-cycles, prefixed opcode table
+ **/
+void SRL(CPU *, uint8_t);
+
+/**
+ * Logical shift the memory contents at address pointed to by HL right
+ * Place bit 0 in C flag, reset bit 7
+ * Reset N and H flags, conditionally set Z flag
+ * 16 T-cycles, prefixed opcode table
+ **/
+void SRL_HL(CPU *, uint8_t);
 
 void UNDEF(CPU *, uint8_t);
 
@@ -497,8 +521,8 @@ static const OpcodeInstruction PREFIXED_TABLE[256] = {
 /*            0x0        0x1        0x2       0x3       0x4       0x5        0x6       0x7       0x8        0x9        0xa       0xb       0xc       0xd        0xe       0xf */
 /* 0 */      &RLC,      &RLC,      &RLC,     &RLC,     &RLC,     &RLC,   &RLC_HL,     &RLC,     &RRC,      &RRC,      &RRC,     &RRC,     &RRC,     &RRC,   &RRC_HL,     &RRC,
 /* 1 */       &RL,       &RL,       &RL,      &RL,      &RL,      &RL,    &RL_HL,      &RL,      &RR,       &RR,       &RR,      &RR,      &RR,      &RR,    &RR_HL,      &RR,
-/* 2 */      &SLA,      &SLA,      &SLA,     &SLA,     &SLA,     &SLA,   &SLA_HL,     &SLA,     &SRA,      &SRA,      &SRA,     &SRA,     &SRA,     &SRA,    &UNDEF,     &SRA,
-/* 3 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* 2 */      &SLA,      &SLA,      &SLA,     &SLA,     &SLA,     &SLA,   &SLA_HL,     &SLA,     &SRA,      &SRA,      &SRA,     &SRA,     &SRA,     &SRA,   &SRA_HL,     &SRA,
+/* 3 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,     &SRL,      &SRL,      &SRL,     &SRL,     &SRL,     &SRL,   &SRL_HL,     &SRL,
 /* 4 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* 5 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* 6 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
