@@ -923,6 +923,33 @@ void SRL_HL(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 16;
 }
 
+void SWAP(CPU *cpu, uint8_t opcode)
+{
+    reset_flags(cpu);
+    uint8_t r_code = opcode & SRC_MASK;
+    uint8_t r = fetch_r8(cpu, r_code);
+    uint8_t upper = (r & 0b11110000) >> 4;
+    uint8_t lower = r & 0b00001111;
+    r = ((lower << 4) ^ upper);
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r);
+    cpu->t_cycles = 8;
+}
+
+void SWAP_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    reset_flags(cpu);
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    uint8_t upper = (byte & 0b11110000) >> 4;
+    uint8_t lower = byte & 0b00001111;
+    byte = (lower << 4) ^ upper;
+    if (byte == 0) set_flag(cpu, Z_FLAG);
+    write_byte(cpu, byte, cpu->registers.HL);
+    cpu->t_cycles = 16;
+}
+
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
     (void)cpu;

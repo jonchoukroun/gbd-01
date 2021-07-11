@@ -495,6 +495,21 @@ void SRL(CPU *, uint8_t);
  **/
 void SRL_HL(CPU *, uint8_t);
 
+
+/**
+ * Swap the lower order bits with the upper order bits in register r
+ * Reset all flags except Z flag
+ * 8 T-cycles, prefixed opcode table
+ **/
+void SWAP(CPU *, uint8_t);
+
+/**
+ * Swap the nibbles of the contents pointed at address in register HL
+ * Reset all flags except Z flag
+ * 16 T-cycles, prefixed opcode table
+ **/
+void SWAP_HL(CPU *, uint8_t);
+
 void UNDEF(CPU *, uint8_t);
 
 static const OpcodeInstruction OPCODE_TABLE[256] = {
@@ -522,7 +537,7 @@ static const OpcodeInstruction PREFIXED_TABLE[256] = {
 /* 0 */      &RLC,      &RLC,      &RLC,     &RLC,     &RLC,     &RLC,   &RLC_HL,     &RLC,     &RRC,      &RRC,      &RRC,     &RRC,     &RRC,     &RRC,   &RRC_HL,     &RRC,
 /* 1 */       &RL,       &RL,       &RL,      &RL,      &RL,      &RL,    &RL_HL,      &RL,      &RR,       &RR,       &RR,      &RR,      &RR,      &RR,    &RR_HL,      &RR,
 /* 2 */      &SLA,      &SLA,      &SLA,     &SLA,     &SLA,     &SLA,   &SLA_HL,     &SLA,     &SRA,      &SRA,      &SRA,     &SRA,     &SRA,     &SRA,   &SRA_HL,     &SRA,
-/* 3 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,     &SRL,      &SRL,      &SRL,     &SRL,     &SRL,     &SRL,   &SRL_HL,     &SRL,
+/* 3 */     &SWAP,     &SWAP,     &SWAP,    &SWAP,    &SWAP,    &SWAP,  &SWAP_HL,    &SWAP,     &SRL,      &SRL,      &SRL,     &SRL,     &SRL,     &SRL,   &SRL_HL,     &SRL,
 /* 4 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* 5 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* 6 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
