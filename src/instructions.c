@@ -980,6 +980,24 @@ void BIT_HL(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 12;
 }
 
+void SET(CPU *cpu, uint8_t opcode)
+{
+    uint8_t r_code = opcode & SRC_MASK;
+    uint8_t r = fetch_r8(cpu, r_code);
+    uint8_t bit = (opcode & DEST_MASK) >> 3;
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r | (1 << bit));
+    cpu->t_cycles = 8;
+}
+
+void SET_HL(CPU *cpu, uint8_t opcode)
+{
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    uint8_t bit = (opcode & DEST_MASK) >> 3;
+    write_byte(cpu, byte | (1 << bit), cpu->registers.HL);
+    cpu->t_cycles = 16;
+}
+
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
     (void)cpu;

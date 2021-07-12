@@ -528,11 +528,25 @@ void BIT(CPU *, uint8_t);
  **/
 void BIT_HL(CPU *, uint8_t);
 
+/**
+ * Set the bit in the register
+ * Ignore all flags
+ * 8 T-cycles, prefixed opcode table
+ **/
+void SET(CPU *, uint8_t);
+
+/**
+ * Set the bit in memory at the address in HL
+ * Ignore all flags
+ * 12 T-cycles, prefixed opcode table
+ **/
+void SET_HL(CPU *, uint8_t);
+
 void UNDEF(CPU *, uint8_t);
 
 static const OpcodeInstruction OPCODE_TABLE[256] = {
 /*            0x0        0x1        0x2       0x3       0x4       0x5        0x6       0x7       0x8        0x9        0xa       0xb       0xc       0xd        0xe       0xf */
-/* 0 */    &UNDEF, &LD_rr_nn,  &LD_rr_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,    &RLCA,   &UNDEF,   &ADD_rr,  &LD_A_rr,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,    &RRCA,
+/* 0 */      &SET, &LD_rr_nn,  &LD_rr_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,    &RLCA,   &UNDEF,   &ADD_rr,  &LD_A_rr,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,    &RRCA,
 /* 1 */    &UNDEF, &LD_rr_nn,  &LD_rr_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,     &RLA,   &UNDEF,   &ADD_rr,  &LD_A_rr,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,     &RRA,
 /* 2 */    &UNDEF, &LD_rr_nn, &LD_HLI_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,   &UNDEF,   &ADD_rr, &LD_A_HLI,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
 /* 3 */    &UNDEF, &LD_rr_nn, &LD_HLD_A,  &INC_rr,  &INC_HL,  &DEC_HL,    &UNDEF,   &UNDEF,   &UNDEF,   &ADD_rr, &LD_A_HLD,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
@@ -565,9 +579,9 @@ static const OpcodeInstruction PREFIXED_TABLE[256] = {
 /* a */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* b */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* c */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* d */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* e */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* f */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* d */      &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,     &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,
+/* e */      &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,     &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,
+/* f */      &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,     &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,
 };
 
 // Exported to make testing easier
