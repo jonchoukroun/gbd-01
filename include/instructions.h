@@ -510,6 +510,24 @@ void SWAP(CPU *, uint8_t);
  **/
 void SWAP_HL(CPU *, uint8_t);
 
+// **************************************************
+// Bit instructions
+// **************************************************
+
+/**
+ * Set the complement of the bit in the register
+ * Reset N flag, set H flag, and ignore C flag
+ * 8 T-cycles, prefixed opcode table
+ **/
+void BIT(CPU *, uint8_t);
+
+/**
+ * Set the complement of tbe bit in memory at the address in HL
+ * Reset N flag, set H flag, and ignore C flag
+ * 12 T-cycles, prefixed opcode table
+ **/
+void BIT_HL(CPU *, uint8_t);
+
 void UNDEF(CPU *, uint8_t);
 
 static const OpcodeInstruction OPCODE_TABLE[256] = {
@@ -538,10 +556,10 @@ static const OpcodeInstruction PREFIXED_TABLE[256] = {
 /* 1 */       &RL,       &RL,       &RL,      &RL,      &RL,      &RL,    &RL_HL,      &RL,      &RR,       &RR,       &RR,      &RR,      &RR,      &RR,    &RR_HL,      &RR,
 /* 2 */      &SLA,      &SLA,      &SLA,     &SLA,     &SLA,     &SLA,   &SLA_HL,     &SLA,     &SRA,      &SRA,      &SRA,     &SRA,     &SRA,     &SRA,   &SRA_HL,     &SRA,
 /* 3 */     &SWAP,     &SWAP,     &SWAP,    &SWAP,    &SWAP,    &SWAP,  &SWAP_HL,    &SWAP,     &SRL,      &SRL,      &SRL,     &SRL,     &SRL,     &SRL,   &SRL_HL,     &SRL,
-/* 4 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* 5 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* 6 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* 7 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* 4 */      &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,     &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,
+/* 5 */      &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,     &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,
+/* 6 */      &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,     &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,
+/* 7 */      &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,     &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,
 /* 8 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* 9 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* a */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
@@ -550,6 +568,23 @@ static const OpcodeInstruction PREFIXED_TABLE[256] = {
 /* d */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* e */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
 /* f */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+};
+
+// Exported to make testing easier
+uint8_t fetch_r8(CPU *, uint8_t);
+typedef void (*RegSet_8)(CPU *, uint8_t value);
+void set_B(CPU *cpu, uint8_t n);
+void set_C(CPU *cpu, uint8_t n);
+void set_D(CPU *cpu, uint8_t n);
+void set_E(CPU *cpu, uint8_t n);
+void set_H(CPU *cpu, uint8_t n);
+void set_L(CPU *cpu, uint8_t n);
+void set_at_HL(CPU *cpu, uint8_t n);
+void set_A(CPU *cpu, uint8_t n);
+
+static const RegSet_8 R_TABLE_8[8] = {
+    &set_B, &set_C, &set_D, &set_E,
+    &set_H, &set_L, &set_at_HL, &set_A
 };
 
 #endif

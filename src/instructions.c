@@ -51,11 +51,6 @@ void set_at_HL(CPU *cpu, uint8_t n) {
 }
 void set_A(CPU *cpu, uint8_t n) { cpu->registers.A = n; }
 
-static const RegSet_8 R_TABLE_8[8] = {
-    &set_B, &set_C, &set_D, &set_E,
-    &set_H, &set_L, &set_at_HL, &set_A
-};
-
 /**
  * Masks for decoding opcode into registers
  **/
@@ -948,6 +943,41 @@ void SWAP_HL(CPU *cpu, uint8_t opcode)
     if (byte == 0) set_flag(cpu, Z_FLAG);
     write_byte(cpu, byte, cpu->registers.HL);
     cpu->t_cycles = 16;
+}
+
+// **************************************************
+// Bit instructions
+// **************************************************
+
+void BIT(CPU *cpu, uint8_t opcode)
+{
+    uint8_t r_code = opcode & SRC_MASK;
+    uint8_t r = fetch_r8(cpu, r_code);
+    uint8_t bit = (opcode & DEST_MASK) >> 3;
+    clear_flag(cpu, N_FLAG);
+    set_flag(cpu, H_FLAG);
+    uint8_t value = (r & (1 << bit)) >> bit;
+    if (value == 0) {
+        set_flag(cpu, Z_FLAG);
+    } else {
+        clear_flag(cpu, Z_FLAG);
+    }
+    cpu->t_cycles = 8;
+}
+
+void BIT_HL(CPU *cpu, uint8_t opcode)
+{
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    uint8_t bit = (opcode & DEST_MASK) >> 3;
+    clear_flag(cpu, N_FLAG);
+    set_flag(cpu, H_FLAG);
+    uint8_t value = (byte & (1 << bit)) >> bit;
+    if (value == 0) {
+        set_flag(cpu, Z_FLAG);
+    } else {
+        clear_flag(cpu, Z_FLAG);
+    }
+    cpu->t_cycles = 12;
 }
 
 void UNDEF(CPU *cpu, uint8_t opcode)
