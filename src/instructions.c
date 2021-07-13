@@ -1017,6 +1017,48 @@ void RES_HL(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 16;
 }
 
+// **************************************************
+// Jump instructions
+// **************************************************
+
+void JP(CPU *cpu, uint8_t opcode)
+{
+    uint16_t address = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+    cpu->PC = address;
+    cpu->t_cycles = 16;
+}
+
+void JPC(CPU *cpu, uint8_t opcode)
+{
+    uint8_t c_mask = 0b00011000;
+    uint8_t c;
+    switch ((opcode & c_mask) >> 3) {
+    case 0:
+        c = get_flag(cpu, Z_FLAG) == 0;
+        break;
+    case 1:
+        c = get_flag(cpu, Z_FLAG) == 1;
+        break;
+    case 2:
+        c = get_flag(cpu, C_FLAG) == 0;
+        break;
+    case 3:
+        c = get_flag(cpu, C_FLAG) == 1;
+        break;
+    default:
+        printf("Error: %x is not a valid JPC opcode", opcode);
+        break;
+    }
+    if (c == 0) {
+        cpu->t_cycles = 12;
+        return;
+    }
+
+    uint16_t address = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+    cpu->PC = address;
+    cpu->t_cycles = 16;
+}
+
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
     (void)cpu;
