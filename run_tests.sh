@@ -37,7 +37,7 @@ PASSED_COUNT=`grep -c passed $OUTPUT`
 FAILED_COUNT=`grep -c FAILED $OUTPUT`
 FAILED=`grep FAILED $OUTPUT`
 
-echo "TEST RESULTS\n-----------------------"
+echo "TEST RESULTS\n======================="
 echo "\nTEST SUITES RUN\n-----------------------"
 echo "$SUITES_RUN"
 echo "\n\nPASSED: $PASSED_COUNT\n-----------------------"
