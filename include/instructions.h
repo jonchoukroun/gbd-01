@@ -538,9 +538,23 @@ void SET(CPU *, uint8_t);
 /**
  * Set the bit in memory at the address in HL
  * Ignore all flags
- * 12 T-cycles, prefixed opcode table
+ * 16 T-cycles, prefixed opcode table
  **/
 void SET_HL(CPU *, uint8_t);
+
+/**
+ * Reset the bit in the register
+ * Ignore all flags
+ * 8 T-Cycles, prefixed opcode table
+ **/
+void RES(CPU *, uint8_t);
+
+/**
+ * Reset the bit in memory at the address in HL
+ * Ignore all flags
+ * 16 T-Cycles, prefixed opcode table
+ **/
+void RES_HL(CPU *, uint8_t);
 
 void UNDEF(CPU *, uint8_t);
 
@@ -574,11 +588,11 @@ static const OpcodeInstruction PREFIXED_TABLE[256] = {
 /* 5 */      &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,     &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,
 /* 6 */      &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,     &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,
 /* 7 */      &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,     &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,
-/* 8 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* 9 */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* a */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* b */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
-/* c */    &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,    &UNDEF,   &UNDEF,
+/* 8 */      &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,     &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,
+/* 9 */      &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,     &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,
+/* a */      &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,     &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,
+/* b */      &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,     &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,
+/* c */      &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,     &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,
 /* d */      &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,     &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,
 /* e */      &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,     &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,
 /* f */      &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,     &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,

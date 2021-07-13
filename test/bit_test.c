@@ -116,6 +116,33 @@ void SET_HL_tester(uint8_t opcode)
     CU_ASSERT_EQUAL(cpu.t_cycles, 16);
 }
 
+void RES_tester(uint8_t opcode)
+{
+    CPU cpu;
+    uint8_t r = opcode & 0b111;
+    uint8_t bit = (opcode & 0b111000) >> 3;
+    RegSet_8 set_R = R_TABLE_8[r];
+
+    set_R(&cpu, 0);
+    cpu.registers.F = 0;
+    RES(&cpu, opcode);
+    CU_ASSERT_EQUAL(fetch_r8(&cpu, r), 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void RES_HL_tester(uint8_t opcode)
+{
+    CPU cpu;
+    cpu.registers.HL = 0x2121;
+    cpu.memory[cpu.registers.HL] = 0;
+    cpu.registers.F = 0b10100000;
+    RES_HL(&cpu, opcode);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+}
+
 void test_BIT(void)
 {
     printf("\n");
@@ -135,7 +162,7 @@ void test_BIT(void)
 void test_SET(void)
 {
     printf("\n");
-    for (int i = 0xd0; i <= 0xff; i++) {
+    for (int i = 0xc0; i <= 0xff; i++) {
         uint8_t nibble = i & 0b111;
         if (nibble != 0x6 && nibble != 0xe) {
             printf("\tSet instructions | opcode 0x%x\n", i);
@@ -143,6 +170,22 @@ void test_SET(void)
         } else {
             printf("\tSet instructions | opcode 0x%x (HL)\n", i);
             SET_HL_tester(i);
+        }
+    }
+    printf("\t...");
+}
+
+void test_RES(void)
+{
+    printf("\n");
+    for (int i = 0x80; i <= 0xBf; i++) {
+        uint8_t nibble = i & 0b111;
+        if (nibble != 0x6 && nibble != 0xe) {
+            printf("\tReset instructions | opcode 0x%x\n", i);
+            RES_tester(i);
+        } else {
+            printf("\tReset instructions | opcode 0x%x (HL)\n", i);
+            RES_HL_tester(i);
         }
     }
     printf("\t...");
@@ -169,7 +212,11 @@ int main()
         CU_add_test(
             test_suite,
             "SET instructions | ",
-            test_SET) == NULL) {
+            test_BIT) == NULL ||
+        CU_add_test(
+            test_suite,
+            "RES instructions | ",
+            test_RES) == NULL) {
         printf("Failed to add test to Bit instructions unit test suite\n");
         CU_cleanup_registry();
         return CU_get_error();
