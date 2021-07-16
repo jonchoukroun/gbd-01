@@ -90,6 +90,23 @@ void JPC_C_test()
     CU_ASSERT_EQUAL(cpu.t_cycles, 16);
 }
 
+void JR_test()
+{
+    CPU cpu;
+    cpu.PC = 0x481;
+    cpu.memory[cpu.PC] = 0x03;
+    cpu.registers.F = 0b10100000;
+    JR(&cpu, 0x18);
+    CU_ASSERT_EQUAL(cpu.PC, 0x485);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10100000);
+
+    cpu.PC = 0x100;
+    // e = -1
+    cpu.memory[cpu.PC] = 0b11111111;
+    JR(&cpu, 0x18);
+    CU_ASSERT_EQUAL(cpu.PC, 0x100);
+}
+
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -128,6 +145,11 @@ int main()
         test_suite,
         "Jump instructions | JPC_C loads next 2 bytes if C flag is set",
         JPC_C_test
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Jump instructions | JR adds/subtracts immediate signed byte to PC",
+        JR_test
     )== NULL) {
         printf("Failed to add test to Jump instructions unit test suite\n");
         CU_cleanup_registry();

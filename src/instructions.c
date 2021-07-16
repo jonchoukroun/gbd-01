@@ -1059,6 +1059,18 @@ void JPC(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 16;
 }
 
+void JR(CPU *cpu, uint8_t opcode)
+{
+    uint8_t e = fetch_opcode(cpu);
+    if (0b10000000 & e) {
+        e = (~e) + 1;
+        cpu->PC -= e;
+    } else {
+        cpu->PC += e;
+    }
+    cpu->t_cycles = 12;
+}
+
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
     (void)cpu;
