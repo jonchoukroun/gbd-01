@@ -99,12 +99,95 @@ void JR_test()
     JR(&cpu, 0x18);
     CU_ASSERT_EQUAL(cpu.PC, 0x485);
     CU_ASSERT_EQUAL(cpu.registers.F, 0b10100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
 
     cpu.PC = 0x100;
     // e = -1
     cpu.memory[cpu.PC] = 0b11111111;
     JR(&cpu, 0x18);
     CU_ASSERT_EQUAL(cpu.PC, 0x100);
+}
+
+void JRC_NZ_test()
+{
+    CPU cpu;
+    cpu.PC = 0x100;
+    cpu.memory[cpu.PC] = 0x3a;
+    cpu.registers.F = 0;
+    JRC(&cpu, 0x20);
+    CU_ASSERT_EQUAL(cpu.PC, 0x13b);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+
+    cpu.PC = 0x101;
+    cpu.memory[cpu.PC] = 0x3a;
+    cpu.registers.F = 0b10000000;
+    JRC(&cpu, 0x20);
+    CU_ASSERT_EQUAL(cpu.PC, 0x102);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void JRC_Z_test()
+{
+    CPU cpu;
+    cpu.PC = 0x201;
+    cpu.memory[cpu.PC] = 0b11111110;
+    cpu.registers.F = 0b10010000;
+    JRC(&cpu, 0x28);
+    CU_ASSERT_EQUAL(cpu.PC, 0x200);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+
+    cpu.PC = 0x201;
+    cpu.memory[cpu.PC] = 0b11111110;
+    cpu.registers.F = 0b01110000;
+    JRC(&cpu, 0x28);
+    CU_ASSERT_EQUAL(cpu.PC, 0x202);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b01110000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void JRC_NC_test()
+{
+    CPU cpu;
+    cpu.PC = 0x481;
+    // e = -6
+    cpu.memory[cpu.PC] = 0xfa;
+    cpu.registers.F = 0b11100000;
+    JRC(&cpu, 0x30);
+    CU_ASSERT_EQUAL(cpu.PC, 0x47c);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b11100000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+
+    cpu.PC = 0x1000;
+    cpu.memory[cpu.PC] = 0x80;
+    cpu.registers.F = 0b00010000;
+    JRC(&cpu, 0x30);
+    CU_ASSERT_EQUAL(cpu.PC, 0x1001);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+}
+
+void JRC_C_test()
+{
+    CPU cpu;
+    cpu.PC = 0x481;
+    // e = -6
+    cpu.memory[cpu.PC] = 0xfa;
+    cpu.registers.F = 0b00010000;
+    JRC(&cpu, 0x38);
+    CU_ASSERT_EQUAL(cpu.PC, 0x47c);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+
+    cpu.PC = 0x1000;
+    cpu.memory[cpu.PC] = 0x80;
+    cpu.registers.F = 0;
+    JRC(&cpu, 0x38);
+    CU_ASSERT_EQUAL(cpu.PC, 0x1001);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
 int main()
@@ -150,6 +233,26 @@ int main()
         test_suite,
         "Jump instructions | JR adds/subtracts immediate signed byte to PC",
         JR_test
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Jump instructions | JRC_NC adds/subtracts immediate signed byte to PC if Z flag is clear",
+        JRC_NZ_test
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Jump instructions | JRC_Z adds/subtracts immediate signed byte to PC if Z flag is set",
+        JRC_Z_test
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Jump instructions | JRC_NC adds/subtracts immediate signed byte to PC if C flag is clear",
+        JRC_NC_test
+    ) == NULL ||
+    CU_add_test(
+        test_suite,
+        "Jump instructions | JRC_C adds/subtracts immediate signed byte to PC if C flag is set",
+        JRC_C_test
     )== NULL) {
         printf("Failed to add test to Jump instructions unit test suite\n");
         CU_cleanup_registry();
