@@ -1038,7 +1038,7 @@ void JP(CPU *cpu, uint8_t opcode)
 
     default:
         printf("Error: invalid opcode %x for JP instructions\n", opcode);
-        break;
+        return;
     }
 
     cpu->PC = address;
@@ -1064,7 +1064,7 @@ void JPC(CPU *cpu, uint8_t opcode)
         break;
     default:
         printf("Error: %x is not a valid JPC opcode", opcode);
-        break;
+        return;
     }
     if (c == 0) {
         cpu->t_cycles = 12;
@@ -1078,6 +1078,7 @@ void JPC(CPU *cpu, uint8_t opcode)
 
 void JR(CPU *cpu, uint8_t opcode)
 {
+    (void)opcode;
     uint8_t e = fetch_opcode(cpu);
     if (0b10000000 & e) {
         e = (~e) + 1;
@@ -1108,7 +1109,7 @@ void JRC(CPU *cpu, uint8_t opcode)
         break;
     default:
         printf("Error: %x is not a valid JRC opcode", opcode);
-        break;
+        return;
     }
     if (c == 0) {
         cpu->t_cycles = 8;
@@ -1130,6 +1131,7 @@ void JRC(CPU *cpu, uint8_t opcode)
 
 void CALL(CPU *cpu, uint8_t opcode)
 {
+    (void)opcode;
     uint16_t address = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
     cpu->SP--;
     write_byte(cpu, (cpu->PC & 0xff00) >> 8, cpu->SP);
@@ -1157,7 +1159,8 @@ void CALLC(CPU *cpu, uint8_t opcode)
         c = get_flag(cpu, C_FLAG) == 1;
         break;
     default:
-        break;
+        printf("Error: invalid condition from opcode %x\n", opcode);
+        return;
     }
 
     if (c == 0) {
@@ -1165,7 +1168,52 @@ void CALLC(CPU *cpu, uint8_t opcode)
         return;
     }
 
-    return CALL(cpu, opcode);
+    CALL(cpu, opcode);
+}
+
+void RET(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    cpu->PC = read_word(cpu, cpu->SP);
+    cpu->SP += 2;
+    cpu->t_cycles = 16;
+}
+
+void RETI(CPU *cpu, uint8_t opcode)
+{
+    enable_IME(cpu);
+    RET(cpu, opcode);
+}
+
+void RETC(CPU *cpu, uint8_t opcode)
+{
+    uint8_t c_mask = 0b00011000;
+    uint8_t c;
+    switch ((opcode & c_mask) >> 3) {
+    case 0:
+        c = get_flag(cpu, Z_FLAG) == 0;
+        break;
+    case 1:
+        c = get_flag(cpu, Z_FLAG) == 1;
+        break;
+    case 2:
+        c = get_flag(cpu, C_FLAG) == 0;
+        break;
+    case 3:
+        c = get_flag(cpu, C_FLAG) == 1;
+        break;
+    default:
+        printf("Error: invalid condition from opcode %x\n", opcode);
+        return;
+    }
+
+    if (c == 0) {
+        cpu->t_cycles = 8;
+        return;
+    }
+
+    RET(cpu, opcode);
+    cpu->t_cycles += 4;
 }
 
 void UNDEF(CPU *cpu, uint8_t opcode)

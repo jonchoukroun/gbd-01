@@ -18,7 +18,7 @@ void CALL_test()
     CU_ASSERT_EQUAL(cpu.t_cycles, 24);
 }
 
-void CALL_C_NZ_test()
+void CALLC_NZ_test()
 {
     CPU cpu;
     cpu.PC = 0x7ffd;
@@ -46,7 +46,7 @@ void CALL_C_NZ_test()
     CU_ASSERT_EQUAL(cpu.t_cycles, 24);
 }
 
-void CALL_C_Z_test()
+void CALLC_Z_test()
 {
     CPU cpu;
     cpu.PC = 0x7ffd;
@@ -74,7 +74,7 @@ void CALL_C_Z_test()
     CU_ASSERT_EQUAL(cpu.t_cycles, 24);
 }
 
-void CALL_C_NC_test()
+void CALLC_NC_test()
 {
     CPU cpu;
     cpu.PC = 0x7ffd;
@@ -101,7 +101,7 @@ void CALL_C_NC_test()
     CU_ASSERT_EQUAL(cpu.t_cycles, 24);
 }
 
-void CALL_C_C_test()
+void CALLC_C_test()
 {
     CPU cpu;
     cpu.PC = 0x7ffd;
@@ -128,6 +128,118 @@ void CALL_C_C_test()
     CU_ASSERT_EQUAL(cpu.t_cycles, 24);
 }
 
+void RET_test()
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.SP = 0x8000;
+    cpu.memory[0x8000] = 0x80;
+    cpu.memory[0x8001] = 0x03;
+    RET(&cpu, 0xc9);
+    CU_ASSERT_EQUAL(cpu.PC, 0x8003);
+    CU_ASSERT_EQUAL(cpu.SP, 0x8002);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+}
+
+void RETI_test()
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.SP = 0x8000;
+    cpu.memory[0x8000] = 0x80;
+    cpu.memory[0x8001] = 0x03;
+    cpu.IME = 0;
+    RETI(&cpu, 0xc9);
+    CU_ASSERT_EQUAL(cpu.PC, 0x8003);
+    CU_ASSERT_EQUAL(cpu.SP, 0x8002);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    CU_ASSERT_EQUAL(cpu.IME, 1);
+}
+
+void RETC_NZ_test()
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.SP = 0x8000;
+    cpu.memory[0x8000] = 0x80;
+    cpu.memory[0x8001] = 0x03;
+    // NZ if false
+    cpu.registers.F = 0b10000000;
+    RETC(&cpu, 0xc0);
+    CU_ASSERT_EQUAL(cpu.PC, 0x1000);
+    CU_ASSERT_EQUAL(cpu.SP, 0x8000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+
+    cpu.registers.F = 0;
+    RETC(&cpu, 0xc0);
+    CU_ASSERT_EQUAL(cpu.PC, 0x8003);
+    CU_ASSERT_EQUAL(cpu.SP, 0x8002);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 20);
+}
+
+void RETC_Z_test()
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.SP = 0x8000;
+    cpu.memory[0x8000] = 0x80;
+    cpu.memory[0x8001] = 0x03;
+    // Z if false
+    cpu.registers.F = 0;
+    RETC(&cpu, 0xc8);
+    CU_ASSERT_EQUAL(cpu.PC, 0x1000);
+    CU_ASSERT_EQUAL(cpu.SP, 0x8000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+
+    cpu.registers.F = 0b10000000;
+    RETC(&cpu, 0xc8);
+    CU_ASSERT_EQUAL(cpu.PC, 0x8003);
+    CU_ASSERT_EQUAL(cpu.SP, 0x8002);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 20);
+}
+
+void RETC_NC_test()
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.SP = 0x8000;
+    cpu.memory[0x8000] = 0x80;
+    cpu.memory[0x8001] = 0x03;
+    // NC if false
+    cpu.registers.F = 0b00010000;
+    RETC(&cpu, 0xd0);
+    CU_ASSERT_EQUAL(cpu.PC, 0x1000);
+    CU_ASSERT_EQUAL(cpu.SP, 0x8000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+
+    cpu.registers.F = 0;
+    RETC(&cpu, 0xd0);
+    CU_ASSERT_EQUAL(cpu.PC, 0x8003);
+    CU_ASSERT_EQUAL(cpu.SP, 0x8002);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 20);
+}
+
+void RETC_C_test()
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.SP = 0x8000;
+    cpu.memory[0x8000] = 0x80;
+    cpu.memory[0x8001] = 0x03;
+    // C if false
+    cpu.registers.F = 0;
+    RETC(&cpu, 0xd8);
+    CU_ASSERT_EQUAL(cpu.PC, 0x1000);
+    CU_ASSERT_EQUAL(cpu.SP, 0x8000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+
+    cpu.registers.F = 0b00010000;
+    RETC(&cpu, 0xd8);
+    CU_ASSERT_EQUAL(cpu.PC, 0x8003);
+    CU_ASSERT_EQUAL(cpu.SP, 0x8002);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 20);
+}
+
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -149,23 +261,53 @@ int main()
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Call Instructions | CALL_C_NZ pushes the PC onto the stack, decrements SP by 2, and sets the next 2 bytes on the PC if Z flag is clear",
-            CALL_C_NZ_test
+            "Call Instructions | CALLC_NZ pushes the PC onto the stack, decrements SP by 2, and sets the next 2 bytes on the PC if Z flag is clear",
+            CALLC_NZ_test
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Call Instructions | CALL_C_Z pushes the PC onto the stack, decrements SP by 2, and sets the next 2 bytes on the PC if Z flag is set",
-            CALL_C_Z_test
+            "Call Instructions | CALLC_Z pushes the PC onto the stack, decrements SP by 2, and sets the next 2 bytes on the PC if Z flag is set",
+            CALLC_Z_test
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Call Instructions | CALL_C_NC pushes the PC onto the stack, decrements SP by 2, and sets the next 2 bytes on the PC if C flag is clear",
-            CALL_C_NC_test
+            "Call Instructions | CALLC_NC pushes the PC onto the stack, decrements SP by 2, and sets the next 2 bytes on the PC if C flag is clear",
+            CALLC_NC_test
         ) == NULL ||
         CU_add_test(
             test_suite,
-            "Call Instructions | CALL_C_C pushes the PC onto the stack, decrements SP by 2, and sets the next 2 bytes on the PC if C flag is set",
-            CALL_C_C_test
+            "Call Instructions | CALLC_C pushes the PC onto the stack, decrements SP by 2, and sets the next 2 bytes on the PC if C flag is set",
+            CALLC_C_test
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Call Instructions | RET pops the stack onto the PC",
+            RET_test
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Call Instructions | RETI pops the stack onto the PC and enables the Interrupt Master Enable flag",
+            RETI_test
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Call Instructions | RETC_NZ pops the stack onto the PC if the Z flag is clear",
+            RETC_NZ_test
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Call Instructions | RETC_Z pops the stack onto the PC if the Z flag is set",
+            RETC_Z_test
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Call Instructions | RETC_NC pops the stack onto the PC if the C flag is clear",
+            RETC_NC_test
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Call Instructions | RETC_C pops the stack onto the PC if the C flag is set",
+            RETC_C_test
         )== NULL) {
         printf("Failed to add test to Call instructions unit test suite\n");
         CU_cleanup_registry();

@@ -75,6 +75,7 @@ typedef struct CPU {
     uint16_t PC;
     uint16_t SP;
     uint16_t memory[ADDRESS_BUS_SIZE];
+    uint8_t IME;
     uint8_t t_cycles;
 } CPU;
 
@@ -101,5 +102,8 @@ uint8_t get_flag(CPU *, FlagPosition);
 void set_flag(CPU *, FlagPosition);
 void clear_flag(CPU *, FlagPosition);
 void reset_flags(CPU *);
+
+void enable_IME(CPU *);
+void disable_IME(CPU *);
 
 #endif
