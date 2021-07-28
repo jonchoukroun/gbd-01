@@ -1023,9 +1023,26 @@ void RES_HL(CPU *cpu, uint8_t opcode)
 
 void JP(CPU *cpu, uint8_t opcode)
 {
-    uint16_t address = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+    uint16_t address;
+    uint8_t t_cycles;
+    switch (opcode) {
+    case 0xc3: {
+        address = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+        t_cycles = 16;
+        break;
+    }
+    case 0xe9:
+        address = cpu->registers.HL;
+        t_cycles = 4;
+        break;
+
+    default:
+        printf("Error: invalid opcode %x for JP instructions\n", opcode);
+        break;
+    }
+
     cpu->PC = address;
-    cpu->t_cycles = 16;
+    cpu->t_cycles = t_cycles;
 }
 
 void JPC(CPU *cpu, uint8_t opcode)
@@ -1105,6 +1122,50 @@ void JRC(CPU *cpu, uint8_t opcode)
         cpu->PC += e;
     }
     cpu->t_cycles = 12;
+}
+
+// **************************************************
+// Call instructions
+// **************************************************
+
+void CALL(CPU *cpu, uint8_t opcode)
+{
+    uint16_t address = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+    cpu->SP--;
+    write_byte(cpu, (cpu->PC & 0xff00) >> 8, cpu->SP);
+    cpu->SP--;
+    write_byte(cpu, (cpu->PC & 0xff), cpu->SP);
+    cpu->PC = address;
+    cpu->t_cycles = 24;
+}
+
+void CALLC(CPU *cpu, uint8_t opcode)
+{
+    uint8_t c_mask = 0b00011000;
+    uint8_t c;
+    switch ((opcode & c_mask) >> 3) {
+    case 0:
+        c = get_flag(cpu, Z_FLAG) == 0;
+        break;
+    case 1:
+        c = get_flag(cpu, Z_FLAG) == 1;
+        break;
+    case 2:
+        c = get_flag(cpu, C_FLAG) == 0;
+        break;
+    case 3:
+        c = get_flag(cpu, C_FLAG) == 1;
+        break;
+    default:
+        break;
+    }
+
+    if (c == 0) {
+        cpu->t_cycles = 12;
+        return;
+    }
+
+    return CALL(cpu, opcode);
 }
 
 void UNDEF(CPU *cpu, uint8_t opcode)

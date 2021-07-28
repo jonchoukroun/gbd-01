@@ -570,6 +570,14 @@ void JRC(CPU *, uint8_t);
 
 void UNDEF(CPU *, uint8_t);
 
+// **************************************************
+// Call instructions
+// **************************************************
+
+void CALL(CPU *, uint8_t);
+
+void CALLC(CPU *, uint8_t);
+
 static const OpcodeInstruction OPCODE_TABLE[256] = {
 /*            0x0        0x1        0x2       0x3       0x4       0x5        0x6       0x7       0x8        0x9        0xa       0xb       0xc       0xd        0xe       0xf */
 /* 0 */      &SET, &LD_rr_nn,  &LD_rr_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,    &RLCA,   &UNDEF,   &ADD_rr,  &LD_A_rr,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,    &RRCA,
@@ -584,8 +592,8 @@ static const OpcodeInstruction OPCODE_TABLE[256] = {
 /* 9 */    &SUB_r,    &SUB_r,    &SUB_r,   &SUB_r,   &SUB_r,   &SUB_r,   &SUB_HL,   &SUB_r,   &SBC_r,    &SBC_r,    &SBC_r,   &SBC_r,   &SBC_r,   &SBC_r,   &SBC_HL,   &SBC_r,
 /* a */    &AND_r,    &AND_r,    &AND_r,   &AND_r,   &AND_r,   &AND_r,   &AND_HL,   &AND_r,   &XOR_r,    &XOR_r,    &XOR_r,   &XOR_r,   &XOR_r,   &XOR_r,   &XOR_HL,   &XOR_r,
 /* b */     &OR_r,     &OR_r,     &OR_r,    &OR_r,    &OR_r,    &OR_r,    &OR_HL,    &OR_r,    &CP_r,     &CP_r,     &CP_r,    &CP_r,    &CP_r,    &CP_r,    &CP_HL,    &CP_r,
-/* c */    &UNDEF,   &POP_rr,      &JPC,      &JP,   &UNDEF, &PUSH_rr,    &ADD_n,   &UNDEF,   &UNDEF,    &UNDEF,      &JPC,   &UNDEF,   &UNDEF,   &UNDEF,    &ADC_n,   &UNDEF,
-/* d */    &UNDEF,   &POP_rr,      &JPC,   &UNDEF,   &UNDEF, &PUSH_rr,    &SUB_n,   &UNDEF,   &UNDEF,    &UNDEF,      &JPC,   &UNDEF,   &UNDEF,   &UNDEF,    &SBC_n,   &UNDEF,
+/* c */    &UNDEF,   &POP_rr,      &JPC,      &JP,   &CALLC, &PUSH_rr,    &ADD_n,   &UNDEF,   &UNDEF,    &UNDEF,      &JPC,   &UNDEF,   &CALLC,    &CALL,    &ADC_n,   &UNDEF,
+/* d */    &UNDEF,   &POP_rr,      &JPC,   &UNDEF,   &CALLC, &PUSH_rr,    &SUB_n,   &UNDEF,   &UNDEF,    &UNDEF,      &JPC,   &UNDEF,   &CALLC,   &UNDEF,    &SBC_n,   &UNDEF,
 /* e */  &LD_rr_A,   &POP_rr,  &LD_rr_A,   &UNDEF,   &UNDEF, &PUSH_rr,    &AND_n,   &UNDEF,   &ADD_e,    &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,    &XOR_n,   &UNDEF,
 /* f */  &LD_A_rr,   &POP_rr,  &LD_A_rr,   &UNDEF,   &UNDEF, &PUSH_rr,     &OR_n,   &UNDEF,   &UNDEF, &LD_SP_HL,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,     &CP_n,   &UNDEF,
 };
