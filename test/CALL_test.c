@@ -240,6 +240,77 @@ void RETC_C_test()
     CU_ASSERT_EQUAL(cpu.t_cycles, 20);
 }
 
+void RST_test()
+{
+    CPU cpu;
+    cpu.PC = 0x1000;
+    cpu.SP = 0x8000;
+
+    // t = 0
+    RST(&cpu, 0xc7);
+    CU_ASSERT_EQUAL(cpu.SP, 0x7ffe);
+    CU_ASSERT_EQUAL(cpu.memory[0x7fff], 0x10);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ffe], 0x00);
+    CU_ASSERT_EQUAL(cpu.PC, 0);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+
+    // t = 1
+    RST(&cpu, 0xcf);
+    CU_ASSERT_EQUAL(cpu.SP, 0x7ffc);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ffd], 0);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ffc], 0);
+    CU_ASSERT_EQUAL(cpu.PC, 0x0008);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+
+    // t = 2
+    RST(&cpu, 0xd7);
+    CU_ASSERT_EQUAL(cpu.SP, 0x7ffa);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ffb], 0);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ffa], 0x08);
+    CU_ASSERT_EQUAL(cpu.PC, 0x0010);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+
+    // t = 3
+    RST(&cpu, 0xdf);
+    CU_ASSERT_EQUAL(cpu.SP, 0x7ff8);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ff9], 0);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ff8], 0x10);
+    CU_ASSERT_EQUAL(cpu.PC, 0x18);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+
+    // t = 4
+    RST(&cpu, 0xe7);
+    CU_ASSERT_EQUAL(cpu.SP, 0x7ff6);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ff7], 0);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ff6], 0x18);
+    CU_ASSERT_EQUAL(cpu.PC, 0x20);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+
+    // t = 5
+    RST(&cpu, 0xef);
+    CU_ASSERT_EQUAL(cpu.SP, 0x7ff4);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ff5], 0);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ff4], 0x20);
+    CU_ASSERT_EQUAL(cpu.PC, 0x28);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+
+    // t = 6
+    RST(&cpu, 0xf7);
+    CU_ASSERT_EQUAL(cpu.SP, 0x7ff2);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ff3], 0);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ff2], 0x28);
+    CU_ASSERT_EQUAL(cpu.PC, 0x30);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+
+    // t = 7
+    RST(&cpu, 0xff);
+    CU_ASSERT_EQUAL(cpu.SP, 0x7ff0);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ff1], 0);
+    CU_ASSERT_EQUAL(cpu.memory[0x7ff0], 0x30);
+    CU_ASSERT_EQUAL(cpu.PC, 0x38);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+}
+
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -308,6 +379,11 @@ int main()
             test_suite,
             "Call Instructions | RETC_C pops the stack onto the PC if the C flag is set",
             RETC_C_test
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "Call Instructions | RST pushes the PC onto the stack and loads the operand's Page 0 memory address into the PC",
+            RST_test
         )== NULL) {
         printf("Failed to add test to Call instructions unit test suite\n");
         CU_cleanup_registry();

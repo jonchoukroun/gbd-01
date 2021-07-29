@@ -1216,6 +1216,49 @@ void RETC(CPU *cpu, uint8_t opcode)
     cpu->t_cycles += 4;
 }
 
+void RST(CPU *cpu, uint8_t opcode)
+{
+    uint8_t t = (opcode & 0b00111000) >> 3;
+    uint8_t address;
+    switch (t) {
+    case 0:
+        address = 0;
+        break;
+    case 1:
+        address = 0x08;
+        break;
+    case 2:
+        address = 0x10;
+        break;
+    case 3:
+        address = 0x18;
+        break;
+    case 4:
+        address = 0x20;
+        break;
+    case 5:
+        address = 0x28;
+        break;
+    case 6:
+        address = 0x30;
+        break;
+    case 7:
+        address = 0x38;
+        break;
+    default:
+        printf("Error: Invalid operand t (%d) for opcode %x\n", t, opcode);
+        return;
+    }
+
+    cpu->SP--;
+    write_byte(cpu, (cpu->PC & 0xff00) >> 8, cpu->SP);
+    cpu->SP--;
+    write_byte(cpu, cpu->PC & 0xff, cpu->SP);
+
+    cpu->PC = address;
+    cpu->t_cycles = 16;
+}
+
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
     (void)cpu;
