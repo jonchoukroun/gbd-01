@@ -12,8 +12,8 @@ and run with:
 ```
 
 ## Testing
-This project uses the [CUnit](http://cunit.sourceforge.net/) testing framework to unit test all CPU instructions. To test, run:
+This project uses the [CUnit](http://cunit.sourceforge.net/) testing framework to unit test all CPU instructions. To test, use the handy script:
 ```bash
-make test
+./run_tests.sh <optional testfile name>
 ```
-which will print out a summary of tests run, passed, and failed. For more details on the latest round of tests run, look in the `/test/results/` directory
+which will print out a summary of tests run, passed, and failed. More details on the latest test run are located in the `/test/results/` folder.
