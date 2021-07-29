@@ -75,6 +75,7 @@ typedef struct CPU {
     uint16_t PC;
     uint16_t SP;
     uint16_t memory[ADDRESS_BUS_SIZE];
+    uint8_t IME;
     uint8_t t_cycles;
 } CPU;
 
@@ -92,13 +93,17 @@ typedef enum {
 
 uint8_t fetch_opcode(CPU *);
 
-uint8_t read_byte(CPU *, uint16_t);
-uint16_t read_word(CPU *, uint16_t);
+uint8_t read_byte(CPU *, uint16_t addr);
+uint16_t read_word(CPU *, uint16_t addr);
 void write_byte(CPU *, uint8_t byte, uint16_t address);
 void write_word(CPU *, uint16_t word, uint16_t address);
 
 uint8_t get_flag(CPU *, FlagPosition);
 void set_flag(CPU *, FlagPosition);
 void clear_flag(CPU *, FlagPosition);
+void reset_flags(CPU *);
+
+void enable_IME(CPU *);
+void disable_IME(CPU *);
 
 #endif

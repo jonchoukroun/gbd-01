@@ -69,3 +69,18 @@ void clear_flag(CPU *cpu, FlagPosition flag)
 {
     cpu->registers.F &= ~(0b1 << flag);
 }
+
+void reset_flags(CPU *cpu)
+{
+    cpu->registers.F = 0;
+}
+
+void enable_IME(CPU *cpu)
+{
+    cpu->IME = 1;
+}
+
+void disable_IME(CPU *cpu)
+{
+    cpu->IME = 0;
+}

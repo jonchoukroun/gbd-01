@@ -3,430 +3,644 @@
 
 #include "cpu.h"
 
-typedef void (*OpcodeInstruction)(CPU *);
-
-// *************************************
-// 8-bit Arithmetic/Logical Instructions
-// *************************************
-
-// ADD A, r8: Add value in r8 to register A
-void ADD_A_A(CPU *);
-void ADD_A_B(CPU *);
-void ADD_A_C(CPU *);
-void ADD_A_D(CPU *);
-void ADD_A_E(CPU *);
-void ADD_A_H(CPU *);
-void ADD_A_L(CPU *);
-
-void ADD_A_n(CPU *);
-void ADD_A_HL(CPU *);
-
-// ADC A, r8: Add value in r8 + carry flag to register A
-void ADC_A_A(CPU *);
-void ADC_A_B(CPU *);
-void ADC_A_C(CPU *);
-void ADC_A_D(CPU *);
-void ADC_A_E(CPU *);
-void ADC_A_H(CPU *);
-void ADC_A_L(CPU *);
-
-void ADC_A_n(CPU *);
-void ADC_A_HL(CPU *);
-
-// SUB A, r8: Subtract value in r8 from register A
-void SUB_A_A(CPU *);
-void SUB_A_B(CPU *);
-void SUB_A_C(CPU *);
-void SUB_A_D(CPU *);
-void SUB_A_E(CPU *);
-void SUB_A_H(CPU *);
-void SUB_A_L(CPU *);
-
-void SUB_A_n(CPU *);
-void SUB_A_HL(CPU *);
-
-// SBC A, r8: Subtract value in r8 and carry from register A
-void SBC_A_A(CPU *);
-void SBC_A_B(CPU *);
-void SBC_A_C(CPU *);
-void SBC_A_D(CPU *);
-void SBC_A_E(CPU *);
-void SBC_A_H(CPU *);
-void SBC_A_L(CPU *);
-
-void SBC_A_n(CPU *);
-void SBC_A_HL(CPU *);
-
-// AND A, r8: Set A to bitwise & between A and r8
-void AND_A_A(CPU *);
-void AND_A_B(CPU *);
-void AND_A_C(CPU *);
-void AND_A_D(CPU *);
-void AND_A_E(CPU *);
-void AND_A_H(CPU *);
-void AND_A_L(CPU *);
-
-void AND_A_n(CPU *);
-void AND_A_HL(CPU *);
-
-// XOR A, r8: Set A to bitwise xor between A and r8
-void XOR_A_A(CPU *);
-void XOR_A_B(CPU *);
-void XOR_A_C(CPU *);
-void XOR_A_D(CPU *);
-void XOR_A_E(CPU *);
-void XOR_A_H(CPU *);
-void XOR_A_L(CPU *);
-
-void XOR_A_n(CPU *);
-void XOR_A_HL(CPU *);
-
-// OR A, r8: Set A to bitwise or between A and r8
-void OR_A_A(CPU *);
-void OR_A_B(CPU *);
-void OR_A_C(CPU *);
-void OR_A_D(CPU *);
-void OR_A_E(CPU *);
-void OR_A_H(CPU *);
-void OR_A_L(CPU *);
-
-void OR_A_n(CPU *);
-void OR_A_HL(CPU *);
-
-// CP A, r8: Compare A and register values
-void CP_A_A(CPU *);
-void CP_A_B(CPU *);
-void CP_A_C(CPU *);
-void CP_A_D(CPU *);
-void CP_A_E(CPU *);
-void CP_A_H(CPU *);
-void CP_A_L(CPU *);
-
-void CP_A_n(CPU *);
-void CP_A_HL(CPU *);
-
-// INC r
-void INC_A(CPU *);
-void INC_B(CPU *);
-void INC_C(CPU *);
-void INC_D(CPU *);
-void INC_E(CPU *);
-void INC_H(CPU *);
-void INC_L(CPU *);
-
-void INC_nHL(CPU *);
-
-// DEC r
-void DEC_A(CPU *);
-void DEC_B(CPU *);
-void DEC_C(CPU *);
-void DEC_D(CPU *);
-void DEC_E(CPU *);
-void DEC_H(CPU *);
-void DEC_L(CPU *);
-
-void DEC_nHL(CPU *);
-
-
-// **************************************
-// 16-bit Arithmetic/Logical Instructions
-// **************************************
-
-// ADD HL, r16: Add value in r8 to register HL
-void ADD_HL_BC(CPU *);
-void ADD_HL_DE(CPU *);
-void ADD_HL_HL(CPU *);
-
-void ADD_HL_SP(CPU *);
-
-// ADD SP, e: Add signed immediate value to stack pointer
-void ADD_SP_e(CPU *);
-
-// INC rr
-void INC_BC(CPU *);
-void INC_DE(CPU *);
-void INC_HL(CPU *);
-void INC_SP(CPU *);
-
-// DEC rr
-void DEC_BC(CPU *);
-void DEC_DE(CPU *);
-void DEC_HL(CPU *);
-void DEC_SP(CPU *);
-
-
-// ***********************
-// 8-bit Load Instructions
-// ***********************
-
-// LD r, r*
-void LD_B_A(CPU *);
-void LD_B_B(CPU *);
-void LD_B_C(CPU *);
-void LD_B_D(CPU *);
-void LD_B_E(CPU *);
-void LD_B_H(CPU *);
-void LD_B_L(CPU *);
-void LD_C_A(CPU *);
-void LD_C_B(CPU *);
-void LD_C_C(CPU *);
-void LD_C_D(CPU *);
-void LD_C_E(CPU *);
-void LD_C_H(CPU *);
-void LD_C_L(CPU *);
-void LD_D_A(CPU *);
-void LD_D_B(CPU *);
-void LD_D_C(CPU *);
-void LD_D_D(CPU *);
-void LD_D_E(CPU *);
-void LD_D_H(CPU *);
-void LD_D_L(CPU *);
-void LD_E_A(CPU *);
-void LD_E_B(CPU *);
-void LD_E_C(CPU *);
-void LD_E_D(CPU *);
-void LD_E_E(CPU *);
-void LD_E_H(CPU *);
-void LD_E_L(CPU *);
-void LD_H_A(CPU *);
-void LD_H_B(CPU *);
-void LD_H_C(CPU *);
-void LD_H_D(CPU *);
-void LD_H_E(CPU *);
-void LD_H_H(CPU *);
-void LD_H_L(CPU *);
-void LD_L_A(CPU *);
-void LD_L_B(CPU *);
-void LD_L_C(CPU *);
-void LD_L_D(CPU *);
-void LD_L_E(CPU *);
-void LD_L_H(CPU *);
-void LD_L_L(CPU *);
-
-// LD r, u8
-void LD_A_n(CPU *);
-void LD_B_n(CPU *);
-void LD_C_n(CPU *);
-void LD_D_n(CPU *);
-void LD_E_n(CPU *);
-void LD_H_n(CPU *);
-void LD_L_n(CPU *);
-
-// LD r, (HL)
-void LD_A_HL(CPU *);
-void LD_B_HL(CPU *);
-void LD_C_HL(CPU *);
-void LD_D_HL(CPU *);
-void LD_E_HL(CPU *);
-void LD_H_HL(CPU *);
-void LD_L_HL(CPU *);
-
-// LD (HL), r
-void LD_HL_A(CPU *);
-void LD_HL_B(CPU *);
-void LD_HL_C(CPU *);
-void LD_HL_D(CPU *);
-void LD_HL_E(CPU *);
-void LD_HL_H(CPU *);
-void LD_HL_L(CPU *);
-
-// LD (HL), n
-void LD_HL_n(CPU *);
-
-void LD_A_BC(CPU *);
-void LD_A_DE(CPU *);
-
-void LD_BC_A(CPU *);
-void LD_DE_A(CPU *);
-
-void LD_A_nn(CPU *);
-void LD_nn_A(CPU *);
-
-void LDH_A_C(CPU *);
-void LDH_C_A(CPU *);
-void LDH_A_n(CPU *);
-void LDH_n_A(CPU *);
-
-// LD A, (HL+/-): Load into A data from address stored in HL, then increment/decrement HL
-void LD_A_HLI(CPU *);
-void LD_A_HLD(CPU *);
-
-// LD (HL+/-), A: Load into address stored in HL from register A, then increment/decrement HL
-void LD_HLI_A(CPU *);
-void LD_HLD_A(CPU *);
-
-
-// ************************
-// 16-bit Load Instructions
-// ************************
-
-// LD rr, nn: Load 16 bit data into 16 bit register
-void LD_BC_nn(CPU *);
-void LD_DE_nn(CPU *);
-void LD_HL_nn(CPU *);
-
-void LD_nn_SP(CPU *);
-void LD_SP_HL(CPU *);
-void LD_HL_SPe(CPU *);
-
-// PUSH rr: Push to stack from register rr
-void PUSH_AF(CPU *);
-void PUSH_BC(CPU *);
-void PUSH_DE(CPU *);
-void PUSH_HL(CPU *);
-
-// POP rr: Pop to register rr from stack
-void POP_AF(CPU *);
-void POP_BC(CPU *);
-void POP_DE(CPU *);
-void POP_HL(CPU *);
-
-void UNDEF(CPU *);
-
-
-// *************************
-// Rotate Shift Instructions
-// *************************
-void RLCA(CPU *);
-void RLA(CPU *);
-void RRCA(CPU *);
-void RRA(CPU *);
-
-// RLC r (prefixed opcodes)
-void RLC_A(CPU *);
-void RLC_B(CPU *);
-void RLC_C(CPU *);
-void RLC_D(CPU *);
-void RLC_E(CPU *);
-void RLC_H(CPU *);
-void RLC_L(CPU *);
-void RLC_HL(CPU *);
-
-// RL r
-void RL_A(CPU *);
-void RL_B(CPU *);
-void RL_C(CPU *);
-void RL_D(CPU *);
-void RL_E(CPU *);
-void RL_H(CPU *);
-void RL_L(CPU *);
-void RL_HL(CPU *);
-
-// RRC r
-void RRC_A(CPU *);
-void RRC_B(CPU *);
-void RRC_C(CPU *);
-void RRC_D(CPU *);
-void RRC_E(CPU *);
-void RRC_H(CPU *);
-void RRC_L(CPU *);
-void RRC_HL(CPU *);
-
-// RR r
-void RR_A(CPU *);
-void RR_B(CPU *);
-void RR_C(CPU *);
-void RR_D(CPU *);
-void RR_E(CPU *);
-void RR_H(CPU *);
-void RR_L(CPU *);
-void RR_HL(CPU *);
-
-
-// ********************
-// Bit shift operations
-// ********************
-
-// SLA r
-void SLA_A(CPU *);
-void SLA_B(CPU *);
-void SLA_C(CPU *);
-void SLA_D(CPU *);
-void SLA_E(CPU *);
-void SLA_H(CPU *);
-void SLA_L(CPU *);
-void SLA_HL(CPU *);
-
-// SRA r
-void SRA_A(CPU *);
-void SRA_B(CPU *);
-void SRA_C(CPU *);
-void SRA_D(CPU *);
-void SRA_E(CPU *);
-void SRA_H(CPU *);
-void SRA_L(CPU *);
-void SRA_HL(CPU *);
-
-// SRL r
-void SRL_A(CPU *);
-void SRL_B(CPU *);
-void SRL_C(CPU *);
-void SRL_D(CPU *);
-void SRL_E(CPU *);
-void SRL_H(CPU *);
-void SRL_L(CPU *);
-void SRL_HL(CPU *);
-
-// SWAP r
-void SWAP_A(CPU *);
-void SWAP_B(CPU *);
-void SWAP_C(CPU *);
-void SWAP_D(CPU *);
-void SWAP_E(CPU *);
-void SWAP_H(CPU *);
-void SWAP_L(CPU *);
-void SWAP_HL(CPU *);
-
-
-// *****************************
-// Misc. Arithmetic Instructions
-// *****************************
-
-// DAA: decimal adjust
-void DAA(CPU *);
-
-// CPL: complement A
-void CPL(CPU *);
-
-
-static const OpcodeInstruction opcode_table[256] = {
-/*             0x0        0x1        0x2       0x3       0x4       0x5        0x6       0x7         0x8         0x9        0xa       0xb       0xc       0xd        0xe       0xf */
-/* 0 */     &UNDEF, &LD_BC_nn,  &LD_BC_A,  &INC_BC,   &INC_B,   &DEC_B,   &LD_B_n,    &RLCA,  &LD_nn_SP, &ADD_HL_BC,  &LD_A_BC,  &DEC_BC,   &INC_C,   &DEC_C,   &LD_C_n,    &RRCA,
-/* 1 */     &UNDEF, &LD_DE_nn,  &LD_DE_A,  &INC_DE,   &INC_D,   &DEC_D,   &LD_D_n,     &RLA,     &UNDEF, &ADD_HL_DE,  &LD_A_DE,  &DEC_DE,   &INC_E,   &DEC_E,   &LD_E_n,     &RRA,
-/* 2 */     &UNDEF, &LD_HL_nn, &LD_HLI_A,  &INC_HL,   &INC_H,   &DEC_H,   &LD_H_n,     &DAA,     &UNDEF, &ADD_HL_HL, &LD_A_HLI,  &DEC_HL,   &INC_L,   &DEC_L,   &LD_L_n,     &CPL,
-/* 3 */     &UNDEF,    &UNDEF, &LD_HLD_A,  &INC_SP, &INC_nHL, &DEC_nHL,  &LD_HL_n,   &UNDEF,     &UNDEF, &ADD_HL_SP, &LD_A_HLD,  &DEC_SP,   &INC_A,   &DEC_A,   &LD_A_n,   &UNDEF,
-/* 4 */    &LD_B_B,   &LD_B_C,   &LD_B_D,  &LD_B_E,  &LD_B_H,  &LD_B_L,  &LD_B_HL,  &LD_B_A,    &LD_C_B,    &LD_C_C,   &LD_C_D,  &LD_C_E,  &LD_C_H,  &LD_C_L,  &LD_C_HL,  &LD_C_A,
-/* 5 */    &LD_D_B,   &LD_D_C,   &LD_D_D,  &LD_D_E,  &LD_D_H,  &LD_D_L,  &LD_D_HL,  &LD_D_A,    &LD_E_B,    &LD_E_C,   &LD_E_D,  &LD_E_E,  &LD_E_H,  &LD_E_L,  &LD_E_HL,  &LD_E_A,
-/* 6 */    &LD_H_B,   &LD_H_C,   &LD_H_D,  &LD_H_E,  &LD_H_H,  &LD_H_L,  &LD_H_HL,  &LD_H_A,    &LD_L_B,    &LD_L_C,   &LD_L_D,  &LD_L_E,  &LD_L_H,  &LD_L_L,  &LD_L_HL,  &LD_L_A,
-/* 7 */   &LD_HL_B,  &LD_HL_C,  &LD_HL_D, &LD_HL_E, &LD_HL_H, &LD_HL_L,    &UNDEF, &LD_HL_A,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &LD_A_HL,   &UNDEF,
-/* 8 */   &ADD_A_B,  &ADD_A_C,  &ADD_A_D, &ADD_A_E, &ADD_A_H, &ADD_A_L, &ADD_A_HL, &ADD_A_A,   &ADC_A_B,   &ADC_A_C,  &ADC_A_D, &ADC_A_E, &ADC_A_H, &ADC_A_L, &ADC_A_HL, &ADC_A_A,
-/* 9 */   &SUB_A_B,  &SUB_A_C,  &SUB_A_D, &SUB_A_E, &SUB_A_H, &SUB_A_L, &SUB_A_HL, &SUB_A_A,   &SBC_A_B,   &SBC_A_C,  &SBC_A_D, &SBC_A_E, &SBC_A_H, &SBC_A_L, &SBC_A_HL, &SBC_A_A,
-/* a */   &AND_A_B,  &AND_A_C,  &AND_A_D, &AND_A_E, &AND_A_H, &AND_A_L, &AND_A_HL, &AND_A_A,   &XOR_A_B,   &XOR_A_C,  &XOR_A_D, &XOR_A_E, &XOR_A_H, &XOR_A_L, &XOR_A_HL, &XOR_A_A,
-/* b */    &OR_A_B,   &OR_A_C,   &OR_A_D,  &OR_A_E,  &OR_A_H,  &OR_A_L,  &OR_A_HL,  &OR_A_A,    &CP_A_B,    &CP_A_C,   &CP_A_D,  &CP_A_E,  &CP_A_H,  &CP_A_L,  &CP_A_HL,  &CP_A_A,
-/* c */     &UNDEF,   &POP_BC,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_BC,  &ADD_A_n,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &ADC_A_n,   &UNDEF,
-/* d */     &UNDEF,   &POP_DE,    &UNDEF,   &UNDEF,   &UNDEF, &PUSH_DE,  &SUB_A_n,   &UNDEF,     &UNDEF,     &UNDEF,    &UNDEF,   &UNDEF,   &UNDEF,   &UNDEF,  &SBC_A_n,   &UNDEF,
-/* e */   &LDH_n_A,   &POP_HL,  &LDH_C_A,   &UNDEF,   &UNDEF, &PUSH_HL,  &AND_A_n,   &UNDEF,  &ADD_SP_e,     &UNDEF,  &LD_nn_A,   &UNDEF,   &UNDEF,   &UNDEF,  &XOR_A_n,   &UNDEF,
-/* f */   &LDH_A_n,   &POP_AF,  &LDH_A_C,   &UNDEF,   &UNDEF, &PUSH_AF,   &OR_A_n,   &UNDEF, &LD_HL_SPe,  &LD_SP_HL,  &LD_A_nn,   &UNDEF,   &UNDEF,   &UNDEF,   &CP_A_n,   &UNDEF,
+typedef void (*OpcodeInstruction)(CPU *, uint8_t opcode);
+
+// **************************************************
+// 8-bit load instructions
+// **************************************************
+
+/**
+ * Load into 1st register 2nd register's value
+ * No flag effects
+ * 4 T-cycles
+ **/
+void LD_r_r(CPU *, uint8_t);
+
+/**
+ * Load into register immediate unsigned value
+ * No flag effects
+ * 8 T-cycles
+ **/
+void LD_r_n(CPU *, uint8_t);
+
+/**
+ * Load memory contents pointed to from register HL into register
+ * No flag effects
+ * 8 T-cyles
+ **/
+void LD_r_HL(CPU *, uint8_t);
+
+/**
+ * Load into memory at address pointed to from HL, the contents of register r
+ * No flag effects
+ * 8 T-cycles
+ **/
+void LD_HL_r(CPU *, uint8_t);
+
+/**
+ * Load memory contents into register A
+ * No flag effects
+ * 8 T-cycles
+ **/
+void LD_A_rr(CPU *, uint8_t);
+
+/**
+ * Load A register value into internal RAM
+ * No flag effects
+ * 8 T-cycles
+ **/
+void LD_rr_A(CPU *, uint8_t);
+
+/**
+ * Load memory contents pointed to by HL into register A then incrment HL
+ * No flag effects
+ * 8 T-cycles
+ **/
+void LD_A_HLI(CPU *, uint8_t);
+
+/**
+ * Load memory contents pointed to by HL into register A then decrement HL
+ * No flag effects
+ * 8 T-cycles
+ **/
+void LD_A_HLD(CPU *, uint8_t);
+
+/**
+ * Load register A into memory at the address in HL then increment HL
+ * No flag effects
+ * 8 T-cycles
+ **/
+void LD_HLI_A(CPU *, uint8_t);
+
+/**
+ * Load register A into memory at the address in HL then decrement HL
+ * No flag effects
+ * 8 T-cycles
+ **/
+void LD_HLD_A(CPU *, uint8_t);
+
+
+// **************************************************
+// 16-bit load instructions
+// **************************************************
+
+/**
+ * Load 2 bytes of immediate data into register rr
+ * No flag effects
+ * 12 T-cycles
+ **/
+void LD_rr_nn(CPU *, uint8_t);
+
+/**
+ * Load HL value into SP
+ * No flag effects
+ * 8 T-cycles
+ **/
+void LD_SP_HL(CPU *, uint8_t);
+
+/**
+ * Pushes contents of register pair onto memory stack.
+ * No flag effects
+ * 16 T-cycles
+ **/
+void PUSH_rr(CPU *, uint8_t);
+
+/**
+ * Pops contents of memory stack onto register pair.
+ * NO flag effects
+ * 16 T-cycles
+ **/
+void POP_rr(CPU *, uint8_t);
+
+
+// **************************************************
+// 8-bit ALU instructions
+// **************************************************
+
+/**
+ * Add value in register r to register A
+ * Clears N flag, conditionally sets Z, H, and C flags
+ * 4 T-cycles
+ **/
+void ADD_r(CPU *, uint8_t);
+
+/**
+ * Add immediate value to register A
+ * Clears N flag, conditionally sets Z, H, and C flags
+ * 8 T-cycles
+ **/
+void ADD_n(CPU *, uint8_t);
+
+/**
+ * Add memory contents at address in HL to A
+ * Clears N flag, conditionally sets Z, H, and C flags
+ * 8 T-cycles
+ **/
+void ADD_HL(CPU *, uint8_t);
+
+/**
+ * Add value in register r and C flag to register A
+ * Clears N flag, conditionally sets Z, H, and C flags
+ * 4 T-cycles
+ **/
+void ADC_r(CPU *, uint8_t);
+
+/**
+ * Add immediate value and C flag to register A
+ * Clears N flag, conditionally sets Z, H, and C flags
+ * 8 T-cycles
+ **/
+void ADC_n(CPU *, uint8_t);
+
+/**
+ * Add memory contents at address in HL and C flag to register A
+ * Clears N flag, conditionally sets Z, H, and C flags
+ * 8 T-cycles
+ **/
+void ADC_HL(CPU *, uint8_t);
+
+/**
+ * Subtract value in register from register A
+ * Set N flag, conditionally set Z, H, and C flags
+ * 4 T-cycles
+ **/
+void SUB_r(CPU *, uint8_t);
+
+/**
+ * Subtract immediate value from register A
+ * Set N flag, conditionally set Z, H, and C flags
+ * 8 T-cycles
+ **/
+void SUB_n(CPU *, uint8_t);
+
+/**
+ * Subtract memory contents at address in HL from register A
+ * Set N flag, conditionally set Z, H, and C flags
+ * 8 T-cycles
+ **/
+void SUB_HL(CPU *, uint8_t);
+
+/**
+ * Subtract value in register and C flag from register A
+ * Set N flag, conditionally set Z, H, and C flag
+ * 4 T-cycles
+ **/
+void SBC_r(CPU *, uint8_t);
+
+/**
+ * Subtract immediate value and C flag from register A
+ * Set N flag, conditionally set Z, H, and C flags
+ * 8 T-cycles
+ **/
+void SBC_n(CPU *, uint8_t);
+
+/**
+ * Subtract memory contents at address in HL and C flag from register A
+ * Set N flag, conditionally set Z, H, and C flags
+ * 8 T-cycles
+ **/
+void SBC_HL(CPU *, uint8_t);
+
+/**
+ * Set logical AND of register value and register A
+ * Set H flag, clear N and C flgs, conditionally set Z flag
+ * 4 T-cycles
+ **/
+void AND_r(CPU *, uint8_t);
+
+/**
+ * Store logical AND of register A and immediate value into register A
+ * Set H flag, clear N and C flgs, conditionally set Z flag
+ * 8 T-cycles
+ **/
+void AND_n(CPU *, uint8_t);
+
+/**
+ * Store logical AND of register A and memory contents at address in HL into register A
+ * Set H flag, clear N and C flgs, conditionally set Z flag
+ * 8 T-cycles
+ **/
+void AND_HL(CPU *, uint8_t);
+
+/**
+ * Store logical OR of register A and register value into register A
+ * Clear N, H, and C flags, conditionally set Z flag
+ * 4 T-cycles
+ **/
+void OR_r(CPU *, uint8_t);
+
+/**
+ * Store logical OR of register A and immediate value into register A
+ * Clear N, H, and C flags, conditionally set Z flag
+ * 8 T-Cycles
+ **/
+void OR_n(CPU *, uint8_t);
+
+/**
+ * Store logical OR of register A and memory contents at address in HL into register A
+ * Clear N, H, and C flags, conditionally set Z flag
+ * 8 T-Cycles
+ **/
+void OR_HL(CPU *, uint8_t);
+
+/**
+ * Store logical XOR of register A and register value into register A
+ * Clear N, H, and C flags, conditionally set Z flag
+ * 4 T-cycles
+ **/
+void XOR_r(CPU *, uint8_t);
+
+/**
+ * Store logical XOR of register A and immediate value into register A
+ * Clear N, H, and C flags, conditionally set Z flag
+ * 8 T-Cycles
+ **/
+void XOR_n(CPU *, uint8_t);
+
+/**
+ * Store logical XOR of register A and memory contents at address in HL into register A
+ * Clear N, H, and C flags, conditionally set Z flag
+ * 8 T-Cycles
+ **/
+void XOR_HL(CPU *, uint8_t);
+
+/**
+ * Compare difference between register A and register value (don't store)
+ * Set N flag, conditionally set Z, H, and C flags
+ * 4 T-cycles
+ **/
+void CP_r(CPU *, uint8_t);
+
+/**
+ * Compare difference between register A and immediate value (don't store)
+ * Set N flag, conditionally set Z, H, and C flags
+ * 8 T-cycles
+ **/
+void CP_n(CPU *, uint8_t);
+
+/**
+ * Compare difference between register A and memory contents add address in HL (don't store)
+ * Set N flag, conditionally set Z, H, and C flags
+ * 8 T-cycles
+ **/
+void CP_HL(CPU *, uint8_t);
+
+/**
+ * Increment register value by 1
+ * Clear N flag, ignore C flag, conditionally set Z and H flags
+ * 4 T-cycles
+ **/
+void INC_r(CPU *, uint8_t);
+
+/**
+ * Increment memory contents at address in HL by 1
+ * Clear N flag, ignore C flag, conditionally set Z and H flags
+ * 8 T-cycles
+ **/
+void INC_HL(CPU *, uint8_t);
+
+/**
+ * Decrement register value by 1
+ * Set N flag, ignore C flag, conditionally set Z and H flags
+ * 4 T-cycles
+ **/
+void DEC_r(CPU *, uint8_t);
+
+/**
+ * Decrement memory contents at address in HL by 1
+ * Set N flag, ignore C flag, conditionally set Z and H flags
+ * 8 T-cycles
+ **/
+void DEC_HL(CPU *, uint8_t);
+
+
+// **************************************************
+// 16-bit arithmetic instructions
+// **************************************************
+
+/**
+ * Add register pair value to register HL
+ * Clear N flag, ignore Z flag, conditionally Z and H flag
+ * 8 T-cycles
+ **/
+void ADD_rr(CPU *, uint8_t);
+
+/**
+ * Add immediate signed value to SP
+ * Clears Z and N flags, conditionally sets H and C flags
+ * 16 T-cycles
+ **/
+void ADD_e(CPU *, uint8_t);
+
+/**
+ * Increment the value in register pair
+ * Ignore all flags
+ * 8 T-cycles
+ **/
+void INC_rr(CPU *, uint8_t);
+
+/**
+ * Decrement the value in register pair
+ * Ignore all flags
+ * 8 T-cycles
+ **/
+void DEC_rr(CPU *, uint8_t);
+
+
+// **************************************************
+// Rotate shift instructions
+// **************************************************
+
+/**
+ * Rotate contents of register A to the left
+ * Place bit 7 in C flag and bit 0
+ * Clear Z, N, and H flags
+ * 4 T-cycles
+ **/
+void RLCA(CPU *, uint8_t);
+
+/**
+ * Rotate contents of register A to the left
+ * Place C flag into bit 0 and bit 7 in C flag
+ * Clear Z, N, and H flags
+ * 4 T-cycles
+ **/
+void RLA(CPU *, uint8_t);
+
+/**
+ * Rotate contents of register A to the right
+ * Place bit 1 into C flag and bit 7
+ * Clear Z, N, and H flags
+ * 4 T-cycles
+ **/
+void RRCA(CPU *, uint8_t);
+
+/**
+ * Rotate contents of register A to the right
+ * Place bit 1 into C flag and C flag into bit 7
+ * Clear Z, N, and H flags
+ * 4 T-cycles
+ **/
+void RRA(CPU *, uint8_t);
+
+/**
+ * Rotate contents of register to the left
+ * Place bit 7 into C flag and bit 0
+ * Clear N and H flags, conditionally set Z flag
+ * 8 T-cycles, prefixed opcode table
+ **/
+void RLC(CPU *, uint8_t);
+
+/**
+ * Rotate memory contents at address pointed to by HL to the left
+ * Place bit 7 into C flag and bit 0
+ * Clear N and H flags, conditionally set Z flag
+ * 12 T-cycles, prefixed opcode table
+ **/
+void RLC_HL(CPU *, uint8_t);
+
+/**
+ * Rotate contents of register to the left
+ * Place C flag into bit 0 and bit 7 into C flag
+ * Clear N and H flags, conditionally set Z flag
+ * 8 T-cycles, prefixed opcode table
+ **/
+void RL(CPU *, uint8_t);
+
+/**
+ * Rotate memory contents at address pointed to by HL to the left
+ * Place C flag into bit 0 and bit 7 into C flag
+ * Clear N and H flags, conditionally set Z flag
+ * 16 T-cycles, prefixed opcode table
+ **/
+void RL_HL(CPU *, uint8_t);
+
+/**
+ * Rotate contents of register to the right
+ * Place bit 0 into C flag and bit 7
+ * Clear H and H flags, conditionally set Z flag
+ * 8 T-cycles, prefixed opcode table
+ **/
+void RRC(CPU *, uint8_t);
+
+/**
+ * Rotate memory contents at address pointed to by HL to the right
+ * Place bit 0 in C flag and bit 7
+ * Clear N and H flags, conditionally set Z flag
+ * 12 T-cycles, prefixed opcode table
+ **/
+void RRC_HL(CPU *, uint8_t);
+
+/**
+ * Rotate contents of register to the right
+ * Place C flag into bit 7 and bit 0 into C flag
+ * Clear N and H flags, conditionally set Z flag
+ * 8 T-cycles, prefixed opcode table
+ **/
+void RR(CPU *, uint8_t);
+
+/**
+ * Rotate memory contents at address pointed to by HL to the right
+ * Place C flag into bit 7 and bit 0 into C flag
+ * Clear N and H flags, conditionally set Z flag
+ * 16 T-cycles, prefixed opcode table
+ **/
+void RR_HL(CPU *, uint8_t);
+
+/**
+ * Shift the contents of register left
+ * Place bit 7 in C flag and reset bit 0
+ * Clear N and H flags, conditionally set Z flag
+ * 8 T-cycles, prefixed opcode table
+ **/
+void SLA(CPU *, uint8_t);
+
+/**
+ * Shift the memory contents at address pointed to by HL left
+ * Place bit 7 in C flag and reset bit 0
+ * Reset N and H flags, conditionally set Z flag
+ * 16 T-cycles, prefixed opcode table
+ **/
+void SLA_HL(CPU *, uint8_t);
+
+/**
+ * Arithmetic shift the contents of register right
+ * Place bit 0 in C flag, leave original value in bit 7
+ * Reset N and H flags, conditionally set Z flag
+ * 8 T-cycles, prefixed opcode table
+ **/
+void SRA(CPU *, uint8_t);
+
+/**
+ * Arithmetic shift the memory contents at address pointed to by HL right
+ * Place bit 0 in C flag, leave original value in bit 7
+ * Reset N and H flags, conditionally set Z flag
+ * 16 T-cycles, prefixed opcode table
+ **/
+void SRA_HL(CPU *, uint8_t);
+
+/**
+ * Logical shift the contents of register right
+ * Place bit 0 in C flag, reset bit 7
+ * Reset N and H flags, conditionally set Z flag
+ * 8 T-cycles, prefixed opcode table
+ **/
+void SRL(CPU *, uint8_t);
+
+/**
+ * Logical shift the memory contents at address pointed to by HL right
+ * Place bit 0 in C flag, reset bit 7
+ * Reset N and H flags, conditionally set Z flag
+ * 16 T-cycles, prefixed opcode table
+ **/
+void SRL_HL(CPU *, uint8_t);
+
+
+/**
+ * Swap the lower order bits with the upper order bits in register r
+ * Reset all flags except Z flag
+ * 8 T-cycles, prefixed opcode table
+ **/
+void SWAP(CPU *, uint8_t);
+
+/**
+ * Swap the nibbles of the contents pointed at address in register HL
+ * Reset all flags except Z flag
+ * 16 T-cycles, prefixed opcode table
+ **/
+void SWAP_HL(CPU *, uint8_t);
+
+// **************************************************
+// Bit instructions
+// **************************************************
+
+/**
+ * Set the complement of the bit in the register
+ * Reset N flag, set H flag, and ignore C flag
+ * 8 T-cycles, prefixed opcode table
+ **/
+void BIT(CPU *, uint8_t);
+
+/**
+ * Set the complement of tbe bit in memory at the address in HL
+ * Reset N flag, set H flag, and ignore C flag
+ * 12 T-cycles, prefixed opcode table
+ **/
+void BIT_HL(CPU *, uint8_t);
+
+/**
+ * Set the bit in the register
+ * Ignore all flags
+ * 8 T-cycles, prefixed opcode table
+ **/
+void SET(CPU *, uint8_t);
+
+/**
+ * Set the bit in memory at the address in HL
+ * Ignore all flags
+ * 16 T-cycles, prefixed opcode table
+ **/
+void SET_HL(CPU *, uint8_t);
+
+/**
+ * Reset the bit in the register
+ * Ignore all flags
+ * 8 T-Cycles, prefixed opcode table
+ **/
+void RES(CPU *, uint8_t);
+
+/**
+ * Reset the bit in memory at the address in HL
+ * Ignore all flags
+ * 16 T-Cycles, prefixed opcode table
+ **/
+void RES_HL(CPU *, uint8_t);
+
+// **************************************************
+// Jump instructions
+// **************************************************
+
+void JP(CPU *, uint8_t);
+
+void JPC(CPU *, uint8_t);
+
+void JR(CPU *, uint8_t);
+
+void JRC(CPU *, uint8_t);
+
+void UNDEF(CPU *, uint8_t);
+
+// **************************************************
+// Call instructions
+// **************************************************
+
+void CALL(CPU *, uint8_t);
+
+void CALLC(CPU *, uint8_t);
+
+void RET(CPU *, uint8_t);
+
+void RETI(CPU *, uint8_t);
+
+void RETC(CPU *, uint8_t);
+
+void RST(CPU *, uint8_t);
+
+static const OpcodeInstruction OPCODE_TABLE[256] = {
+/*            0x0        0x1        0x2       0x3       0x4       0x5        0x6       0x7       0x8        0x9        0xa       0xb       0xc       0xd        0xe       0xf */
+/* 0 */      &SET, &LD_rr_nn,  &LD_rr_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,    &RLCA,   &UNDEF,   &ADD_rr,  &LD_A_rr,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,    &RRCA,
+/* 1 */    &UNDEF, &LD_rr_nn,  &LD_rr_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,     &RLA,      &JR,   &ADD_rr,  &LD_A_rr,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,     &RRA,
+/* 2 */      &JRC, &LD_rr_nn, &LD_HLI_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,     &JRC,   &ADD_rr, &LD_A_HLI,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
+/* 3 */      &JRC, &LD_rr_nn, &LD_HLD_A,  &INC_rr,  &INC_HL,  &DEC_HL,    &UNDEF,   &UNDEF,     &JRC,   &ADD_rr, &LD_A_HLD,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
+/* 4 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
+/* 5 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
+/* 5 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
+/* 7 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
+/* 8 */    &ADD_r,    &ADD_r,    &ADD_r,   &ADD_r,   &ADD_r,   &ADD_r,   &ADD_HL,   &ADD_r,   &ADC_r,    &ADC_r,    &ADC_r,   &ADC_r,   &ADC_r,   &ADC_r,   &ADC_HL,   &ADC_r,
+/* 9 */    &SUB_r,    &SUB_r,    &SUB_r,   &SUB_r,   &SUB_r,   &SUB_r,   &SUB_HL,   &SUB_r,   &SBC_r,    &SBC_r,    &SBC_r,   &SBC_r,   &SBC_r,   &SBC_r,   &SBC_HL,   &SBC_r,
+/* a */    &AND_r,    &AND_r,    &AND_r,   &AND_r,   &AND_r,   &AND_r,   &AND_HL,   &AND_r,   &XOR_r,    &XOR_r,    &XOR_r,   &XOR_r,   &XOR_r,   &XOR_r,   &XOR_HL,   &XOR_r,
+/* b */     &OR_r,     &OR_r,     &OR_r,    &OR_r,    &OR_r,    &OR_r,    &OR_HL,    &OR_r,    &CP_r,     &CP_r,     &CP_r,    &CP_r,    &CP_r,    &CP_r,    &CP_HL,    &CP_r,
+/* c */     &RETC,   &POP_rr,      &JPC,      &JP,   &CALLC, &PUSH_rr,    &ADD_n,     &RST,    &RETC,      &RET,      &JPC,   &UNDEF,   &CALLC,    &CALL,    &ADC_n,     &RST,
+/* d */     &RETC,   &POP_rr,      &JPC,   &UNDEF,   &CALLC, &PUSH_rr,    &SUB_n,     &RST,    &RETC,     &RETI,      &JPC,   &UNDEF,   &CALLC,   &UNDEF,    &SBC_n,     &RST,
+/* e */  &LD_rr_A,   &POP_rr,  &LD_rr_A,   &UNDEF,   &UNDEF, &PUSH_rr,    &AND_n,     &RST,   &ADD_e,    &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,    &XOR_n,     &RST,
+/* f */  &LD_A_rr,   &POP_rr,  &LD_A_rr,   &UNDEF,   &UNDEF, &PUSH_rr,     &OR_n,     &RST,   &UNDEF, &LD_SP_HL,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,     &CP_n,     &RST,
 };
 
-static const OpcodeInstruction prefixed_opcode_table[256] = {
-/*           0x0      0x1      0x2      0x3      0x4      0x5       0x6      0x7      0x8      0x9      0xa      0xb      0xc      0xd      0xe      0xf */
-/* 0 */   &RLC_B,  &RLC_C,  &RLC_D,  &RLC_E,  &RLC_H,  &RLC_L,  &RLC_HL,  &RLC_A,  &RRC_B,  &RRC_C,  &RRC_D,  &RRC_E,  &RRC_H,  &RRC_L, &RRC_HL,  &RRC_A,
-/* 1 */    &RL_B,   &RL_C,   &RL_D,   &RL_E,   &RL_H,   &RL_L,   &RL_HL,   &RL_A,   &RR_B,   &RR_C,   &RR_D,   &RR_E,   &RR_H,   &RR_L,  &RR_HL,   &RR_A,
-/* 2 */   &SLA_B,  &SLA_C,  &SLA_D,  &SLA_E,  &SLA_H,  &SLA_L,  &SLA_HL,  &SLA_A,  &SRA_B,  &SRA_C,  &SRA_D,  &SRA_E,  &SRA_H,  &SRA_L, &SRA_HL,  &SRA_A,
-/* 3 */  &SWAP_B, &SWAP_C, &SWAP_D, &SWAP_E, &SWAP_H, &SWAP_L, &SWAP_HL, &SWAP_A,  &SRL_B,  &SRL_C,  &SRL_D,  &SRL_E,  &SRL_H,  &SRL_L, &SRL_HL,  &SRL_A,
-/* 4 */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
-/* 5 */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
-/* 6 */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
-/* 7 */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
-/* 8 */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
-/* 9 */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
-/* a */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
-/* b */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
-/* c */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
-/* d */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
-/* e */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
-/* f */   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,   &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,  &UNDEF,
+static const OpcodeInstruction PREFIXED_TABLE[256] = {
+/*            0x0        0x1        0x2       0x3       0x4       0x5        0x6       0x7       0x8        0x9        0xa       0xb       0xc       0xd        0xe       0xf */
+/* 0 */      &RLC,      &RLC,      &RLC,     &RLC,     &RLC,     &RLC,   &RLC_HL,     &RLC,     &RRC,      &RRC,      &RRC,     &RRC,     &RRC,     &RRC,   &RRC_HL,     &RRC,
+/* 1 */       &RL,       &RL,       &RL,      &RL,      &RL,      &RL,    &RL_HL,      &RL,      &RR,       &RR,       &RR,      &RR,      &RR,      &RR,    &RR_HL,      &RR,
+/* 2 */      &SLA,      &SLA,      &SLA,     &SLA,     &SLA,     &SLA,   &SLA_HL,     &SLA,     &SRA,      &SRA,      &SRA,     &SRA,     &SRA,     &SRA,   &SRA_HL,     &SRA,
+/* 3 */     &SWAP,     &SWAP,     &SWAP,    &SWAP,    &SWAP,    &SWAP,  &SWAP_HL,    &SWAP,     &SRL,      &SRL,      &SRL,     &SRL,     &SRL,     &SRL,   &SRL_HL,     &SRL,
+/* 4 */      &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,     &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,
+/* 5 */      &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,     &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,
+/* 6 */      &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,     &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,
+/* 7 */      &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,     &BIT,      &BIT,      &BIT,     &BIT,     &BIT,     &BIT,   &BIT_HL,     &BIT,
+/* 8 */      &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,     &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,
+/* 9 */      &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,     &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,
+/* a */      &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,     &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,
+/* b */      &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,     &RES,      &RES,      &RES,     &RES,     &RES,     &RES,   &RES_HL,     &RES,
+/* c */      &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,     &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,
+/* d */      &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,     &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,
+/* e */      &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,     &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,
+/* f */      &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,     &SET,      &SET,      &SET,     &SET,     &SET,     &SET,   &SET_HL,     &SET,
+};
+
+// Exported to make testing easier
+uint8_t fetch_r8(CPU *, uint8_t);
+typedef void (*RegSet_8)(CPU *, uint8_t value);
+void set_B(CPU *cpu, uint8_t n);
+void set_C(CPU *cpu, uint8_t n);
+void set_D(CPU *cpu, uint8_t n);
+void set_E(CPU *cpu, uint8_t n);
+void set_H(CPU *cpu, uint8_t n);
+void set_L(CPU *cpu, uint8_t n);
+void set_at_HL(CPU *cpu, uint8_t n);
+void set_A(CPU *cpu, uint8_t n);
+
+static const RegSet_8 R_TABLE_8[8] = {
+    &set_B, &set_C, &set_D, &set_E,
+    &set_H, &set_L, &set_at_HL, &set_A
 };
 
 #endif

@@ -1,2531 +1,1266 @@
 #include <stdio.h>
-#include <limits.h>
 #include "instructions.h"
 
-// *************************************
-// 8-bit Arithmetic/Logical Instructions
-// *************************************
+// **************************************************
+// Utility Functions
+// **************************************************
 
-void add_A_8(CPU *cpu, uint16_t value)
+/**
+ * Access register bitmaps directly
+ * Note: reg_HL is invalid
+ **/
+typedef enum {
+    reg_B, reg_C, reg_D, reg_E,
+    reg_H, reg_L, reg_HL, reg_A,
+} REGISTER_MAP;
+
+/**
+ * Return value in 8-bit registers based on bit code from opcode
+ **/
+uint8_t fetch_r8(CPU *cpu, uint8_t r)
 {
-    uint8_t A = cpu->registers.A;
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
+    uint8_t registers[] = {
+        cpu->registers.B,
+        cpu->registers.C,
+        cpu->registers.D,
+        cpu->registers.E,
+        cpu->registers.H,
+        cpu->registers.L,
+        0,
+        cpu->registers.A,
+    };
 
-    if (((A + value) & 0xff) == 0) set_flag(cpu, Z_FLAG);
-    if ((A & 0xf) + (value & 0xf) > 0xf) set_flag(cpu, H_FLAG);
-    if (0xff - A <= value) set_flag(cpu, C_FLAG);
-
-    cpu->registers.A += value;
+    return registers[r];
 }
 
-// ADD A, r8
-void ADD_A_A(CPU *cpu)
+/**
+ * Set values to 8-bit registers
+ * and memory pointed to by address in HL.
+ * Accessible as function pointers in RegSet_8 bitmap.
+ **/
+typedef void (*RegSet_8)(CPU *, uint8_t value);
+void set_B(CPU *cpu, uint8_t n) { cpu->registers.B = n; }
+void set_C(CPU *cpu, uint8_t n) { cpu->registers.C = n; }
+void set_D(CPU *cpu, uint8_t n) { cpu->registers.D = n; }
+void set_E(CPU *cpu, uint8_t n) { cpu->registers.E = n; }
+void set_H(CPU *cpu, uint8_t n) { cpu->registers.H = n; }
+void set_L(CPU *cpu, uint8_t n) { cpu->registers.L = n; }
+void set_at_HL(CPU *cpu, uint8_t n) {
+    write_byte(cpu, n, cpu->registers.HL);
+    cpu->t_cycles += 4;
+}
+void set_A(CPU *cpu, uint8_t n) { cpu->registers.A = n; }
+
+/**
+ * Masks for decoding opcode into registers
+ **/
+#define DEST_MASK 56     // 0b00 111 000
+#define SRC_MASK   7     // 0b00 000 111
+#define MASK_R16  48     // 0b00 110 000
+
+
+// **************************************************
+// 8-bit load instructions
+// **************************************************
+
+void LD_r_r(CPU *cpu, uint8_t opcode)
 {
-    add_A_8(cpu, cpu->registers.A);
+    uint8_t dest_code = ((opcode & DEST_MASK) >> 3);
+    uint8_t src_code = opcode & SRC_MASK;
+    uint8_t src = fetch_r8(cpu, src_code);
+
+    RegSet_8 set_R = R_TABLE_8[dest_code];
+    set_R(cpu, src);
+
     cpu->t_cycles = 4;
 }
 
-void ADD_A_B(CPU *cpu)
+void LD_r_HL(CPU *cpu, uint8_t opcode)
 {
-    add_A_8(cpu, cpu->registers.B);
-    cpu->t_cycles = 4;
-}
+    uint8_t dest_code = ((opcode & DEST_MASK) >> 3);
+    RegSet_8 set_R = R_TABLE_8[dest_code];
+    set_R(cpu, read_byte(cpu, cpu->registers.HL));
 
-void ADD_A_C(CPU *cpu)
-{
-    add_A_8(cpu, cpu->registers.C);
-    cpu->t_cycles = 4;
-}
-
-void ADD_A_D(CPU *cpu)
-{
-    add_A_8(cpu, cpu->registers.D);
-    cpu->t_cycles = 4;
-}
-
-void ADD_A_E(CPU *cpu)
-{
-    add_A_8(cpu, cpu->registers.E);
-    cpu->t_cycles = 4;
-}
-
-void ADD_A_H(CPU *cpu)
-{
-    add_A_8(cpu, cpu->registers.H);
-    cpu->t_cycles = 4;
-}
-
-void ADD_A_L(CPU *cpu)
-{
-    add_A_8(cpu, cpu->registers.L);
-    cpu->t_cycles = 4;
-}
-
-void ADD_A_HL(CPU *cpu)
-{
-    add_A_8(cpu, read_byte(cpu, cpu->registers.HL));
     cpu->t_cycles = 8;
 }
 
-void ADD_A_n(CPU *cpu)
+void LD_r_n(CPU *cpu, uint8_t opcode)
 {
-    add_A_8(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+    uint8_t r = (opcode & DEST_MASK) >> 3;
+    RegSet_8 set_R = R_TABLE_8[r];
+    set_R(cpu, fetch_opcode(cpu));
+}
+
+void LD_HL_r(CPU *cpu, uint8_t opcode)
+{
+    uint8_t r_code = opcode & SRC_MASK;
+    write_byte(cpu, fetch_r8(cpu, r_code), cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
-// ADC A, r8
-void ADC_A_A(CPU *cpu)
+void LD_A_rr(CPU *cpu, uint8_t opcode)
 {
-    uint16_t value = cpu->registers.A + get_flag(cpu, C_FLAG);
-    add_A_8(cpu, value);
-    cpu->t_cycles = 4;
+    cpu->t_cycles = 8;
+    uint8_t byte = 0;
+    switch (0xff & opcode) {
+        case 0x0a:
+            byte = read_byte(cpu, cpu->registers.BC);
+            break;
+        case 0x1a:
+            byte = read_byte(cpu, cpu->registers.DE);
+            break;
+        case 0xf0:
+            byte = read_byte(cpu, 0xff00 + fetch_opcode(cpu));
+            cpu->t_cycles += 4;
+            break;
+        case 0xf2:
+            byte = read_byte(cpu, 0xff00 + fetch_r8(cpu, reg_C));
+            break;
+        case 0xfa: {
+            uint16_t addr = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+            byte = read_byte(cpu, addr);
+            cpu->t_cycles += 8;
+            break;
+        }
+        default:
+            printf("Invalid read source\n");
+            break;
+    }
+
+    set_A(cpu, byte);
 }
 
-void ADC_A_B(CPU *cpu)
+void LD_rr_A(CPU *cpu, uint8_t opcode)
 {
-    uint16_t value = cpu->registers.B + get_flag(cpu, C_FLAG);
-    add_A_8(cpu, value);
-    cpu->t_cycles = 4;
+    cpu->t_cycles = 8;
+    uint16_t addr = 0;
+    switch (0xff & opcode) {
+        case 0x02:
+            addr = cpu->registers.BC;
+            break;
+        case 0x12:
+            addr = cpu->registers.DE;
+            break;
+        case 0xe0:
+            addr = 0xff00 + fetch_opcode(cpu);
+            cpu->t_cycles += 4;
+            break;
+        case 0xe2:
+            addr = 0xff00 + fetch_r8(cpu, reg_C);
+            break;
+        case 0xea:
+            addr = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+            cpu->t_cycles += 8;
+            break;
+        default:
+            printf("Invalid write destination\n");
+            break;
+    }
+    write_byte(cpu, fetch_r8(cpu, reg_A), addr);
 }
 
-void ADC_A_C(CPU *cpu)
+void LD_A_HLI(CPU *cpu, uint8_t opcode)
 {
-    uint16_t value = cpu->registers.C + get_flag(cpu, C_FLAG);
-    add_A_8(cpu, value);
-    cpu->t_cycles = 4;
-}
-
-void ADC_A_D(CPU *cpu)
-{
-    uint16_t value = cpu->registers.D + get_flag(cpu, C_FLAG);
-    add_A_8(cpu, value);
-    cpu->t_cycles = 4;
-}
-
-void ADC_A_E(CPU *cpu)
-{
-    uint16_t value = cpu->registers.E + get_flag(cpu, C_FLAG);
-    add_A_8(cpu, value);
-    cpu->t_cycles = 4;
-}
-
-void ADC_A_H(CPU *cpu)
-{
-    uint16_t value = cpu->registers.H + get_flag(cpu, C_FLAG);
-    add_A_8(cpu, value);
-    cpu->t_cycles = 4;
-}
-
-void ADC_A_L(CPU *cpu)
-{
-    uint16_t value = cpu->registers.L + get_flag(cpu, C_FLAG);
-    add_A_8(cpu, value);
-    cpu->t_cycles = 4;
-}
-
-void ADC_A_HL(CPU *cpu)
-{
-    uint16_t value = read_byte(cpu, cpu->registers.HL) + get_flag(cpu, C_FLAG);
-    add_A_8(cpu, value);
+    (void)opcode;
+    set_A(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->registers.HL++;
     cpu->t_cycles = 8;
 }
 
-void ADC_A_n(CPU *cpu)
+void LD_A_HLD(CPU *cpu, uint8_t opcode)
 {
-    uint8_t value = fetch_opcode(cpu) + get_flag(cpu, C_FLAG);
-    add_A_8(cpu, value);
+    (void)opcode;
+    set_A(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->registers.HL--;
     cpu->t_cycles = 8;
 }
 
-// SUB A, r8
-void sub_A_8(CPU *cpu, uint8_t r)
+void LD_HLI_A(CPU *cpu, uint8_t opcode)
 {
-    clear_flag(cpu, Z_FLAG);
+    (void)opcode;
+    write_byte(cpu, fetch_r8(cpu, reg_A), cpu->registers.HL);
+    cpu->registers.HL++;
+    cpu->t_cycles = 8;
+}
+
+void LD_HLD_A(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    write_byte(cpu, fetch_r8(cpu, reg_A), cpu->registers.HL);
+    cpu->registers.HL--;
+    cpu->t_cycles = 8;
+}
+
+
+// **************************************************
+// 16-bit load instructions
+// **************************************************
+
+/**
+ * Return value in 16-bit registers based on bit code from opcode
+ * Specific to register pair fetches for 8-bit operations
+ **/
+uint16_t fetch_r16(CPU *cpu, uint8_t r)
+{
+    uint16_t registers[] = {
+        cpu->registers.BC,
+        cpu->registers.DE,
+        cpu->registers.HL,
+        cpu->registers.AF
+    };
+
+    return registers[r];
+}
+
+/**
+ * Set values to 16-bit registers.
+ * Accessible as function pointers in RegSet_16 bitmap.
+ **/
+typedef void (*RegSet_16)(CPU *, uint16_t value);
+void set_BC(CPU *cpu, uint16_t nn) { cpu->registers.BC = nn; }
+void set_DE(CPU *cpu, uint16_t nn) { cpu->registers.DE = nn; }
+void set_HL(CPU *cpu, uint16_t nn) { cpu->registers.HL = nn; }
+void set_SP(CPU *cpu, uint16_t nn) { cpu->SP = nn; }
+
+static const RegSet_16 R_TABLE_16[] = {
+    &set_BC, &set_DE, &set_HL, &set_SP
+};
+
+void LD_rr_nn(CPU *cpu, uint8_t opcode)
+{
+    uint16_t nn = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+    RegSet_16 set_RR = R_TABLE_16[(opcode & MASK_R16) >> 4];
+    set_RR(cpu, nn);
+    cpu->t_cycles = 12;
+}
+
+void LD_SP_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    set_SP(cpu, cpu->registers.HL);
+    cpu->t_cycles = 8;
+}
+
+void PUSH_rr(CPU *cpu, uint8_t opcode)
+{
+    uint16_t rr = fetch_r16(cpu, (opcode & MASK_R16) >> 4);
+    cpu->SP--;
+    cpu->memory[cpu->SP] = rr & 0xff;
+    cpu->SP--;
+    cpu->memory[cpu->SP] = (rr & 0xff00) >> 8;
+
+    cpu->t_cycles = 16;
+}
+
+void POP_rr(CPU *cpu, uint8_t opcode)
+{
+    uint8_t low = cpu->memory[cpu->SP];
+    cpu->SP++;
+    uint8_t high = cpu->memory[cpu->SP];
+    cpu->SP++;
+    RegSet_16 set_RR = R_TABLE_16[(opcode & MASK_R16) >> 4];
+    set_RR(cpu, (high << 8) | low);
+
+    cpu->t_cycles = 12;
+}
+
+
+// **************************************************
+// 8-bit ALU instructions
+// **************************************************
+
+/**
+ * Add value n into register A
+ * Set Z flag if sum is 0 (or 0xff + 1)
+ * Clear N flag
+ * Set H flag on carry from 3rd bit (> 0xf)
+ * Set C flag on carry from 7th bit (> 0xff)
+ **/
+void add_n(CPU *cpu, uint8_t n)
+{
+    uint8_t A = fetch_r8(cpu, reg_A);
+
+    reset_flags(cpu);
+    if (((A + n) & 0xff) == 0) set_flag(cpu, Z_FLAG);
+    if ((A & 0xf) + (n & 0xf) > 0xf) set_flag(cpu, H_FLAG);
+    if (0xff - A <= n) set_flag(cpu, C_FLAG);
+
+    set_A(cpu, A + n);
+}
+
+void ADD_r(CPU *cpu, uint8_t opcode)
+{
+    add_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
+    cpu->t_cycles = 4;
+}
+
+void ADD_n(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    add_n(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+}
+
+void ADD_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    add_n(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
+}
+
+void ADC_r(CPU *cpu, uint8_t opcode)
+{
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    add_n(cpu, fetch_r8(cpu, opcode & SRC_MASK) + carry);
+    cpu->t_cycles = 4;
+}
+
+void ADC_n(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    add_n(cpu, fetch_opcode(cpu) + carry);
+    cpu->t_cycles = 8;
+}
+
+void ADC_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    add_n(cpu, read_byte(cpu, cpu->registers.HL) + carry);
+    cpu->t_cycles = 8;
+}
+
+/**
+ * Return difference between register A and value n
+ * Set N flag
+ * Set Z flag if difference is 0
+ * Set H flag on borrow from 4rd bit
+ * Set C flag if n is greater than A
+ **/
+uint8_t sub_n(CPU *cpu, uint8_t n)
+{
+    uint8_t A = fetch_r8(cpu, reg_A);
+
+    reset_flags(cpu);
     set_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
+    if (A == n) set_flag(cpu, Z_FLAG);
+    if ((n & 0xf) > (A & 0xf)) set_flag(cpu, H_FLAG);
+    if (n > A) set_flag(cpu, C_FLAG);
 
-    if ((r & 0xf) > (cpu->registers.A & 0xf)) set_flag(cpu, H_FLAG);
-    if (r > cpu->registers.A) set_flag(cpu, C_FLAG);
-
-    cpu->registers.A -= r;
-
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
+    return A - n;
 }
 
-void SUB_A_A(CPU *cpu)
+void SUB_r(CPU *cpu, uint8_t opcode)
 {
-    sub_A_8(cpu, cpu->registers.A);
+    uint8_t diff = sub_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
+    set_A(cpu, diff);
     cpu->t_cycles = 4;
 }
 
-void SUB_A_B(CPU *cpu)
+void SUB_n(CPU *cpu, uint8_t opcode)
 {
-    sub_A_8(cpu, cpu->registers.B);
-    cpu->t_cycles = 4;
-}
-
-void SUB_A_C(CPU *cpu)
-{
-    sub_A_8(cpu, cpu->registers.C);
-    cpu->t_cycles = 4;
-}
-
-void SUB_A_D(CPU *cpu)
-{
-    sub_A_8(cpu, cpu->registers.D);
-    cpu->t_cycles = 4;
-}
-
-void SUB_A_E(CPU *cpu)
-{
-    sub_A_8(cpu, cpu->registers.E);
-    cpu->t_cycles = 4;
-}
-
-void SUB_A_H(CPU *cpu)
-{
-    sub_A_8(cpu, cpu->registers.H);
-    cpu->t_cycles = 4;
-}
-
-void SUB_A_L(CPU *cpu)
-{
-    sub_A_8(cpu, cpu->registers.L);
-    cpu->t_cycles = 4;
-}
-
-void SUB_A_n(CPU *cpu)
-{
-    sub_A_8(cpu, fetch_opcode(cpu));
+    (void)opcode;
+    uint8_t diff = sub_n(cpu, fetch_opcode(cpu));
+    set_A(cpu, diff);
     cpu->t_cycles = 8;
 }
 
-void SUB_A_HL(CPU *cpu)
+void SUB_HL(CPU *cpu, uint8_t opcode)
 {
-    sub_A_8(cpu, read_byte(cpu, cpu->registers.HL));
+    (void)opcode;
+    uint8_t diff = sub_n(cpu, read_byte(cpu, cpu->registers.HL));
+    set_A(cpu, diff);
     cpu->t_cycles = 8;
 }
 
-void SBC_A_A(CPU *cpu)
+void SBC_r(CPU *cpu, uint8_t opcode)
 {
-    uint8_t value = cpu->registers.A + get_flag(cpu, C_FLAG);
-    sub_A_8(cpu, value);
+    uint8_t diff = sub_n(cpu, fetch_r8(cpu, opcode & SRC_MASK) + get_flag(cpu, C_FLAG));
+    set_A(cpu, diff);
     cpu->t_cycles = 4;
 }
 
-void SBC_A_B(CPU *cpu)
+void SBC_n(CPU *cpu, uint8_t opcode)
 {
-    uint8_t value = cpu->registers.B + get_flag(cpu, C_FLAG);
-    sub_A_8(cpu, value);
-    cpu->t_cycles = 4;
-}
-
-void SBC_A_C(CPU *cpu)
-{
-    uint8_t value = cpu->registers.C + get_flag(cpu, C_FLAG);
-    sub_A_8(cpu, value);
-    cpu->t_cycles = 4;
-}
-
-void SBC_A_D(CPU *cpu)
-{
-    uint8_t value = cpu->registers.D + get_flag(cpu, C_FLAG);
-    sub_A_8(cpu, value);
-    cpu->t_cycles = 4;
-}
-
-void SBC_A_E(CPU *cpu)
-{
-    uint8_t value = cpu->registers.E + get_flag(cpu, C_FLAG);
-    sub_A_8(cpu, value);
-    cpu->t_cycles = 4;
-}
-
-void SBC_A_H(CPU *cpu)
-{
-    uint8_t value = cpu->registers.H + get_flag(cpu, C_FLAG);
-    sub_A_8(cpu, value);
-    cpu->t_cycles = 4;
-}
-
-void SBC_A_L(CPU *cpu)
-{
-    uint8_t value = cpu->registers.L + get_flag(cpu, C_FLAG);
-    sub_A_8(cpu, value);
-    cpu->t_cycles = 4;
-}
-
-void SBC_A_n(CPU *cpu)
-{
-    uint8_t value = fetch_opcode(cpu) + get_flag(cpu, C_FLAG);
-    sub_A_8(cpu, value);
+    (void)opcode;
+    uint8_t diff = sub_n(cpu, fetch_opcode(cpu) + get_flag(cpu, C_FLAG));
+    set_A(cpu, diff);
     cpu->t_cycles = 8;
 }
 
-void SBC_A_HL(CPU *cpu)
+void SBC_HL(CPU *cpu, uint8_t opcode)
 {
-    uint8_t value = read_byte(cpu, cpu->registers.HL) + get_flag(cpu, C_FLAG);
-    sub_A_8(cpu, value);
+    (void)opcode;
+    uint8_t diff = sub_n(cpu, read_byte(cpu, cpu->registers.HL) + get_flag(cpu, C_FLAG));
+    set_A(cpu, diff);
     cpu->t_cycles = 8;
 }
 
-// AND A, r8
-void AND_A_8(CPU *cpu, uint8_t r)
+/**
+ * Set logical AND of register A and n
+ * Clear N and C flags
+ * Set H flag
+ * Set Z flag if A & n is 0
+ **/
+void and_n(CPU *cpu, uint8_t n)
 {
-    cpu->registers.A &= r;
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
+    uint8_t A = fetch_r8(cpu, reg_A);
+
+    reset_flags(cpu);
     set_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
+    if ((n & A) == 0) set_flag(cpu, Z_FLAG);
+
+    set_A(cpu, n & A);
 }
 
-void AND_A_A(CPU *cpu)
+void AND_r(CPU *cpu, uint8_t opcode)
 {
-    AND_A_8(cpu, cpu->registers.A);
+    and_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
     cpu->t_cycles = 4;
 }
 
-void AND_A_B(CPU *cpu)
+void AND_n(CPU *cpu, uint8_t opcode)
 {
-    AND_A_8(cpu, cpu->registers.B);
-    cpu->t_cycles = 4;
-}
-
-void AND_A_C(CPU *cpu)
-{
-    AND_A_8(cpu, cpu->registers.C);
-    cpu->t_cycles = 4;
-}
-
-void AND_A_D(CPU *cpu)
-{
-    AND_A_8(cpu, cpu->registers.D);
-    cpu->t_cycles = 4;
-}
-
-void AND_A_E(CPU *cpu)
-{
-    AND_A_8(cpu, cpu->registers.E);
-    cpu->t_cycles = 4;
-}
-
-void AND_A_H(CPU *cpu)
-{
-    AND_A_8(cpu, cpu->registers.H);
-    cpu->t_cycles = 4;
-}
-
-void AND_A_L(CPU *cpu)
-{
-    AND_A_8(cpu, cpu->registers.L);
-    cpu->t_cycles = 4;
-}
-
-void AND_A_n(CPU *cpu)
-{
-    AND_A_8(cpu, fetch_opcode(cpu));
+    (void)opcode;
+    and_n(cpu, fetch_opcode(cpu));
     cpu->t_cycles = 8;
 }
 
-void AND_A_HL(CPU *cpu)
+void AND_HL(CPU *cpu, uint8_t opcode)
 {
-    AND_A_8(cpu, read_byte(cpu, cpu->registers.HL));
+    (void)opcode;
+    and_n(cpu, read_byte(cpu, cpu->registers.HL));
     cpu->t_cycles = 8;
 }
 
-// XOR A, r8
-
-void XOR_A_8(CPU *cpu, uint8_t r)
+/**
+ * Set logical OR of register A and n
+ * Clear N, H, and C flags
+ * Set Z flag if A & n is 0
+ **/
+void or_n(CPU *cpu, uint8_t n)
 {
+    uint8_t A = fetch_r8(cpu, reg_A);
+
+    reset_flags(cpu);
+    if ((A | n) == 0) set_flag(cpu, Z_FLAG);
+
+    set_A(cpu, A | n);
+}
+
+void OR_r(CPU *cpu, uint8_t opcode)
+{
+    or_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
+    cpu->t_cycles = 4;
+}
+
+void OR_n(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    or_n(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+}
+
+void OR_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    or_n(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
+}
+
+/**
+ * Set logical XOR of register A and n
+ * Clear N, H, and C flags
+ * Set Z flag if A & n is 0
+ **/
+void xor_n(CPU *cpu, uint8_t n)
+{
+    uint8_t A = fetch_r8(cpu, reg_A);
+
+    reset_flags(cpu);
+    if ((A ^ n) == 0) set_flag(cpu, Z_FLAG);
+
+    set_A(cpu, A | n);
+}
+
+void XOR_r(CPU *cpu, uint8_t opcode)
+{
+    or_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
+    cpu->t_cycles = 4;
+}
+
+void XOR_n(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    or_n(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+}
+
+void XOR_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    or_n(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
+}
+
+void CP_r(CPU *cpu, uint8_t opcode)
+{
+    sub_n(cpu, fetch_r8(cpu, opcode & SRC_MASK));
+    cpu->t_cycles = 4;
+}
+
+void CP_n(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    sub_n(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
+}
+
+void CP_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    sub_n(cpu, read_byte(cpu, cpu->registers.HL));
+    cpu->t_cycles = 8;
+}
+
+void INC_r(CPU *cpu, uint8_t opcode)
+{
+    uint8_t r_code = (opcode & DEST_MASK) >> 3;
+    uint8_t r = fetch_r8(cpu, r_code);
+
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
+    if ((r & 0xf) == 0xf) set_flag(cpu, H_FLAG);
+    if (r == 0xff) set_flag(cpu, Z_FLAG);
 
-    cpu->registers.A ^= r;
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
-}
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r + 1);
 
-void XOR_A_A(CPU *cpu)
-{
-    XOR_A_8(cpu, cpu->registers.A);
     cpu->t_cycles = 4;
 }
 
-void XOR_A_B(CPU *cpu)
+void INC_HL(CPU *cpu, uint8_t opcode)
 {
-    XOR_A_8(cpu, cpu->registers.B);
-    cpu->t_cycles = 4;
-}
+    (void)opcode;
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
 
-void XOR_A_C(CPU *cpu)
-{
-    XOR_A_8(cpu, cpu->registers.C);
-    cpu->t_cycles = 4;
-}
-
-void XOR_A_D(CPU *cpu)
-{
-    XOR_A_8(cpu, cpu->registers.D);
-    cpu->t_cycles = 4;
-}
-
-void XOR_A_E(CPU *cpu)
-{
-    XOR_A_8(cpu, cpu->registers.E);
-    cpu->t_cycles = 4;
-}
-
-void XOR_A_H(CPU *cpu)
-{
-    XOR_A_8(cpu, cpu->registers.H);
-    cpu->t_cycles = 4;
-}
-
-void XOR_A_L(CPU *cpu)
-{
-    XOR_A_8(cpu, cpu->registers.L);
-    cpu->t_cycles = 4;
-}
-
-void XOR_A_n(CPU *cpu)
-{
-    XOR_A_8(cpu, fetch_opcode(cpu));
-    cpu->t_cycles = 8;
-}
-
-void XOR_A_HL(CPU *cpu)
-{
-    XOR_A_8(cpu, read_byte(cpu, cpu->registers.HL));
-    cpu->t_cycles = 8;
-}
-
-// OR A, r8
-void or_A_8(CPU *cpu, uint8_t r)
-{
     clear_flag(cpu, Z_FLAG);
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
+    if ((byte & 0xf) == 0xf) set_flag(cpu, H_FLAG);
+    if (byte == 0xff) set_flag(cpu, Z_FLAG);
 
-    cpu->registers.A |= r;
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
-}
+    write_byte(cpu, byte + 1, cpu->registers.HL);
 
-void OR_A_A(CPU *cpu)
-{
-    or_A_8(cpu, cpu->registers.A);
-    cpu->t_cycles = 4;
-}
-
-void OR_A_B(CPU *cpu)
-{
-    or_A_8(cpu, cpu->registers.B);
-    cpu->t_cycles = 4;
-}
-
-void OR_A_C(CPU *cpu)
-{
-    or_A_8(cpu, cpu->registers.C);
-    cpu->t_cycles = 4;
-}
-
-void OR_A_D(CPU *cpu)
-{
-    or_A_8(cpu, cpu->registers.D);
-    cpu->t_cycles = 4;
-}
-
-void OR_A_E(CPU *cpu)
-{
-    or_A_8(cpu, cpu->registers.E);
-    cpu->t_cycles = 4;
-}
-
-void OR_A_H(CPU *cpu)
-{
-    or_A_8(cpu, cpu->registers.H);
-    cpu->t_cycles = 4;
-}
-
-void OR_A_L(CPU *cpu)
-{
-    or_A_8(cpu, cpu->registers.L);
-    cpu->t_cycles = 4;
-}
-
-void OR_A_n(CPU *cpu)
-{
-    or_A_8(cpu, fetch_opcode(cpu));
     cpu->t_cycles = 8;
 }
 
-void OR_A_HL(CPU *cpu)
+void DEC_r(CPU *cpu, uint8_t opcode)
 {
-    or_A_8(cpu, read_byte(cpu, cpu->registers.HL));
-    cpu->t_cycles = 8;
+    uint8_t r_code = (opcode & DEST_MASK) >> 3;
+    uint8_t r = fetch_r8(cpu, r_code);
+
+    clear_flag(cpu, Z_FLAG);
+    clear_flag(cpu, H_FLAG);
+    set_flag(cpu, N_FLAG);
+    if (r == 0x1) set_flag(cpu, Z_FLAG);
+    if ((r & 0xf) == 0) set_flag(cpu, H_FLAG);
+
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r - 1);
+
+    cpu->t_cycles = 4;
 }
 
-void cp_A_8(CPU *cpu, uint8_t r)
+void DEC_HL(CPU *cpu, uint8_t opcode)
 {
+    (void)opcode;
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+
     clear_flag(cpu, Z_FLAG);
     set_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
+    if ((byte & 0xf) == 0) set_flag(cpu, H_FLAG);
+    if (byte == 0x1) set_flag(cpu, Z_FLAG);
 
-    if ((r & 0xf) > (cpu->registers.A & 0xf)) set_flag(cpu, H_FLAG);
-    if (r > cpu->registers.A) set_flag(cpu, C_FLAG);
-    if (cpu->registers.A == r) set_flag(cpu, Z_FLAG);
-}
+    write_byte(cpu, byte - 1, cpu->registers.HL);
 
-// CP A, r8
-void CP_A_A(CPU *cpu)
-{
-    cp_A_8(cpu, cpu->registers.A);
-    cpu->t_cycles = 4;
-}
-
-void CP_A_B(CPU *cpu)
-{
-    cp_A_8(cpu, cpu->registers.B);
-    cpu->t_cycles = 4;
-}
-
-void CP_A_C(CPU *cpu)
-{
-    cp_A_8(cpu, cpu->registers.C);
-    cpu->t_cycles = 4;
-}
-
-void CP_A_D(CPU *cpu)
-{
-    cp_A_8(cpu, cpu->registers.D);
-    cpu->t_cycles = 4;
-}
-
-void CP_A_E(CPU *cpu)
-{
-    cp_A_8(cpu, cpu->registers.E);
-    cpu->t_cycles = 4;
-}
-
-void CP_A_H(CPU *cpu)
-{
-    cp_A_8(cpu, cpu->registers.H);
-    cpu->t_cycles = 4;
-}
-
-void CP_A_L(CPU *cpu)
-{
-    cp_A_8(cpu, cpu->registers.L);
-    cpu->t_cycles = 4;
-}
-
-void CP_A_n(CPU *cpu)
-{
-    cp_A_8(cpu, fetch_opcode(cpu));
     cpu->t_cycles = 8;
 }
 
-void CP_A_HL(CPU *cpu)
-{
-    cp_A_8(cpu, read_byte(cpu, cpu->registers.HL));
-    cpu->t_cycles = 8;
+
+// **************************************************
+// 16-bit load instructions
+// **************************************************
+
+/**
+ * Return value in 16-bit registers based on bit code from opcode
+ * Specific to register pair fetches for 16-bit operations
+ **/
+uint16_t fetch_register_pairs(CPU *cpu, uint8_t rr) {
+    uint16_t REGISTER_PAIRS[] = {
+            cpu->registers.BC,
+            cpu->registers.DE,
+            cpu->registers.HL,
+            cpu->SP
+    };
+
+    return REGISTER_PAIRS[rr];
 }
 
-// INC r
-void handle_INC_flags(CPU *cpu, uint8_t value)
+void ADD_rr(CPU *cpu, uint8_t opcode)
 {
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-
-    if (value == 0xff) set_flag(cpu, Z_FLAG);
-    if ((value & 0xf) == 0xf) set_flag(cpu, H_FLAG);
-}
-
-void INC_A(CPU *cpu)
-{
-    handle_INC_flags(cpu, cpu->registers.A);
-    cpu->registers.A++;
-    cpu->t_cycles = 4;
-}
-
-void INC_B(CPU *cpu)
-{
-    handle_INC_flags(cpu, cpu->registers.B);
-    cpu->registers.B++;
-    cpu->t_cycles = 4;
-}
-
-void INC_C(CPU *cpu)
-{
-    handle_INC_flags(cpu, cpu->registers.C);
-    cpu->registers.C++;
-    cpu->t_cycles = 4;
-}
-
-void INC_D(CPU *cpu)
-{
-    handle_INC_flags(cpu, cpu->registers.D);
-    cpu->registers.D++;
-    cpu->t_cycles = 4;
-}
-
-void INC_E(CPU *cpu)
-{
-    handle_INC_flags(cpu, cpu->registers.E);
-    cpu->registers.E++;
-    cpu->t_cycles = 4;
-}
-
-void INC_H(CPU *cpu)
-{
-    handle_INC_flags(cpu, cpu->registers.H);
-    cpu->registers.H++;
-    cpu->t_cycles = 4;
-}
-
-void INC_L(CPU *cpu)
-{
-    handle_INC_flags(cpu, cpu->registers.L);
-    cpu->registers.L++;
-    cpu->t_cycles = 4;
-}
-
-void INC_nHL(CPU *cpu)
-{
-    handle_INC_flags(cpu, cpu->memory[cpu->registers.HL]);
-    cpu->memory[cpu->registers.HL]++;
-    cpu->t_cycles = 12;
-}
-
-// DEC r
-void handle_DEC_flags(CPU *cpu, uint8_t value)
-{
-    clear_flag(cpu, Z_FLAG);
-    set_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-
-    if (value == 0x1) set_flag(cpu, Z_FLAG);
-    if ((value & 0xf) == 0) set_flag(cpu, H_FLAG);
-}
-
-void DEC_A(CPU *cpu)
-{
-    handle_DEC_flags(cpu, cpu->registers.A);
-    cpu->registers.A--;
-    cpu->t_cycles = 4;
-}
-
-void DEC_B(CPU *cpu)
-{
-    handle_DEC_flags(cpu, cpu->registers.B);
-    cpu->registers.B--;
-    cpu->t_cycles = 4;
-}
-
-void DEC_C(CPU *cpu)
-{
-    handle_DEC_flags(cpu, cpu->registers.C);
-    cpu->registers.C--;
-    cpu->t_cycles = 4;
-}
-
-void DEC_D(CPU *cpu)
-{
-    handle_DEC_flags(cpu, cpu->registers.D);
-    cpu->registers.D--;
-    cpu->t_cycles = 4;
-}
-
-void DEC_E(CPU *cpu)
-{
-    handle_DEC_flags(cpu, cpu->registers.E);
-    cpu->registers.E--;
-    cpu->t_cycles = 4;
-}
-
-void DEC_H(CPU *cpu)
-{
-    handle_DEC_flags(cpu, cpu->registers.H);
-    cpu->registers.H--;
-    cpu->t_cycles = 4;
-}
-
-void DEC_L(CPU *cpu)
-{
-    handle_DEC_flags(cpu, cpu->registers.L);
-    cpu->registers.L--;
-    cpu->t_cycles = 4;
-}
-
-void DEC_nHL(CPU *cpu)
-{
-    handle_DEC_flags(cpu, cpu->memory[cpu->registers.HL]);
-    cpu->memory[cpu->registers.HL]--;
-    cpu->t_cycles = 12;
-}
-
-
-// **************************************
-// 16-bit Arithmetic/Logical Instructions
-// **************************************
-
-void add_HL_16(CPU *cpu, uint16_t value)
-{
+    uint16_t rr = fetch_register_pairs(cpu, (opcode & MASK_R16) >> 4);
     uint16_t HL = cpu->registers.HL;
+
     clear_flag(cpu, N_FLAG);
     clear_flag(cpu, H_FLAG);
     clear_flag(cpu, C_FLAG);
+    if ((rr & 0xf00) + (HL & 0xf00) > 0xf00) set_flag(cpu, H_FLAG);
+    if (0xffff - rr < HL) set_flag(cpu, C_FLAG);
 
-    if ((HL & 0xf00) + (value & 0xf00) > 0x400) set_flag(cpu, H_FLAG);
-    if (0xffff - HL <= value) set_flag(cpu, C_FLAG);
+    set_HL(cpu, rr + cpu->registers.HL);
 
-    cpu->registers.HL += value;
-}
-
-// ADD HL, r16
-void ADD_HL_BC(CPU *cpu)
-{
-    add_HL_16(cpu, cpu->registers.BC);
     cpu->t_cycles = 8;
 }
 
-void ADD_HL_DE(CPU *cpu)
+void ADD_e(CPU *cpu, uint8_t opcode)
 {
-    add_HL_16(cpu, cpu->registers.DE);
-    cpu->t_cycles = 8;
-}
+    (void)opcode;
+    reset_flags(cpu);
 
-void ADD_HL_HL(CPU *cpu)
-{
-    add_HL_16(cpu, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
+    uint8_t e = fetch_opcode(cpu);
+    if (0b10000000 & e) {
+        e = (~e) + 1;
+        if ((cpu->SP & 0xf) < (e & 0xf)) set_flag(cpu, H_FLAG);
+        if ((cpu->SP & 0xff) < e) set_flag(cpu, C_FLAG);
 
-void ADD_HL_SP(CPU *cpu)
-{
-    add_HL_16(cpu, cpu->SP);
-    cpu->t_cycles = 8;
-}
-
-void ADD_SP_e(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    uint8_t n = fetch_opcode(cpu);
-    if (0b10000000 & n) {
-        n = (~n) + 1;
-        if ((cpu->SP & 0xf) < (n & 0xf)) set_flag(cpu, H_FLAG);
-        if ((cpu->SP & 0xff) < n) set_flag(cpu, C_FLAG);
-
-        cpu->SP -= n;
+        cpu->SP -= e;
     } else {
-        if ((cpu->SP & 0xf) + (n & 0xf) > 0xf) set_flag(cpu, H_FLAG);
-        if ((cpu->SP & 0xff) + n > 0xff) set_flag(cpu, C_FLAG);
+        if ((cpu->SP & 0xf) + (e & 0xf) > 0xf) set_flag(cpu, H_FLAG);
+        if (0xff - e < (cpu->SP & 0xff)) set_flag(cpu, C_FLAG);
 
-        cpu->SP += n;
+        cpu->SP += e;
     }
 
     cpu->t_cycles = 16;
 }
 
-// INC rr
-void INC_BC(CPU *cpu)
+
+void INC_rr(CPU *cpu, uint8_t opcode)
 {
-    cpu->registers.BC++;
+    uint8_t rr_code = (opcode & MASK_R16) >> 4;
+    uint16_t rr = fetch_register_pairs(cpu, rr_code);
+    RegSet_16 set_RR = R_TABLE_16[rr_code];
+    set_RR(cpu, rr + 1);
+
     cpu->t_cycles = 8;
 }
 
-void INC_DE(CPU *cpu)
+void DEC_rr(CPU *cpu, uint8_t opcode)
 {
-    cpu->registers.DE++;
-    cpu->t_cycles = 8;
-}
+    uint8_t rr_code = (opcode & MASK_R16) >> 4;
+    uint16_t rr = fetch_register_pairs(cpu, rr_code);
+    RegSet_16 set_RR = R_TABLE_16[rr_code];
+    set_RR(cpu, rr - 1);
 
-void INC_HL(CPU *cpu)
-{
-    cpu->registers.HL++;
-    cpu->t_cycles = 8;
-}
-
-void INC_SP(CPU *cpu)
-{
-    cpu->SP++;
-    cpu->t_cycles = 8;
-}
-
-// DEC rr
-void DEC_BC(CPU *cpu)
-{
-    cpu->registers.BC--;
-    cpu->t_cycles = 8;
-}
-
-void DEC_DE(CPU *cpu)
-{
-    cpu->registers.DE--;
-    cpu->t_cycles = 8;
-}
-
-void DEC_HL(CPU *cpu)
-{
-    cpu->registers.HL--;
-    cpu->t_cycles = 8;
-}
-
-void DEC_SP(CPU *cpu)
-{
-    cpu->SP--;
     cpu->t_cycles = 8;
 }
 
 
-// ***********************
-// 8-bit Load Instructions
-// ***********************
+// **************************************************
+// Rotate shift instructions
+// **************************************************
 
-// LD r, r*: load 2nd register's value into 1st
-void LD_B_A(CPU *cpu)
+/**
+ * Bit masks for 8-bit value
+ **/
+#define BIT_7_MASK 128
+#define BIT_0_MASK 1
+
+void RLCA(CPU *cpu, uint8_t opcode)
 {
-    cpu->registers.B = cpu->registers.A;
+    (void)opcode;
+    reset_flags(cpu);
+    uint8_t A = fetch_r8(cpu, reg_A);
+    if (A & BIT_7_MASK) set_flag(cpu, C_FLAG);
+    set_A(cpu, (A << 1 | A >> 7));
     cpu->t_cycles = 4;
 }
 
-void LD_B_B(CPU *cpu)
+void RLA(CPU *cpu, uint8_t opcode)
 {
-    cpu->registers.B = cpu->registers.B;
+    (void)opcode;
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    reset_flags(cpu);
+    uint8_t A = fetch_r8(cpu, reg_A);
+    if (A & BIT_7_MASK) set_flag(cpu, C_FLAG);
+    A <<= 1;
+    A |= carry;
+    set_A(cpu, A);
     cpu->t_cycles = 4;
 }
 
-void LD_B_C(CPU *cpu)
+void RRCA(CPU *cpu, uint8_t opcode)
 {
-    cpu->registers.B = cpu->registers.C;
+    (void)opcode;
+    reset_flags(cpu);
+    uint8_t A = fetch_r8(cpu, reg_A);
+    if (A & BIT_0_MASK) set_flag(cpu, C_FLAG);
+    set_A(cpu, (A << 7 | A >> 1));
     cpu->t_cycles = 4;
 }
 
-void LD_B_D(CPU *cpu)
+void RRA(CPU *cpu, uint8_t opcode)
 {
-    cpu->registers.B = cpu->registers.D;
+    (void)opcode;
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    reset_flags(cpu);
+    uint8_t A = fetch_r8(cpu, reg_A);
+    if (A & BIT_0_MASK) set_flag(cpu, C_FLAG);
+    A >>= 1;
+    A |= (carry << 7);
+    set_A(cpu, A);
     cpu->t_cycles = 4;
 }
 
-void LD_B_E(CPU *cpu)
+void RLC(CPU *cpu, uint8_t opcode)
 {
-    cpu->registers.B = cpu->registers.E;
-    cpu->t_cycles = 4;
-}
+    reset_flags(cpu);
+    uint8_t r_code = opcode & SRC_MASK;
+    uint8_t r = fetch_r8(cpu, r_code);
+    if (r & BIT_7_MASK) set_flag(cpu, C_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    r = (r << 1 | r >> 7);
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    set_R(cpu, r);
 
-void LD_B_H(CPU *cpu)
-{
-    cpu->registers.B = cpu->registers.H;
-    cpu->t_cycles = 4;
-}
-
-void LD_B_L(CPU *cpu)
-{
-    cpu->registers.B = cpu->registers.L;
-    cpu->t_cycles = 4;
-}
-
-void LD_C_A(CPU *cpu)
-{
-    cpu->registers.C = cpu->registers.A;
-    cpu->t_cycles = 4;
-}
-
-void LD_C_B(CPU *cpu)
-{
-    cpu->registers.C = cpu->registers.B;
-    cpu->t_cycles = 4;
-}
-
-void LD_C_C(CPU *cpu)
-{
-    cpu->registers.C = cpu->registers.C;
-    cpu->t_cycles = 4;
-}
-
-void LD_C_D(CPU *cpu)
-{
-    cpu->registers.C = cpu->registers.D;
-    cpu->t_cycles = 4;
-}
-
-void LD_C_E(CPU *cpu)
-{
-    cpu->registers.C = cpu->registers.E;
-    cpu->t_cycles = 4;
-}
-
-void LD_C_H(CPU *cpu)
-{
-    cpu->registers.C = cpu->registers.H;
-    cpu->t_cycles = 4;
-}
-
-void LD_C_L(CPU *cpu)
-{
-    cpu->registers.C = cpu->registers.L;
-    cpu->t_cycles = 4;
-}
-
-void LD_D_A(CPU *cpu)
-{
-    cpu->registers.D = cpu->registers.A;
-    cpu->t_cycles = 4;
-}
-
-void LD_D_B(CPU *cpu)
-{
-    cpu->registers.D = cpu->registers.B;
-    cpu->t_cycles = 4;
-}
-
-void LD_D_C(CPU *cpu)
-{
-    cpu->registers.D = cpu->registers.C;
-    cpu->t_cycles = 4;
-}
-
-void LD_D_D(CPU *cpu)
-{
-    cpu->registers.D = cpu->registers.D;
-    cpu->t_cycles = 4;
-}
-
-void LD_D_E(CPU *cpu)
-{
-    cpu->registers.D = cpu->registers.E;
-    cpu->t_cycles = 4;
-}
-
-void LD_D_H(CPU *cpu)
-{
-    cpu->registers.D = cpu->registers.H;
-    cpu->t_cycles = 4;
-}
-
-void LD_D_L(CPU *cpu)
-{
-    cpu->registers.D = cpu->registers.L;
-    cpu->t_cycles = 4;
-}
-
-void LD_E_A(CPU *cpu)
-{
-    cpu->registers.E = cpu->registers.A;
-    cpu->t_cycles = 4;
-}
-
-void LD_E_B(CPU *cpu)
-{
-    cpu->registers.E = cpu->registers.B;
-    cpu->t_cycles = 4;
-}
-
-void LD_E_C(CPU *cpu)
-{
-    cpu->registers.E = cpu->registers.C;
-    cpu->t_cycles = 4;
-}
-
-void LD_E_D(CPU *cpu)
-{
-    cpu->registers.E = cpu->registers.D;
-    cpu->t_cycles = 4;
-}
-
-void LD_E_E(CPU *cpu)
-{
-    cpu->registers.E = cpu->registers.E;
-    cpu->t_cycles = 4;
-}
-
-void LD_E_H(CPU *cpu)
-{
-    cpu->registers.E = cpu->registers.H;
-    cpu->t_cycles = 4;
-}
-
-void LD_E_L(CPU *cpu)
-{
-    cpu->registers.E = cpu->registers.L;
-    cpu->t_cycles = 4;
-}
-
-void LD_H_A(CPU *cpu)
-{
-    cpu->registers.H = cpu->registers.A;
-    cpu->t_cycles = 4;
-}
-
-void LD_H_B(CPU *cpu)
-{
-    cpu->registers.H = cpu->registers.B;
-    cpu->t_cycles = 4;
-}
-
-void LD_H_C(CPU *cpu)
-{
-    cpu->registers.H = cpu->registers.C;
-    cpu->t_cycles = 4;
-}
-
-void LD_H_D(CPU *cpu)
-{
-    cpu->registers.H = cpu->registers.D;
-    cpu->t_cycles = 4;
-}
-
-void LD_H_E(CPU *cpu)
-{
-    cpu->registers.H = cpu->registers.E;
-    cpu->t_cycles = 4;
-}
-
-void LD_H_H(CPU *cpu)
-{
-    cpu->registers.H = cpu->registers.H;
-    cpu->t_cycles = 4;
-}
-
-void LD_H_L(CPU *cpu)
-{
-    cpu->registers.H = cpu->registers.L;
-    cpu->t_cycles = 4;
-}
-
-void LD_L_A(CPU *cpu)
-{
-    cpu->registers.L = cpu->registers.A;
-    cpu->t_cycles = 4;
-}
-
-void LD_L_B(CPU *cpu)
-{
-    cpu->registers.L = cpu->registers.B;
-    cpu->t_cycles = 4;
-}
-
-void LD_L_C(CPU *cpu)
-{
-    cpu->registers.L = cpu->registers.C;
-    cpu->t_cycles = 4;
-}
-
-void LD_L_D(CPU *cpu)
-{
-    cpu->registers.L = cpu->registers.D;
-    cpu->t_cycles = 4;
-}
-
-void LD_L_E(CPU *cpu)
-{
-    cpu->registers.L = cpu->registers.E;
-    cpu->t_cycles = 4;
-}
-
-void LD_L_H(CPU *cpu)
-{
-    cpu->registers.L = cpu->registers.H;
-    cpu->t_cycles = 4;
-}
-
-void LD_L_L(CPU *cpu)
-{
-    cpu->registers.L = cpu->registers.L;
-    cpu->t_cycles = 4;
-}
-
-// LD r, n: Load byte from next PC into register
-void LD_A_n(CPU *cpu)
-{
-    cpu->registers.A = fetch_opcode(cpu);
     cpu->t_cycles = 8;
 }
 
-void LD_B_n(CPU *cpu)
+void RLC_HL(CPU *cpu, uint8_t opcode)
 {
-    cpu->registers.B = fetch_opcode(cpu);
-    cpu->t_cycles = 8;
-}
-
-void LD_C_n(CPU *cpu)
-{
-    cpu->registers.C = fetch_opcode(cpu);
-    cpu->t_cycles = 8;
-}
-
-void LD_D_n(CPU *cpu)
-{
-    cpu->registers.D = fetch_opcode(cpu);
-    cpu->t_cycles = 8;
-}
-
-void LD_E_n(CPU *cpu)
-{
-    cpu->registers.E = fetch_opcode(cpu);
-    cpu->t_cycles = 8;
-}
-
-void LD_H_n(CPU *cpu)
-{
-    cpu->registers.H = fetch_opcode(cpu);
-    cpu->t_cycles = 8;
-}
-
-void LD_L_n(CPU *cpu)
-{
-    cpu->registers.L = fetch_opcode(cpu);
-    cpu->t_cycles = 8;
-}
-
-// LD r, (HL): Load value in memory at address in HL into register
-void LD_A_HL(CPU *cpu)
-{
-    cpu->registers.A = read_byte(cpu, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-void LD_B_HL(CPU *cpu)
-{
-    cpu->registers.B = read_byte(cpu, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-void LD_C_HL(CPU *cpu)
-{
-    cpu->registers.C = read_byte(cpu, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-void LD_D_HL(CPU *cpu)
-{
-    cpu->registers.D = read_byte(cpu, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-void LD_E_HL(CPU *cpu)
-{
-    cpu->registers.E = read_byte(cpu, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-void LD_H_HL(CPU *cpu)
-{
-    cpu->registers.H = read_byte(cpu, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-void LD_L_HL(CPU *cpu)
-{
-    cpu->registers.L = read_byte(cpu, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-// LD (HL), r: Write value in register to byte at address pointed to by register HL
-void LD_HL_A(CPU *cpu)
-{
-    write_byte(cpu, cpu->registers.A, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-void LD_HL_B(CPU *cpu)
-{
-    write_byte(cpu, cpu->registers.B, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-void LD_HL_C(CPU *cpu)
-{
-    write_byte(cpu, cpu->registers.C, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-void LD_HL_D(CPU *cpu)
-{
-    write_byte(cpu, cpu->registers.D, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-void LD_HL_E(CPU *cpu)
-{
-    write_byte(cpu, cpu->registers.E, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-void LD_HL_H(CPU *cpu)
-{
-    write_byte(cpu, cpu->registers.H, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-void LD_HL_L(CPU *cpu)
-{
-    write_byte(cpu, cpu->registers.L, cpu->registers.HL);
-    cpu->t_cycles = 8;
-}
-
-void LD_HL_n(CPU *cpu)
-{
-    uint8_t byte = fetch_opcode(cpu);
+    (void)opcode;
+    reset_flags(cpu);
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    if (byte & BIT_7_MASK) set_flag(cpu, C_FLAG);
+    byte = (byte << 1 | byte >> 7);
+    if (byte == 0) set_flag(cpu, Z_FLAG);
     write_byte(cpu, byte, cpu->registers.HL);
-    cpu->t_cycles = 12;
-}
 
-void LD_A_BC(CPU *cpu)
-{
-    cpu->registers.A = read_byte(cpu, cpu->registers.BC);
-    cpu->t_cycles = 8;
-}
-
-void LD_A_DE(CPU *cpu)
-{
-    cpu->registers.A = read_byte(cpu, cpu->registers.DE);
-    cpu->t_cycles = 8;
-}
-
-void LD_BC_A(CPU *cpu)
-{
-    write_byte(cpu, cpu->registers.A, cpu->registers.BC);
-    cpu->t_cycles = 8;
-}
-
-void LD_DE_A(CPU *cpu)
-{
-    write_byte(cpu, cpu->registers.A, cpu->registers.DE);
-    cpu->t_cycles = 8;
-}
-
-void LD_A_nn(CPU *cpu)
-{
-    uint16_t address = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
-    cpu->registers.A = read_byte(cpu, address);
     cpu->t_cycles = 16;
 }
 
-void LD_nn_A(CPU *cpu)
+void RL(CPU *cpu, uint8_t opcode)
 {
-    uint16_t address = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
-    write_byte(cpu, cpu->registers.A, address);
-    cpu->t_cycles = 16;
-}
-
-void LDH_A_C(CPU *cpu)
-{
-    uint16_t address = (0xff << 8) | cpu->registers.C;
-    cpu->registers.A = cpu->memory[address];
-    cpu->t_cycles = 8;
-}
-
-void LDH_C_A(CPU *cpu)
-{
-    uint16_t address = (0xff << 8) | cpu->registers.C;
-    write_byte(cpu, cpu->registers.A, address);
-    cpu->t_cycles = 8;
-}
-
-void LDH_A_n(CPU *cpu)
-{
-    uint16_t address = (0xff << 8) | fetch_opcode(cpu);
-    cpu->registers.A = cpu->memory[address];
-    cpu->t_cycles = 12;
-}
-
-void LDH_n_A(CPU *cpu)
-{
-    uint16_t address = (0xff << 8) | fetch_opcode(cpu);
-    write_byte(cpu, cpu->registers.A, address);
-    cpu->t_cycles = 12;
-}
-
-void LD_A_HLI(CPU *cpu)
-{
-    cpu->registers.A = read_byte(cpu, cpu->registers.HL);
-    cpu->registers.HL++;
-    cpu->t_cycles = 8;
-}
-
-void LD_A_HLD(CPU *cpu)
-{
-    cpu->registers.A = read_byte(cpu, cpu->registers.HL);
-    cpu->registers.HL--;
-    cpu->t_cycles = 8;
-}
-
-void LD_HLI_A(CPU *cpu)
-{
-    write_byte(cpu, cpu->registers.A, cpu->registers.HL);
-    cpu->registers.HL++;
-    cpu->t_cycles = 8;
-}
-
-void LD_HLD_A(CPU *cpu)
-{
-    write_byte(cpu, cpu->registers.A, cpu->registers.HL);
-    cpu->registers.HL--;
-    cpu->t_cycles = 8;
-}
-
-
-// ************************
-// 16-bit Load Instructions
-// ************************
-
-// LD rr, nn
-void LD_BC_nn(CPU *cpu)
-{
-    cpu->registers.BC = fetch_opcode(cpu) << 8 | fetch_opcode(cpu);
-    cpu->t_cycles = 12;
-}
-
-void LD_DE_nn(CPU *cpu)
-{
-    cpu->registers.DE = fetch_opcode(cpu) << 8 | fetch_opcode(cpu);
-    cpu->t_cycles = 12;
-}
-
-void LD_HL_nn(CPU *cpu)
-{
-    cpu->registers.HL = fetch_opcode(cpu) << 8 | fetch_opcode(cpu);
-    cpu->t_cycles = 12;
-}
-
-void LD_nn_SP(CPU *cpu)
-{
-    uint16_t address = fetch_opcode(cpu) << 8 | fetch_opcode(cpu);
-    write_word(cpu, cpu->SP, address);
-    cpu->t_cycles = 20;
-}
-
-void LD_SP_HL(CPU *cpu)
-{
-    cpu->SP = cpu->registers.HL;
-    cpu->t_cycles = 8;
-}
-
-void LD_HL_SPe(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    uint8_t n = fetch_opcode(cpu);
-    uint16_t result;
-    if ((0b10000000 & n) != 0) {
-        n = (~n) + 1;
-        if ((cpu->SP & 0xf) < (n & 0xf)) set_flag(cpu, H_FLAG);
-        if ((cpu->SP & 0xff) < n) set_flag(cpu, C_FLAG);
-        result = cpu->SP - n;
-    } else {
-        if ((cpu->SP & 0xf) + (n & 0xf) > 0xf) set_flag(cpu, H_FLAG);
-        if ((cpu->SP & 0x00ff) + n > 0xff) set_flag(cpu, C_FLAG);
-        result = cpu->SP + n;
-    }
-
-    cpu->registers.HL = result;
-    cpu->t_cycles = 12;
-}
-
-// PUSH rr
-void PUSH_AF(CPU *cpu)
-{
-    cpu->SP--;
-    cpu->memory[cpu->SP] = cpu->registers.F;
-    cpu->SP--;
-    cpu->memory[cpu->SP] = cpu->registers.A;
-    cpu->t_cycles = 16;
-}
-
-void PUSH_BC(CPU *cpu)
-{
-    cpu->SP--;
-    cpu->memory[cpu->SP] = cpu->registers.C;
-    cpu->SP--;
-    cpu->memory[cpu->SP] = cpu->registers.B;
-    cpu->t_cycles = 16;
-}
-
-void PUSH_DE(CPU *cpu)
-{
-    cpu->SP--;
-    cpu->memory[cpu->SP] = cpu->registers.E;
-    cpu->SP--;
-    cpu->memory[cpu->SP] = cpu->registers.D;
-    cpu->t_cycles = 16;
-}
-
-void PUSH_HL(CPU *cpu)
-{
-    cpu->SP--;
-    cpu->memory[cpu->SP] = cpu->registers.L;
-    cpu->SP--;
-    cpu->memory[cpu->SP] = cpu->registers.H;
-    cpu->t_cycles = 16;
-}
-
-void POP_AF(CPU *cpu)
-{
-    cpu->registers.A = cpu->memory[cpu->SP];
-    cpu->SP++;
-    cpu->registers.F = cpu->memory[cpu->SP];
-    cpu->SP++;
-    cpu->t_cycles = 12;
-}
-
-void POP_BC(CPU *cpu)
-{
-    cpu->registers.B = cpu->memory[cpu->SP];
-    cpu->SP++;
-    cpu->registers.C = cpu->memory[cpu->SP];
-    cpu->SP++;
-    cpu->t_cycles = 12;
-}
-
-void POP_DE(CPU *cpu)
-{
-    cpu->registers.D = cpu->memory[cpu->SP];
-    cpu->SP++;
-    cpu->registers.E = cpu->memory[cpu->SP];
-    cpu->SP++;
-    cpu->t_cycles = 12;
-}
-
-void POP_HL(CPU *cpu)
-{
-    cpu->registers.H = cpu->memory[cpu->SP];
-    cpu->SP++;
-    cpu->registers.L = cpu->memory[cpu->SP];
-    cpu->SP++;
-    cpu->t_cycles = 12;
-}
-
-
-// *************************
-// Rotate Shift Instructions
-// *************************
-uint8_t rotate_left_carry(uint8_t n)
-{
-    return (n << 1) | (n >> 7);
-}
-
-uint8_t rotate_right_carry(uint8_t n)
-{
-    return (n >> 1) | (n << 7);
-}
-
-void RLCA(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.A & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.A = rotate_left_carry(cpu->registers.A);
-    cpu->t_cycles = 4;
-}
-
-void RLA(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-
     uint8_t carry = get_flag(cpu, C_FLAG);
-
-    if (cpu->registers.A & 0b10000000) set_flag(cpu, C_FLAG);
-    cpu->registers.A <<= 1;
-    cpu->registers.A |= carry;
-    cpu->t_cycles = 4;
+    reset_flags(cpu);
+    uint8_t r_code = (opcode & SRC_MASK);
+    uint8_t r = fetch_r8(cpu, r_code);
+    if (r & BIT_7_MASK) set_flag(cpu, C_FLAG);
+    r <<= 1;
+    r |= carry;
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r);
+    cpu->t_cycles = 8;
 }
 
-void RRCA(CPU *cpu)
+void RL_HL(CPU *cpu, uint8_t opcode)
 {
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.A & 1) set_flag(cpu, C_FLAG);
-
-    cpu->registers.A = rotate_right_carry(cpu->registers.A);
-    cpu->t_cycles = 4;
-}
-
-void RRA(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-
+    (void)opcode;
     uint8_t carry = get_flag(cpu, C_FLAG);
-
-    if (cpu->registers.A & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.A >>= 1;
-    cpu->registers.A |= (carry << 7);
-    cpu->t_cycles = 4;
-}
-
-// RLC r
-void RLC_A(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.A & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.A = rotate_left_carry(cpu->registers.A);
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RLC_B(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.B & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.B = rotate_left_carry(cpu->registers.B);
-    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RLC_C(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.C & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.C = rotate_left_carry(cpu->registers.C);
-    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RLC_D(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.D & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.D = rotate_left_carry(cpu->registers.D);
-    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RLC_E(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.E & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.E = rotate_left_carry(cpu->registers.E);
-    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RLC_H(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.H & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.H = rotate_left_carry(cpu->registers.H);
-    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RLC_L(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.L & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.L = rotate_left_carry(cpu->registers.L);
-    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RLC_HL(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
+    reset_flags(cpu);
     uint8_t byte = read_byte(cpu, cpu->registers.HL);
-    if (byte & 0b10000000) set_flag(cpu, C_FLAG);
-
-    write_byte(cpu, rotate_left_carry(byte), cpu->registers.HL);
-    if (read_byte(cpu, cpu->registers.HL) == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 16;
-}
-
-// RL r
-void RL_A(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.A & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.A <<= 1;
-    cpu->registers.A |= carry;
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RL_B(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.B & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.B <<= 1;
-    cpu->registers.B |= carry;
-    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RL_C(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.C & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.C <<= 1;
-    cpu->registers.C |= carry;
-    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RL_D(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.D & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.D <<= 1;
-    cpu->registers.D |= carry;
-    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RL_E(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.E & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.E <<= 1;
-    cpu->registers.E |= carry;
-    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RL_H(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.H & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.H <<= 1;
-    cpu->registers.H |= carry;
-    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RL_L(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.L & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.L <<= 1;
-    cpu->registers.L |= carry;
-    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RL_HL(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    uint8_t byte = read_byte(cpu, cpu->registers.HL);
-    if (byte & 0b10000000) set_flag(cpu, C_FLAG);
-
+    if (byte & BIT_7_MASK) set_flag(cpu, C_FLAG);
     byte <<= 1;
     byte |= carry;
+    if (byte == 0) set_flag(cpu, Z_FLAG);
     write_byte(cpu, byte, cpu->registers.HL);
-    if (read_byte(cpu, cpu->registers.HL) == 0) set_flag(cpu, Z_FLAG);
+    cpu->t_cycles = 16;
+}
+
+void RRC(CPU *cpu, uint8_t opcode)
+{
+    reset_flags(cpu);
+    uint8_t r_code = opcode & SRC_MASK;
+    uint8_t r = fetch_r8(cpu, r_code);
+    if (r & BIT_0_MASK) set_flag(cpu, C_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    r = (r << 7 | r >> 1);
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    set_R(cpu, r);
+
+    cpu->t_cycles = 8;
+}
+
+void RRC_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    reset_flags(cpu);
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    if (byte & BIT_0_MASK) set_flag(cpu, C_FLAG);
+    byte = (byte << 7 | byte >> 1);
+    if (byte == 0) set_flag(cpu, Z_FLAG);
+    write_byte(cpu, byte, cpu->registers.HL);
 
     cpu->t_cycles = 16;
 }
 
-// RRC r
-void RRC_A(CPU *cpu)
+void RR(CPU *cpu, uint8_t opcode)
 {
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.A & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.A = rotate_right_carry(cpu->registers.A);
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
-
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    reset_flags(cpu);
+    uint8_t r_code = (opcode & SRC_MASK);
+    uint8_t r = fetch_r8(cpu, r_code);
+    if (r & BIT_0_MASK) set_flag(cpu, C_FLAG);
+    r >>= 1;
+    r |= (carry << 7);
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r);
     cpu->t_cycles = 8;
 }
 
-void RRC_B(CPU *cpu)
+void RR_HL(CPU *cpu, uint8_t opcode)
 {
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.B & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.B = rotate_right_carry(cpu->registers.B);
-    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RRC_C(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.C & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.C = rotate_right_carry(cpu->registers.C);
-    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RRC_D(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.D & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.D = rotate_right_carry(cpu->registers.D);
-    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RRC_E(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.E & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.E = rotate_right_carry(cpu->registers.E);
-    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RRC_H(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.H & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.H = rotate_right_carry(cpu->registers.H);
-    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RRC_L(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.L & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.L = rotate_right_carry(cpu->registers.L);
-    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RRC_HL(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
+    (void)opcode;
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    reset_flags(cpu);
     uint8_t byte = read_byte(cpu, cpu->registers.HL);
-    if (byte & 1) set_flag(cpu, C_FLAG);
-    write_byte(cpu, rotate_right_carry(byte), cpu->registers.HL);
-    if (read_byte(cpu, cpu->registers.HL) == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 16;
-}
-
-// RR r
-void RR_A(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.A & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.A >>= 1;
-    cpu->registers.A |= (carry << 7);
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RR_B(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.B & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.B >>= 1;
-    cpu->registers.B |= (carry << 7);
-    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RR_C(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.C & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.C >>= 1;
-    cpu->registers.C |= (carry << 7);
-    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RR_D(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.D & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.D >>= 1;
-    cpu->registers.D |= (carry << 7);
-    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RR_E(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.E & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.E >>= 1;
-    cpu->registers.E |= (carry << 7);
-    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RR_H(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.H & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.H >>= 1;
-    cpu->registers.H |= (carry << 7);
-    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RR_L(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.L & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.L >>= 1;
-    cpu->registers.L |= (carry << 7);
-    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void RR_HL(CPU *cpu)
-{
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    uint8_t byte = read_byte(cpu, cpu->registers.HL);
-    if (byte & 1) set_flag(cpu, C_FLAG);
+    if (byte & BIT_0_MASK) set_flag(cpu, C_FLAG);
     byte >>= 1;
     byte |= (carry << 7);
+    if (byte == 0) set_flag(cpu, Z_FLAG);
     write_byte(cpu, byte, cpu->registers.HL);
-    if (read_byte(cpu, cpu->registers.HL) == 0) set_flag(cpu, Z_FLAG);
-
     cpu->t_cycles = 16;
 }
 
-
-// **********************
-// Bit Shift Instructions
-// **********************
-
-// SLA r
-void SLA_A(CPU *cpu)
+void SLA(CPU *cpu, uint8_t opcode)
 {
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.A & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.A <<= 1;
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
-
+    reset_flags(cpu);
+    uint8_t r_code = (opcode & SRC_MASK);
+    uint8_t r = fetch_r8(cpu, r_code);
+    if (r & BIT_7_MASK) set_flag(cpu, C_FLAG);
+    r <<= 1;
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r);
     cpu->t_cycles = 8;
 }
 
-void SLA_B(CPU *cpu)
+void SLA_HL(CPU *cpu, uint8_t opcode)
 {
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.B & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.B <<= 1;
-    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SLA_C(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.C & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.C <<= 1;
-    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SLA_D(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.D & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.D <<= 1;
-    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SLA_E(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.E & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.E <<= 1;
-    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SLA_H(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.H & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.H <<= 1;
-    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SLA_L(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.L & 0b10000000) set_flag(cpu, C_FLAG);
-
-    cpu->registers.L <<= 1;
-    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SLA_HL(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
+    (void)opcode;
+    reset_flags(cpu);
     uint8_t byte = read_byte(cpu, cpu->registers.HL);
-    if (byte & 0b10000000) set_flag(cpu, C_FLAG);
-
+    if (byte & BIT_7_MASK) set_flag(cpu, C_FLAG);
     byte <<= 1;
     if (byte == 0) set_flag(cpu, Z_FLAG);
-
     write_byte(cpu, byte, cpu->registers.HL);
-
     cpu->t_cycles = 16;
 }
 
-// SRA r
-void SRA_A(CPU *cpu)
+void SRA(CPU *cpu, uint8_t opcode)
 {
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.A & 1) set_flag(cpu, C_FLAG);
-
-    cpu->registers.A >>= 1;
-    if (cpu->registers.A & 0b01000000) cpu->registers.A |= 0b10000000;
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
-
+    reset_flags(cpu);
+    uint8_t r_code = (opcode & SRC_MASK);
+    uint8_t r = fetch_r8(cpu, r_code);
+    if (r & BIT_0_MASK) set_flag(cpu, C_FLAG);
+    uint8_t bit_7 = r & BIT_7_MASK;
+    r >>= 1;
+    r ^= bit_7;
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r);
     cpu->t_cycles = 8;
 }
 
-void SRA_B(CPU *cpu)
+void SRA_HL(CPU *cpu, uint8_t opcode)
 {
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.B & 1) set_flag(cpu, C_FLAG);
-
-    cpu->registers.B >>= 1;
-    if (cpu->registers.B & 0b01000000) cpu->registers.B |= 0b10000000;
-    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SRA_C(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.C & 1) set_flag(cpu, C_FLAG);
-
-    cpu->registers.C >>= 1;
-    if (cpu->registers.C & 0b01000000) cpu->registers.C |= 0b10000000;
-    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SRA_D(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.D & 1) set_flag(cpu, C_FLAG);
-
-    cpu->registers.D >>= 1;
-    if (cpu->registers.D & 0b01000000) cpu->registers.D |= 0b10000000;
-    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SRA_E(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.E & 1) set_flag(cpu, C_FLAG);
-
-    cpu->registers.E >>= 1;
-    if (cpu->registers.E & 0b01000000) cpu->registers.E |= 0b10000000;
-    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SRA_H(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.H & 1) set_flag(cpu, C_FLAG);
-
-    cpu->registers.H >>= 1;
-    if (cpu->registers.H & 0b01000000) cpu->registers.H |= 0b10000000;
-    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SRA_L(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.L & 1) set_flag(cpu, C_FLAG);
-
-    cpu->registers.L >>= 1;
-    if (cpu->registers.L & 0b01000000) cpu->registers.L |= 0b10000000;
-    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SRA_HL(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
+    (void)opcode;
+    reset_flags(cpu);
     uint8_t byte = read_byte(cpu, cpu->registers.HL);
-    if (byte & 1) set_flag(cpu, C_FLAG);
-
+    if (byte & BIT_0_MASK) set_flag(cpu, C_FLAG);
+    uint8_t bit_7 = byte & BIT_7_MASK;
     byte >>= 1;
-    if (byte & 0b01000000) byte |= 0b10000000;
+    byte ^= bit_7;
     if (byte == 0) set_flag(cpu, Z_FLAG);
     write_byte(cpu, byte, cpu->registers.HL);
-
     cpu->t_cycles = 16;
 }
 
-// SRL r
-void SRL_A(CPU *cpu)
+void SRL(CPU *cpu, uint8_t opcode)
 {
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.A & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.A >>= 1;
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
-
+    reset_flags(cpu);
+    uint8_t r_code = (opcode & SRC_MASK);
+    uint8_t r = fetch_r8(cpu, r_code);
+    if (r & BIT_0_MASK) set_flag(cpu, C_FLAG);
+    r >>= 1;
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r);
     cpu->t_cycles = 8;
 }
 
-void SRL_B(CPU *cpu)
+void SRL_HL(CPU *cpu, uint8_t opcode)
 {
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.B & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.B >>= 1;
-    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SRL_C(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.C & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.C >>= 1;
-    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SRL_D(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.D & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.D >>= 1;
-    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SRL_E(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.E & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.E >>= 1;
-    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SRL_H(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.H & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.H >>= 1;
-    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SRL_L(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    if (cpu->registers.L & 1) set_flag(cpu, C_FLAG);
-    cpu->registers.L >>= 1;
-    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SRL_HL(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
+    (void)opcode;
+    reset_flags(cpu);
     uint8_t byte = read_byte(cpu, cpu->registers.HL);
-    if (byte & 1) set_flag(cpu, C_FLAG);
+    if (byte & BIT_0_MASK) set_flag(cpu, C_FLAG);
     byte >>= 1;
     if (byte == 0) set_flag(cpu, Z_FLAG);
     write_byte(cpu, byte, cpu->registers.HL);
-
     cpu->t_cycles = 16;
 }
 
-// SWAP r
-uint8_t swap_byte(uint8_t n)
+void SWAP(CPU *cpu, uint8_t opcode)
 {
-    return ((n & 0xf0) >> 4) | ((n & 0xf) << 4);
-}
-
-void SWAP_A(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    cpu->registers.A = swap_byte(cpu->registers.A);
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
-
+    reset_flags(cpu);
+    uint8_t r_code = opcode & SRC_MASK;
+    uint8_t r = fetch_r8(cpu, r_code);
+    uint8_t upper = (r & 0b11110000) >> 4;
+    uint8_t lower = r & 0b00001111;
+    r = ((lower << 4) ^ upper);
+    if (r == 0) set_flag(cpu, Z_FLAG);
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r);
     cpu->t_cycles = 8;
 }
 
-void SWAP_B(CPU *cpu)
+void SWAP_HL(CPU *cpu, uint8_t opcode)
 {
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    cpu->registers.B = swap_byte(cpu->registers.B);
-    if (cpu->registers.B == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SWAP_C(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    cpu->registers.C = swap_byte(cpu->registers.C);
-    if (cpu->registers.C == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SWAP_D(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    cpu->registers.D = swap_byte(cpu->registers.D);
-    if (cpu->registers.D == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SWAP_E(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    cpu->registers.E = swap_byte(cpu->registers.E);
-    if (cpu->registers.E == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SWAP_H(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    cpu->registers.H = swap_byte(cpu->registers.H);
-    if (cpu->registers.H == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SWAP_L(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
-    cpu->registers.L = swap_byte(cpu->registers.L);
-    if (cpu->registers.L == 0) set_flag(cpu, Z_FLAG);
-
-    cpu->t_cycles = 8;
-}
-
-void SWAP_HL(CPU *cpu)
-{
-    clear_flag(cpu, Z_FLAG);
-    clear_flag(cpu, N_FLAG);
-    clear_flag(cpu, H_FLAG);
-    clear_flag(cpu, C_FLAG);
-
+    (void)opcode;
+    reset_flags(cpu);
     uint8_t byte = read_byte(cpu, cpu->registers.HL);
-    byte = swap_byte(byte);
+    uint8_t upper = (byte & 0b11110000) >> 4;
+    uint8_t lower = byte & 0b00001111;
+    byte = (lower << 4) ^ upper;
     if (byte == 0) set_flag(cpu, Z_FLAG);
     write_byte(cpu, byte, cpu->registers.HL);
-
     cpu->t_cycles = 16;
 }
 
+// **************************************************
+// Bit instructions
+// **************************************************
 
-// *****************************
-// Misc. Arithmetic Instructions
-// *****************************
-
-void DAA(CPU *cpu)
+void BIT(CPU *cpu, uint8_t opcode)
 {
-    uint8_t A = cpu->registers.A;
-    uint8_t half_carry = get_flag(cpu, H_FLAG);
-    uint8_t carry = get_flag(cpu, C_FLAG);
-
-    if (get_flag(cpu, N_FLAG) == 0) {
-        if (carry == 1 || A > 0x99) {
-            cpu->registers.A += 0x60;
-            set_flag(cpu, C_FLAG);
-        }
-        if (half_carry == 1 || (A & 0x0f) > 0x09) cpu->registers.A += 0x06;
+    uint8_t r_code = opcode & SRC_MASK;
+    uint8_t r = fetch_r8(cpu, r_code);
+    uint8_t bit = (opcode & DEST_MASK) >> 3;
+    clear_flag(cpu, N_FLAG);
+    set_flag(cpu, H_FLAG);
+    uint8_t value = (r & (1 << bit)) >> bit;
+    if (value == 0) {
+        set_flag(cpu, Z_FLAG);
     } else {
-        if (carry == 1) cpu->registers.A -= 0x60;
-        if (half_carry == 1) cpu->registers.A -= 0x06;
+        clear_flag(cpu, Z_FLAG);
+    }
+    cpu->t_cycles = 8;
+}
+
+void BIT_HL(CPU *cpu, uint8_t opcode)
+{
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    uint8_t bit = (opcode & DEST_MASK) >> 3;
+    clear_flag(cpu, N_FLAG);
+    set_flag(cpu, H_FLAG);
+    uint8_t value = (byte & (1 << bit)) >> bit;
+    if (value == 0) {
+        set_flag(cpu, Z_FLAG);
+    } else {
+        clear_flag(cpu, Z_FLAG);
+    }
+    cpu->t_cycles = 12;
+}
+
+void SET(CPU *cpu, uint8_t opcode)
+{
+    uint8_t r_code = opcode & SRC_MASK;
+    uint8_t r = fetch_r8(cpu, r_code);
+    uint8_t bit = (opcode & DEST_MASK) >> 3;
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r | (1 << bit));
+    cpu->t_cycles = 8;
+}
+
+void SET_HL(CPU *cpu, uint8_t opcode)
+{
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    uint8_t bit = (opcode & DEST_MASK) >> 3;
+    write_byte(cpu, byte | (1 << bit), cpu->registers.HL);
+    cpu->t_cycles = 16;
+}
+
+void RES(CPU *cpu, uint8_t opcode)
+{
+    uint8_t r_code = opcode & SRC_MASK;
+    uint8_t r = fetch_r8(cpu, r_code);
+    uint8_t bit = (opcode & DEST_MASK) >> 3;
+    RegSet_8 set_R = R_TABLE_8[r_code];
+    set_R(cpu, r & ~(0b1 << bit));
+    cpu->t_cycles = 8;
+}
+
+void RES_HL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    uint8_t byte = read_byte(cpu, cpu->registers.HL);
+    uint8_t bit = (opcode & DEST_MASK) >> 3;
+    write_byte(cpu, byte & ~(0b1 << bit), cpu->registers.HL);
+    cpu->t_cycles = 16;
+}
+
+// **************************************************
+// Jump instructions
+// **************************************************
+
+void JP(CPU *cpu, uint8_t opcode)
+{
+    uint16_t address;
+    uint8_t t_cycles;
+    switch (opcode) {
+    case 0xc3: {
+        address = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+        t_cycles = 16;
+        break;
+    }
+    case 0xe9:
+        address = cpu->registers.HL;
+        t_cycles = 4;
+        break;
+
+    default:
+        printf("Error: invalid opcode %x for JP instructions\n", opcode);
+        return;
     }
 
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
-    clear_flag(cpu, H_FLAG);
-
-    cpu->t_cycles = 4;
+    cpu->PC = address;
+    cpu->t_cycles = t_cycles;
 }
 
-void CPL(CPU *cpu)
+void JPC(CPU *cpu, uint8_t opcode)
 {
-    cpu->registers.A = ~cpu->registers.A;
-    set_flag(cpu, N_FLAG);
-    set_flag(cpu, H_FLAG);
+    uint8_t c_mask = 0b00011000;
+    uint8_t c;
+    switch ((opcode & c_mask) >> 3) {
+    case 0:
+        c = get_flag(cpu, Z_FLAG) == 0;
+        break;
+    case 1:
+        c = get_flag(cpu, Z_FLAG) == 1;
+        break;
+    case 2:
+        c = get_flag(cpu, C_FLAG) == 0;
+        break;
+    case 3:
+        c = get_flag(cpu, C_FLAG) == 1;
+        break;
+    default:
+        printf("Error: %x is not a valid JPC opcode", opcode);
+        return;
+    }
+    if (c == 0) {
+        cpu->t_cycles = 12;
+        return;
+    }
 
-    cpu->t_cycles = 4;
+    uint16_t address = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+    cpu->PC = address;
+    cpu->t_cycles = 16;
 }
 
-void UNDEF(CPU *cpu)
+void JR(CPU *cpu, uint8_t opcode)
 {
-    printf("Opcode instruction undefined (%x)\n", cpu->memory[cpu->PC--]);
+    (void)opcode;
+    uint8_t e = fetch_opcode(cpu);
+    if (0b10000000 & e) {
+        e = (~e) + 1;
+        cpu->PC -= e;
+    } else {
+        cpu->PC += e;
+    }
+    cpu->t_cycles = 12;
+}
+
+void JRC(CPU *cpu, uint8_t opcode)
+{
+    uint8_t e = fetch_opcode(cpu);
+    uint8_t c_mask = 0b00011000;
+    uint8_t c;
+    switch ((opcode & c_mask) >> 3) {
+    case 0:
+        c = get_flag(cpu, Z_FLAG) == 0;
+        break;
+    case 1:
+        c = get_flag(cpu, Z_FLAG) == 1;
+        break;
+    case 2:
+        c = get_flag(cpu, C_FLAG) == 0;
+        break;
+    case 3:
+        c = get_flag(cpu, C_FLAG) == 1;
+        break;
+    default:
+        printf("Error: %x is not a valid JRC opcode", opcode);
+        return;
+    }
+    if (c == 0) {
+        cpu->t_cycles = 8;
+        return;
+    }
+
+    if (0b10000000 & e) {
+        e = (~e) + 1;
+        cpu->PC -= e;
+    } else {
+        cpu->PC += e;
+    }
+    cpu->t_cycles = 12;
+}
+
+// **************************************************
+// Call instructions
+// **************************************************
+
+void CALL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    uint16_t address = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+    cpu->SP--;
+    write_byte(cpu, (cpu->PC & 0xff00) >> 8, cpu->SP);
+    cpu->SP--;
+    write_byte(cpu, (cpu->PC & 0xff), cpu->SP);
+    cpu->PC = address;
+    cpu->t_cycles = 24;
+}
+
+void CALLC(CPU *cpu, uint8_t opcode)
+{
+    uint8_t c_mask = 0b00011000;
+    uint8_t c;
+    switch ((opcode & c_mask) >> 3) {
+    case 0:
+        c = get_flag(cpu, Z_FLAG) == 0;
+        break;
+    case 1:
+        c = get_flag(cpu, Z_FLAG) == 1;
+        break;
+    case 2:
+        c = get_flag(cpu, C_FLAG) == 0;
+        break;
+    case 3:
+        c = get_flag(cpu, C_FLAG) == 1;
+        break;
+    default:
+        printf("Error: invalid condition from opcode %x\n", opcode);
+        return;
+    }
+
+    if (c == 0) {
+        cpu->t_cycles = 12;
+        return;
+    }
+
+    CALL(cpu, opcode);
+}
+
+void RET(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    cpu->PC = read_word(cpu, cpu->SP);
+    cpu->SP += 2;
+    cpu->t_cycles = 16;
+}
+
+void RETI(CPU *cpu, uint8_t opcode)
+{
+    enable_IME(cpu);
+    RET(cpu, opcode);
+}
+
+void RETC(CPU *cpu, uint8_t opcode)
+{
+    uint8_t c_mask = 0b00011000;
+    uint8_t c;
+    switch ((opcode & c_mask) >> 3) {
+    case 0:
+        c = get_flag(cpu, Z_FLAG) == 0;
+        break;
+    case 1:
+        c = get_flag(cpu, Z_FLAG) == 1;
+        break;
+    case 2:
+        c = get_flag(cpu, C_FLAG) == 0;
+        break;
+    case 3:
+        c = get_flag(cpu, C_FLAG) == 1;
+        break;
+    default:
+        printf("Error: invalid condition from opcode %x\n", opcode);
+        return;
+    }
+
+    if (c == 0) {
+        cpu->t_cycles = 8;
+        return;
+    }
+
+    RET(cpu, opcode);
+    cpu->t_cycles += 4;
+}
+
+void RST(CPU *cpu, uint8_t opcode)
+{
+    uint8_t t = (opcode & 0b00111000) >> 3;
+    uint8_t address;
+    switch (t) {
+    case 0:
+        address = 0;
+        break;
+    case 1:
+        address = 0x08;
+        break;
+    case 2:
+        address = 0x10;
+        break;
+    case 3:
+        address = 0x18;
+        break;
+    case 4:
+        address = 0x20;
+        break;
+    case 5:
+        address = 0x28;
+        break;
+    case 6:
+        address = 0x30;
+        break;
+    case 7:
+        address = 0x38;
+        break;
+    default:
+        printf("Error: Invalid operand t (%d) for opcode %x\n", t, opcode);
+        return;
+    }
+
+    cpu->SP--;
+    write_byte(cpu, (cpu->PC & 0xff00) >> 8, cpu->SP);
+    cpu->SP--;
+    write_byte(cpu, cpu->PC & 0xff, cpu->SP);
+
+    cpu->PC = address;
+    cpu->t_cycles = 16;
+}
+
+void UNDEF(CPU *cpu, uint8_t opcode)
+{
+    (void)cpu;
+    printf("Opcode 0x%x is undefined\n", opcode);
 }
