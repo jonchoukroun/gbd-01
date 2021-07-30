@@ -1259,6 +1259,50 @@ void RST(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 16;
 }
 
+// **************************************************
+// Call instructions
+// **************************************************
+
+void DAA(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    uint8_t c_flag = get_flag(cpu, C_FLAG);
+    uint8_t h_flag = get_flag(cpu, H_FLAG);
+
+    uint8_t reg_A = cpu->registers.A;
+
+    uint8_t correction = 0;
+    uint8_t carry = 0;
+
+    if (get_flag(cpu, N_FLAG) == 0) {
+        if (h_flag || (reg_A & 0xf) > 0x9) {
+            correction += 0x6;
+        }
+        if (c_flag || reg_A >= 0x99) {
+            correction += 0x60;
+            set_flag(cpu, c_flag);
+        }
+
+        reg_A += correction;
+    } else {
+        if (h_flag || (reg_A & 0xf) >= 0x6) {
+            correction += 0xfa;
+        }
+        if (c_flag || reg_A >= 0x70) {
+            correction += 0xa0;
+            correction &= 0xff;
+        }
+
+        reg_A += correction;
+    }
+
+    cpu->registers.A = reg_A & 0xff;
+    clear_flag(cpu, h_flag);
+    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
+
+    cpu->t_cycles = 4;
+}
+
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
     (void)cpu;
