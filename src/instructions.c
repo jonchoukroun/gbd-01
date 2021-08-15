@@ -1266,39 +1266,34 @@ void RST(CPU *cpu, uint8_t opcode)
 void DAA(CPU *cpu, uint8_t opcode)
 {
     (void)opcode;
-    uint8_t c_flag = get_flag(cpu, C_FLAG);
-    uint8_t h_flag = get_flag(cpu, H_FLAG);
+    uint8_t subtract = get_flag(cpu, N_FLAG);
+    uint8_t half_carry = get_flag(cpu, H_FLAG);
+    uint8_t carry = get_flag(cpu, C_FLAG);
+    clear_flag(cpu, H_FLAG);
+    clear_flag(cpu, C_FLAG);
 
     uint8_t reg_A = cpu->registers.A;
 
     uint8_t correction = 0;
-    uint8_t carry = 0;
-
-    if (get_flag(cpu, N_FLAG) == 0) {
-        if (h_flag || (reg_A & 0xf) > 0x9) {
-            correction += 0x6;
-        }
-        if (c_flag || reg_A >= 0x99) {
-            correction += 0x60;
-            set_flag(cpu, c_flag);
-        }
-
-        reg_A += correction;
-    } else {
-        if (h_flag || (reg_A & 0xf) >= 0x6) {
-            correction += 0xfa;
-        }
-        if (c_flag || reg_A >= 0x70) {
+    if (subtract) {
+        if (carry) {
             correction += 0xa0;
-            correction &= 0xff;
+            set_flag(cpu, C_FLAG);
+        }
+        if (half_carry) correction += 0xfa;
+    } else {
+        if (carry || reg_A > 0x99) {
+            correction += 0x60;
+            set_flag(cpu, C_FLAG);
         }
 
-        reg_A += correction;
+        if (half_carry || (reg_A & 0x0f) > 0x09) correction += 0x06;
     }
 
-    cpu->registers.A = reg_A & 0xff;
-    clear_flag(cpu, h_flag);
-    if (cpu->registers.A == 0) set_flag(cpu, Z_FLAG);
+    reg_A += correction;
+    reg_A &= 0xff;
+    cpu->registers.A = reg_A;
+    if (reg_A == 0) set_flag(cpu, Z_FLAG);
 
     cpu->t_cycles = 4;
 }
