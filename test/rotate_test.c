@@ -884,35 +884,6 @@ int main()
             test_suite,
             "Rotate instructions | RR_HL rotates byte at HL to the right with the C flag into bit 7 and bit 0 into the C flag",
             test_RR_HL
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RRC_B rotates B to the right with bit 0 moved to bit 7 and into the C flag",
-        //     test_RRC_B
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RRC_C rotates C to the right with bit 0 moved to bit 7 and into the C flag",
-        //     test_RRC_C
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RRC_D rotates D to the right with bit 0 moved to bit 7 and into the C flag",
-        //     test_RRC_D
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RRC_E rotates E to the right with bit 0 moved to bit 7 and into the C flag",
-        //     test_RRC_E
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RRC_H rotates H to the right with bit 0 moved to bit 7 and into the C flag",
-        //     test_RRC_H
-        // ) == NULL ||
-        // CU_add_test(
-        //     test_suite,
-        //     "Rotate instructions | RRC_L rotates L to the right with bit 0 moved to bit 7 and into the C flag",
-        //     test_RRC_L
         ) == NULL) {
         printf("Failed to add test to rotate instruction unit test suite\n");
         CU_cleanup_registry();

@@ -212,7 +212,7 @@ int main()
         CU_add_test(
             test_suite,
             "SET instructions | ",
-            test_BIT) == NULL ||
+            test_SET) == NULL ||
         CU_add_test(
             test_suite,
             "RES instructions | ",
