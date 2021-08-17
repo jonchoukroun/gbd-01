@@ -1260,7 +1260,7 @@ void RST(CPU *cpu, uint8_t opcode)
 }
 
 // **************************************************
-// Call instructions
+// Misc instructions
 // **************************************************
 
 void DAA(CPU *cpu, uint8_t opcode)
@@ -1295,6 +1295,17 @@ void DAA(CPU *cpu, uint8_t opcode)
     cpu->registers.A = reg_A;
     if (reg_A == 0) set_flag(cpu, Z_FLAG);
 
+    cpu->t_cycles = 4;
+}
+
+void CPL(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    reset_flags(cpu);
+    uint8_t reg_A = cpu->registers.A;
+    cpu->registers.A = (~reg_A) & 0xff;
+    set_flag(cpu, N_FLAG);
+    set_flag(cpu, H_FLAG);
     cpu->t_cycles = 4;
 }
 
