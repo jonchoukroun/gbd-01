@@ -112,6 +112,20 @@ void PUSH_rr(CPU *, uint8_t);
  **/
 void POP_rr(CPU *, uint8_t);
 
+/**
+ * Stores sum of signed 8-bit operand and SP to register HL
+ * Conditionally sets carry, half-carry flags
+ * 12 T-cycles
+ **/
+void LD_HL_SPe(CPU *, uint8_t);
+
+/**
+ * Stores SP to address in 16-bit operand
+ * No flag effects
+ * 20 T-cycles
+ **/
+void LD_nn_SP(CPU *, uint8_t);
+
 
 // **************************************************
 // 8-bit ALU instructions
@@ -602,23 +616,23 @@ void HALT(CPU *, uint8_t);
 void STOP(CPU *, uint8_t);
 
 static const OpcodeInstruction OPCODE_TABLE[256] = {
-/*            0x0        0x1        0x2       0x3       0x4       0x5        0x6       0x7       0x8        0x9        0xa       0xb       0xc       0xd        0xe       0xf */
-/* 0 */      &NOP, &LD_rr_nn,  &LD_rr_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,    &RLCA,   &UNDEF,   &ADD_rr,  &LD_A_rr,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,    &RRCA,
-/* 1 */     &STOP, &LD_rr_nn,  &LD_rr_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,     &RLA,      &JR,   &ADD_rr,  &LD_A_rr,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,     &RRA,
-/* 2 */      &JRC, &LD_rr_nn, &LD_HLI_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,     &DAA,     &JRC,   &ADD_rr, &LD_A_HLI,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,     &CPL,
-/* 3 */      &JRC, &LD_rr_nn, &LD_HLD_A,  &INC_rr,  &INC_HL,  &DEC_HL,    &UNDEF,   &UNDEF,     &JRC,   &ADD_rr, &LD_A_HLD,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
-/* 4 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
-/* 5 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
-/* 5 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
-/* 7 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,     &HALT,  &LD_r_r,  &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
-/* 8 */    &ADD_r,    &ADD_r,    &ADD_r,   &ADD_r,   &ADD_r,   &ADD_r,   &ADD_HL,   &ADD_r,   &ADC_r,    &ADC_r,    &ADC_r,   &ADC_r,   &ADC_r,   &ADC_r,   &ADC_HL,   &ADC_r,
-/* 9 */    &SUB_r,    &SUB_r,    &SUB_r,   &SUB_r,   &SUB_r,   &SUB_r,   &SUB_HL,   &SUB_r,   &SBC_r,    &SBC_r,    &SBC_r,   &SBC_r,   &SBC_r,   &SBC_r,   &SBC_HL,   &SBC_r,
-/* a */    &AND_r,    &AND_r,    &AND_r,   &AND_r,   &AND_r,   &AND_r,   &AND_HL,   &AND_r,   &XOR_r,    &XOR_r,    &XOR_r,   &XOR_r,   &XOR_r,   &XOR_r,   &XOR_HL,   &XOR_r,
-/* b */     &OR_r,     &OR_r,     &OR_r,    &OR_r,    &OR_r,    &OR_r,    &OR_HL,    &OR_r,    &CP_r,     &CP_r,     &CP_r,    &CP_r,    &CP_r,    &CP_r,    &CP_HL,    &CP_r,
-/* c */     &RETC,   &POP_rr,      &JPC,      &JP,   &CALLC, &PUSH_rr,    &ADD_n,     &RST,    &RETC,      &RET,      &JPC,   &UNDEF,   &CALLC,    &CALL,    &ADC_n,     &RST,
-/* d */     &RETC,   &POP_rr,      &JPC,   &UNDEF,   &CALLC, &PUSH_rr,    &SUB_n,     &RST,    &RETC,     &RETI,      &JPC,   &UNDEF,   &CALLC,   &UNDEF,    &SBC_n,     &RST,
-/* e */  &LD_rr_A,   &POP_rr,  &LD_rr_A,   &UNDEF,   &UNDEF, &PUSH_rr,    &AND_n,     &RST,   &ADD_e,    &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,    &XOR_n,     &RST,
-/* f */  &LD_A_rr,   &POP_rr,  &LD_A_rr,   &UNDEF,   &UNDEF, &PUSH_rr,     &OR_n,     &RST,   &UNDEF, &LD_SP_HL,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,     &CP_n,     &RST,
+/*            0x0        0x1        0x2       0x3       0x4       0x5        0x6       0x7         0x8        0x9        0xa       0xb       0xc       0xd        0xe       0xf */
+/* 0 */      &NOP, &LD_rr_nn,  &LD_rr_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,    &RLCA,  &LD_nn_SP,   &ADD_rr,  &LD_A_rr,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,    &RRCA,
+/* 1 */     &STOP, &LD_rr_nn,  &LD_rr_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,     &RLA,        &JR,   &ADD_rr,  &LD_A_rr,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,     &RRA,
+/* 2 */      &JRC, &LD_rr_nn, &LD_HLI_A,  &INC_rr,   &INC_r,   &DEC_r,   &LD_r_n,     &DAA,       &JRC,   &ADD_rr, &LD_A_HLI,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,     &CPL,
+/* 3 */      &JRC, &LD_rr_nn, &LD_HLD_A,  &INC_rr,  &INC_HL,  &DEC_HL,    &UNDEF,   &UNDEF,       &JRC,   &ADD_rr, &LD_A_HLD,  &DEC_rr,   &INC_r,   &DEC_r,   &LD_r_n,   &UNDEF,
+/* 4 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,    &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
+/* 5 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,    &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
+/* 5 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,    &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
+/* 7 */   &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,     &HALT,  &LD_r_r,    &LD_r_r,   &LD_r_r,   &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_r,  &LD_r_HL,  &LD_r_r,
+/* 8 */    &ADD_r,    &ADD_r,    &ADD_r,   &ADD_r,   &ADD_r,   &ADD_r,   &ADD_HL,   &ADD_r,     &ADC_r,    &ADC_r,    &ADC_r,   &ADC_r,   &ADC_r,   &ADC_r,   &ADC_HL,   &ADC_r,
+/* 9 */    &SUB_r,    &SUB_r,    &SUB_r,   &SUB_r,   &SUB_r,   &SUB_r,   &SUB_HL,   &SUB_r,     &SBC_r,    &SBC_r,    &SBC_r,   &SBC_r,   &SBC_r,   &SBC_r,   &SBC_HL,   &SBC_r,
+/* a */    &AND_r,    &AND_r,    &AND_r,   &AND_r,   &AND_r,   &AND_r,   &AND_HL,   &AND_r,     &XOR_r,    &XOR_r,    &XOR_r,   &XOR_r,   &XOR_r,   &XOR_r,   &XOR_HL,   &XOR_r,
+/* b */     &OR_r,     &OR_r,     &OR_r,    &OR_r,    &OR_r,    &OR_r,    &OR_HL,    &OR_r,      &CP_r,     &CP_r,     &CP_r,    &CP_r,    &CP_r,    &CP_r,    &CP_HL,    &CP_r,
+/* c */     &RETC,   &POP_rr,      &JPC,      &JP,   &CALLC, &PUSH_rr,    &ADD_n,     &RST,      &RETC,      &RET,      &JPC,   &UNDEF,   &CALLC,    &CALL,    &ADC_n,     &RST,
+/* d */     &RETC,   &POP_rr,      &JPC,   &UNDEF,   &CALLC, &PUSH_rr,    &SUB_n,     &RST,      &RETC,     &RETI,      &JPC,   &UNDEF,   &CALLC,   &UNDEF,    &SBC_n,     &RST,
+/* e */  &LD_rr_A,   &POP_rr,  &LD_rr_A,   &UNDEF,   &UNDEF, &PUSH_rr,    &AND_n,     &RST,     &ADD_e,    &UNDEF,  &LD_rr_A,   &UNDEF,   &UNDEF,   &UNDEF,    &XOR_n,     &RST,
+/* f */  &LD_A_rr,   &POP_rr,  &LD_A_rr,   &UNDEF,   &UNDEF, &PUSH_rr,     &OR_n,     &RST, &LD_HL_SPe, &LD_SP_HL,  &LD_A_rr,   &UNDEF,   &UNDEF,   &UNDEF,     &CP_n,     &RST,
 };
 
 static const OpcodeInstruction PREFIXED_TABLE[256] = {

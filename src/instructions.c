@@ -265,6 +265,39 @@ void POP_rr(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 12;
 }
 
+void LD_HL_SPe(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+
+    reset_flags(cpu);
+
+    uint16_t SP = cpu->SP;
+    uint8_t e = fetch_opcode(cpu);
+    if (0b10000000 & e) {
+        e = (~e) + 1;
+        if ((SP & 0xf) < (e & 0xf)) set_flag(cpu, H_FLAG);
+        if ((SP & 0xff) < e) set_flag(cpu, C_FLAG);
+
+        cpu->registers.HL = SP - e;
+    } else {
+        if ((SP & 0xf) + (e & 0xf) > 0xf) set_flag(cpu, H_FLAG);
+        if (0xff - e < (SP & 0xff)) set_flag(cpu, C_FLAG);
+
+        cpu->registers.HL = SP + e;
+    }
+
+    cpu->t_cycles = 12;
+}
+
+void LD_nn_SP(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    uint16_t nn = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
+    write_byte(cpu, (cpu->SP & 0xff), nn);
+    write_byte(cpu, (cpu->SP & 0xff00) >> 8, nn + 1);
+    cpu->t_cycles = 20;
+}
+
 
 // **************************************************
 // 8-bit ALU instructions
