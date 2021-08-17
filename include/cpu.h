@@ -75,6 +75,7 @@ typedef struct CPU {
     uint16_t PC;
     uint16_t SP;
     uint16_t memory[ADDRESS_BUS_SIZE];
+    // FIXME: IME should be a fixed memory location ($FFFF)
     uint8_t IME;
     uint8_t t_cycles;
 } CPU;
@@ -103,6 +104,7 @@ void set_flag(CPU *, FlagPosition);
 void clear_flag(CPU *, FlagPosition);
 void reset_flags(CPU *);
 
+// Interrupt Flags
 void enable_IME(CPU *);
 void disable_IME(CPU *);
 

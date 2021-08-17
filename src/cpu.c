@@ -75,6 +75,7 @@ void reset_flags(CPU *cpu)
     cpu->registers.F = 0;
 }
 
+// FIXME: IME should point to a reserved memory location ($FFFF)
 void enable_IME(CPU *cpu)
 {
     cpu->IME = 1;

@@ -1309,6 +1309,28 @@ void CPL(CPU *cpu, uint8_t opcode)
     cpu->t_cycles = 4;
 }
 
+void NOP(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    cpu->t_cycles = 4;
+}
+
+void HALT(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    // Effectively skips next operation
+    fetch_opcode(cpu);
+    cpu->t_cycles = 4;
+}
+
+void STOP(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    // 2-byte instruction
+    fetch_opcode(cpu);
+    cpu->t_cycles = 4;
+}
+
 void UNDEF(CPU *cpu, uint8_t opcode)
 {
     (void)cpu;
