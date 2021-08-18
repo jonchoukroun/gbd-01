@@ -37,6 +37,6 @@
 #define HIGH_RAM_START 0xff80
 #define HIGH_RAM_END 0xfffe
 
-#define IE_REGISTER 0xffff
+#define IME_FLAG 0xffff
 
 #endif

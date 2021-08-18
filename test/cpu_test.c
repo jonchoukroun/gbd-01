@@ -99,6 +99,16 @@ void test_set_flag(void)
     CU_ASSERT_EQUAL(cpu.registers.F, 0b11110000);
 }
 
+void test_IME_flag(void)
+{
+    CPU cpu;
+    cpu.memory[IME_FLAG] = 0;
+    set_IME(&cpu);
+    CU_ASSERT_EQUAL(cpu.memory[IME_FLAG], 1);
+    reset_IME(&cpu);
+    CU_ASSERT_EQUAL(cpu.memory[IME_FLAG], 1);
+}
+
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -142,6 +152,11 @@ int main()
             test_suite,
             "CPU | set_flag sets flag bit and ignores other flag bits",
             test_set_flag
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "CPU | set, reset IME flag sets, resets reserved memory",
+            test_IME_flag
         ) == NULL) {
         printf("Failed to add test to CPU unit test suite\n");
         CU_cleanup_registry();
