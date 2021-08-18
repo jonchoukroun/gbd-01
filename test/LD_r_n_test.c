@@ -96,14 +96,17 @@ void test_LD_A_n(void)
 void test_LD_HL_n(void)
 {
     CPU cpu;
-    uint16_t address = 0x1234;
-    uint8_t value = 0x1e;
-    cpu.memory[address] = value;
-    cpu.registers.HL = address;
-    cpu.PC = address;
-    LD_r_n(&cpu, 0x36);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+    cpu.PC = 0x0100;
+    cpu.registers.HL = 0x5fba;
+    cpu.registers.F = 0b10100000;
+    cpu.memory[cpu.registers.HL] = 0xfb;
+    cpu.memory[cpu.PC] = 0x3a;
+    LD_HL_n(&cpu, 0x36);
+    CU_ASSERT_EQUAL(cpu.PC, 0x0101);
+    CU_ASSERT_EQUAL(cpu.registers.HL, 0x5fba);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10100000);
+    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0x3a);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
 }
 
 int main(void)

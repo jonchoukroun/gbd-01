@@ -86,16 +86,23 @@ void LD_r_HL(CPU *cpu, uint8_t opcode)
 
 void LD_r_n(CPU *cpu, uint8_t opcode)
 {
-    cpu->t_cycles = 8;
     uint8_t r = (opcode & DEST_MASK) >> 3;
     RegSet_8 set_R = R_TABLE_8[r];
     set_R(cpu, fetch_opcode(cpu));
+    cpu->t_cycles = 8;
 }
 
 void LD_HL_r(CPU *cpu, uint8_t opcode)
 {
     uint8_t r_code = opcode & SRC_MASK;
     write_byte(cpu, fetch_r8(cpu, r_code), cpu->registers.HL);
+    cpu->t_cycles = 8;
+}
+
+void LD_HL_n(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    write_byte(cpu, fetch_opcode(cpu), cpu->registers.HL);
     cpu->t_cycles = 8;
 }
 
@@ -1214,7 +1221,7 @@ void RET(CPU *cpu, uint8_t opcode)
 
 void RETI(CPU *cpu, uint8_t opcode)
 {
-    enable_IME(cpu);
+    set_IME(cpu);
     RET(cpu, opcode);
 }
 
@@ -1362,6 +1369,49 @@ void STOP(CPU *cpu, uint8_t opcode)
     // 2-byte instruction
     fetch_opcode(cpu);
     cpu->t_cycles = 4;
+}
+
+void SCF(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    set_flag(cpu, C_FLAG);
+    cpu->t_cycles = 4;
+}
+
+void CCF(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    clear_flag(cpu, N_FLAG);
+    clear_flag(cpu, H_FLAG);
+    get_flag(cpu, C_FLAG) ? clear_flag(cpu, C_FLAG) : set_flag(cpu, C_FLAG);
+    cpu->t_cycles = 4;
+}
+
+void DI(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    reset_IME(cpu);
+    cpu->t_cycles = 4;
+}
+
+void EI(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    set_IME(cpu);
+    cpu->t_cycles = 4;
+}
+
+
+// **************************************************
+// Internal
+// **************************************************
+
+void PREFIX(CPU *cpu, uint8_t opcode)
+{
+    (void)opcode;
+    printf("0xCB prefix called\n");
 }
 
 void UNDEF(CPU *cpu, uint8_t opcode)

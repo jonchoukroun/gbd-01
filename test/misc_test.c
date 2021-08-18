@@ -2,7 +2,7 @@
 #include <CUnit/Basic.h>
 #include "instructions.h"
 
-void CPL_test()
+void test_CPL(void)
 {
     CPU cpu;
     cpu.registers.A = 0x35;
@@ -26,6 +26,34 @@ void CPL_test()
     CU_ASSERT_EQUAL(cpu.t_cycles, 4);
 }
 
+void test_SCF(void)
+{
+    CPU cpu;
+    cpu.registers.F = 0;
+    SCF(&cpu, 0x37);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+
+    cpu.registers.F = 0b11110000;
+    SCF(&cpu, 0x37);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
+void test_CCF(void)
+{
+    CPU cpu;
+    cpu.registers.F = 0;
+    CCF(&cpu, 0x3f);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+
+    cpu.registers.F = 0b11110000;
+    CCF(&cpu, 0x37);
+    CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
+    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+}
+
 int main()
 {
     if (CU_initialize_registry() != CUE_SUCCESS) {
@@ -41,10 +69,20 @@ int main()
     }
 
     if (CU_add_test(
-        test_suite,
-        "CPL Instruction | sets A to its 1's complement, sets N, H flags",
-        CPL_test
-    ) == NULL) {
+            test_suite,
+            "CPL Instruction | sets A to its 1's complement, sets N, H flags",
+            test_CPL
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "SCF Instruction | sets carry flag, resets negative, half carry flags",
+            test_SCF
+        ) == NULL ||
+        CU_add_test(
+            test_suite,
+            "CCF Instruction | inverts carry flag, resets negative, half carry flags",
+            test_CCF
+        ) == NULL) {
         printf("Failed to add test to Misc instructions unit test suite\n");
         CU_cleanup_registry();
         return CU_get_error();
