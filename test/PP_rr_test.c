@@ -5,7 +5,7 @@
 void test_PUSH_BC(void)
 {
     CPU cpu;
-    uint16_t SP = 0xfffe;
+    uint16_t SP = 0x5fff;
     cpu.SP = SP;
     cpu.registers.BC = 0xabcd;
     PUSH_rr(&cpu, 0xc5);
@@ -18,7 +18,7 @@ void test_PUSH_BC(void)
 void test_PUSH_DE(void)
 {
     CPU cpu;
-    uint16_t SP = ADDRESS_BUS_SIZE;
+    uint16_t SP = 0x5fff;
     uint16_t value = 0xabcd;
     cpu.SP = SP;
     cpu.registers.DE = value;
@@ -32,7 +32,7 @@ void test_PUSH_DE(void)
 void test_PUSH_HL(void)
 {
     CPU cpu;
-    uint16_t SP = ADDRESS_BUS_SIZE;
+    uint16_t SP = 0x5fff;
     uint16_t value = 0xabcd;
     cpu.SP = SP;
     cpu.registers.HL = value;
@@ -46,7 +46,7 @@ void test_PUSH_HL(void)
 void test_PUSH_AF(void)
 {
     CPU cpu;
-    uint16_t SP = ADDRESS_BUS_SIZE;
+    uint16_t SP = 0x5fff;
     uint16_t value = 0xabcd;
     cpu.SP = SP;
     cpu.registers.AF = value;

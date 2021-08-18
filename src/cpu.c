@@ -4,7 +4,7 @@
 
 uint8_t fetch_opcode(CPU *cpu)
 {
-    if (cpu->PC > ADDRESS_BUS_SIZE) {
+    if (cpu->PC > ADDRESS_BUS_SIZE - 1) {
         printf("PC is out of memory bounds (%x)\n", cpu->PC);
         return -1;
     }

@@ -148,12 +148,12 @@ void RETI_test()
     cpu.SP = 0x8000;
     cpu.memory[0x8000] = 0x80;
     cpu.memory[0x8001] = 0x03;
-    cpu.IME = 0;
+    cpu.memory[IME_FLAG] = 0;
     RETI(&cpu, 0xc9);
     CU_ASSERT_EQUAL(cpu.PC, 0x8003);
     CU_ASSERT_EQUAL(cpu.SP, 0x8002);
     CU_ASSERT_EQUAL(cpu.t_cycles, 16);
-    CU_ASSERT_EQUAL(cpu.IME, 1);
+    CU_ASSERT_EQUAL(cpu.memory[IME_FLAG], 1);
 }
 
 void RETC_NZ_test()

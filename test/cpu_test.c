@@ -106,7 +106,7 @@ void test_IME_flag(void)
     set_IME(&cpu);
     CU_ASSERT_EQUAL(cpu.memory[IME_FLAG], 1);
     reset_IME(&cpu);
-    CU_ASSERT_EQUAL(cpu.memory[IME_FLAG], 1);
+    CU_ASSERT_EQUAL(cpu.memory[IME_FLAG], 0);
 }
 
 int main()

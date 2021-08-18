@@ -2,7 +2,7 @@
 #define Memory
 #include <stdint.h>
 
-#define ADDRESS_BUS_SIZE 0xffff
+#define ADDRESS_BUS_SIZE 0x10000
 
 #define ROM0_START 0x0000
 #define ROM0_END 0x3fff

@@ -1410,6 +1410,7 @@ void EI(CPU *cpu, uint8_t opcode)
 
 void PREFIX(CPU *cpu, uint8_t opcode)
 {
+    (void)cpu;
     (void)opcode;
     printf("0xCB prefix called\n");
 }
