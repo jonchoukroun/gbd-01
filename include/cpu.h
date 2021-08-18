@@ -90,6 +90,8 @@ typedef enum {
     WORD = 1
 } USIZE;
 
+CPU * init_cpu(void);
+
 uint8_t fetch_opcode(CPU *);
 
 uint8_t read_byte(CPU *, uint16_t addr);

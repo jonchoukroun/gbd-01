@@ -1,6 +1,15 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "cpu.h"
 #include "instructions.h"
+
+CPU * init_cpu(void)
+{
+    CPU *cpu = calloc(1, sizeof *cpu);
+    cpu->PC = 0;
+
+    return cpu;
+}
 
 uint8_t fetch_opcode(CPU *cpu)
 {
