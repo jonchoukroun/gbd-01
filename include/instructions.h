@@ -92,7 +92,7 @@ void LD_HLD_A(CPU *, uint8_t);
 // **************************************************
 
 /**
- * Load 2 bytes of immediate data into register rr
+ * Load 2 bytes of immediate data into register rr (or SP)
  * No flag effects
  * 12 T-cycles
  **/
