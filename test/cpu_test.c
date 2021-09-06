@@ -2,6 +2,12 @@
 #include <CUnit/Basic.h>
 #include "cpu.h"
 
+void test_init_cpu(void)
+{
+    CPU *cpu = init_cpu();
+    CU_ASSERT_EQUAL(cpu->PC, 0);
+}
+
 void test_fetch_opcode(void)
 {
     CPU *cpu = init_cpu();
@@ -123,7 +129,13 @@ int main()
         return CU_get_error();
     }
 
-    if (CU_add_test(
+    if (
+        CU_add_test(
+            test_suite,
+            "CPU | init_cpu returns a pointer to a CPU with valid values",
+            test_init_cpu
+        ) == NULL |
+        CU_add_test(
             test_suite,
             "CPU | fetch_opcode returns 8bit value from memory address at PC and increments PC",
             test_fetch_opcode
