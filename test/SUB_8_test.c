@@ -4,102 +4,102 @@
 
 void test_SUB_A(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x05;
-    SUB_r(&cpu, 0x97);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b11000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x05;
+    SUB_r(cpu, 0x97);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b11000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SUB_B(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x08;
-    cpu.registers.B = 0x03;
-    SUB_r(&cpu, 0x90);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x05);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x08;
+    cpu->registers.B = 0x03;
+    SUB_r(cpu, 0x90);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x05);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SUB_C(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x10;
-    cpu.registers.C = 0x0a;
-    SUB_r(&cpu, 0x91);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x06);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01100000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x10;
+    cpu->registers.C = 0x0a;
+    SUB_r(cpu, 0x91);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x06);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01100000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SUB_D(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x2e;
-    cpu.registers.D = 0xfd;
-    SUB_r(&cpu, 0x92);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x31);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x2e;
+    cpu->registers.D = 0xfd;
+    SUB_r(cpu, 0x92);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x31);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SUB_E(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x22;
-    cpu.registers.E = 0x55;
-    SUB_r(&cpu, 0x93);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0xcd);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x22;
+    cpu->registers.E = 0x55;
+    SUB_r(cpu, 0x93);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0xcd);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SUB_H(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0xa0;
-    cpu.registers.H = 0x0a;
-    SUB_r(&cpu, 0x94);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x96);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01100000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0xa0;
+    cpu->registers.H = 0x0a;
+    SUB_r(cpu, 0x94);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x96);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01100000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SUB_L(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x10;
-    cpu.registers.L = 0x0a;
-    SUB_r(&cpu, 0x95);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x06);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01100000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x10;
+    cpu->registers.L = 0x0a;
+    SUB_r(cpu, 0x95);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x06);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01100000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SUB_n(void)
 {
-    CPU cpu;
-    cpu.PC = 0x0100;
-    cpu.memory[0x0100] = 0x06;
-    cpu.registers.A = 0x12;
-    SUB_n(&cpu, 0xd6);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x0c);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01100000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->PC = 0x0100;
+    cpu->memory[0x0100] = 0x06;
+    cpu->registers.A = 0x12;
+    SUB_n(cpu, 0xd6);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x0c);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01100000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SUB_HL(void)
 {
-    CPU cpu;
-    cpu.registers.HL = 0x0300;
-    cpu.memory[0x0300] = 0x0c;
-    cpu.registers.A = 0x0f;
-    SUB_HL(&cpu, 0x96);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x03);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.HL = 0x0300;
+    cpu->memory[0x0300] = 0x0c;
+    cpu->registers.A = 0x0f;
+    SUB_HL(cpu, 0x96);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x03);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 int main()

@@ -228,16 +228,21 @@ typedef void (*RegSet_16)(CPU *, uint16_t value);
 void set_BC(CPU *cpu, uint16_t nn) { cpu->registers.BC = nn; }
 void set_DE(CPU *cpu, uint16_t nn) { cpu->registers.DE = nn; }
 void set_HL(CPU *cpu, uint16_t nn) { cpu->registers.HL = nn; }
+void set_AF(CPU *cpu, uint16_t nn) { cpu->registers.AF = nn; }
 void set_SP(CPU *cpu, uint16_t nn) { cpu->SP = nn; }
 
-static const RegSet_16 R_TABLE_16[] = {
+static const RegSet_16 dd_table[] = {
     &set_BC, &set_DE, &set_HL, &set_SP
+};
+
+static const RegSet_16 qq_table[] = {
+    &set_BC, &set_DE, &set_HL, &set_AF
 };
 
 void LD_rr_nn(CPU *cpu, uint8_t opcode)
 {
     uint16_t nn = (fetch_opcode(cpu) << 8) | fetch_opcode(cpu);
-    RegSet_16 set_RR = R_TABLE_16[(opcode & MASK_R16) >> 4];
+    RegSet_16 set_RR = dd_table[(opcode & MASK_R16) >> 4];
     set_RR(cpu, nn);
     cpu->t_cycles = 12;
 }
@@ -266,7 +271,7 @@ void POP_rr(CPU *cpu, uint8_t opcode)
     cpu->SP++;
     uint8_t high = cpu->memory[cpu->SP];
     cpu->SP++;
-    RegSet_16 set_RR = R_TABLE_16[(opcode & MASK_R16) >> 4];
+    RegSet_16 set_RR = qq_table[(opcode & MASK_R16) >> 4];
     set_RR(cpu, (high << 8) | low);
 
     cpu->t_cycles = 12;
@@ -694,7 +699,7 @@ void INC_rr(CPU *cpu, uint8_t opcode)
 {
     uint8_t rr_code = (opcode & MASK_R16) >> 4;
     uint16_t rr = fetch_register_pairs(cpu, rr_code);
-    RegSet_16 set_RR = R_TABLE_16[rr_code];
+    RegSet_16 set_RR = dd_table[rr_code];
     set_RR(cpu, rr + 1);
 
     cpu->t_cycles = 8;
@@ -704,7 +709,7 @@ void DEC_rr(CPU *cpu, uint8_t opcode)
 {
     uint8_t rr_code = (opcode & MASK_R16) >> 4;
     uint16_t rr = fetch_register_pairs(cpu, rr_code);
-    RegSet_16 set_RR = R_TABLE_16[rr_code];
+    RegSet_16 set_RR = dd_table[rr_code];
     set_RR(cpu, rr - 1);
 
     cpu->t_cycles = 8;

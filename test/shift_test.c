@@ -4,318 +4,318 @@
 
 void test_SLA_B(void)
 {
-    CPU cpu;
-    cpu.registers.B = 0x80;
-    cpu.registers.F = 0;
-    SLA(&cpu, 0x20);
-    CU_ASSERT_EQUAL(cpu.registers.B, 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.B = 0x80;
+    cpu->registers.F = 0;
+    SLA(cpu, 0x20);
+    CU_ASSERT_EQUAL(cpu->registers.B, 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    cpu.registers.B = 0x01;
-    cpu.registers.F = 0b11110000;
-    SLA(&cpu, 0x20);
-    CU_ASSERT_EQUAL(cpu.registers.B, 0x02);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    cpu->registers.B = 0x01;
+    cpu->registers.F = 0b11110000;
+    SLA(cpu, 0x20);
+    CU_ASSERT_EQUAL(cpu->registers.B, 0x02);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
 }
 
 void test_SLA_C(void)
 {
-    CPU cpu;
-    cpu.registers.C = 0x80;
-    cpu.registers.F = 0;
-    SLA(&cpu, 0x21);
-    CU_ASSERT_EQUAL(cpu.registers.C, 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.C = 0x80;
+    cpu->registers.F = 0;
+    SLA(cpu, 0x21);
+    CU_ASSERT_EQUAL(cpu->registers.C, 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    cpu.registers.C = 0x01;
-    cpu.registers.F = 0b11110000;
-    SLA(&cpu, 0x21);
-    CU_ASSERT_EQUAL(cpu.registers.C, 0x02);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    cpu->registers.C = 0x01;
+    cpu->registers.F = 0b11110000;
+    SLA(cpu, 0x21);
+    CU_ASSERT_EQUAL(cpu->registers.C, 0x02);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
 }
 
 void test_SLA_D(void)
 {
-    CPU cpu;
-    cpu.registers.D = 0x80;
-    cpu.registers.F = 0;
-    SLA(&cpu, 0x22);
-    CU_ASSERT_EQUAL(cpu.registers.D, 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.D = 0x80;
+    cpu->registers.F = 0;
+    SLA(cpu, 0x22);
+    CU_ASSERT_EQUAL(cpu->registers.D, 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    cpu.registers.D = 0x01;
-    cpu.registers.F = 0b11110000;
-    SLA(&cpu, 0x22);
-    CU_ASSERT_EQUAL(cpu.registers.D, 0x02);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    cpu->registers.D = 0x01;
+    cpu->registers.F = 0b11110000;
+    SLA(cpu, 0x22);
+    CU_ASSERT_EQUAL(cpu->registers.D, 0x02);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
 }
 
 void test_SLA_E(void)
 {
-    CPU cpu;
-    cpu.registers.E = 0x80;
-    cpu.registers.F = 0;
-    SLA(&cpu, 0x23);
-    CU_ASSERT_EQUAL(cpu.registers.E, 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.E = 0x80;
+    cpu->registers.F = 0;
+    SLA(cpu, 0x23);
+    CU_ASSERT_EQUAL(cpu->registers.E, 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    cpu.registers.E = 0x01;
-    cpu.registers.F = 0b11110000;
-    SLA(&cpu, 0x23);
-    CU_ASSERT_EQUAL(cpu.registers.E, 0x02);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    cpu->registers.E = 0x01;
+    cpu->registers.F = 0b11110000;
+    SLA(cpu, 0x23);
+    CU_ASSERT_EQUAL(cpu->registers.E, 0x02);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
 }
 
 void test_SLA_H(void)
 {
-    CPU cpu;
-    cpu.registers.H = 0x80;
-    cpu.registers.F = 0;
-    SLA(&cpu, 0x24);
-    CU_ASSERT_EQUAL(cpu.registers.H, 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.H = 0x80;
+    cpu->registers.F = 0;
+    SLA(cpu, 0x24);
+    CU_ASSERT_EQUAL(cpu->registers.H, 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    cpu.registers.H = 0x01;
-    cpu.registers.F = 0b11110000;
-    SLA(&cpu, 0x24);
-    CU_ASSERT_EQUAL(cpu.registers.H, 0x02);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    cpu->registers.H = 0x01;
+    cpu->registers.F = 0b11110000;
+    SLA(cpu, 0x24);
+    CU_ASSERT_EQUAL(cpu->registers.H, 0x02);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
 }
 
 void test_SLA_L(void)
 {
-    CPU cpu;
-    cpu.registers.L = 0x80;
-    cpu.registers.F = 0;
-    SLA(&cpu, 0x25);
-    CU_ASSERT_EQUAL(cpu.registers.L, 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.L = 0x80;
+    cpu->registers.F = 0;
+    SLA(cpu, 0x25);
+    CU_ASSERT_EQUAL(cpu->registers.L, 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    cpu.registers.L = 0x01;
-    cpu.registers.F = 0b11110000;
-    SLA(&cpu, 0x25);
-    CU_ASSERT_EQUAL(cpu.registers.L, 0x02);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    cpu->registers.L = 0x01;
+    cpu->registers.F = 0b11110000;
+    SLA(cpu, 0x25);
+    CU_ASSERT_EQUAL(cpu->registers.L, 0x02);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
 }
 
 void test_SLA_A(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x80;
-    cpu.registers.F = 0;
-    SLA(&cpu, 0x27);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x80;
+    cpu->registers.F = 0;
+    SLA(cpu, 0x27);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    cpu.registers.A = 0x01;
-    cpu.registers.F = 0b11110000;
-    SLA(&cpu, 0x27);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x02);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
+    cpu->registers.A = 0x01;
+    cpu->registers.F = 0b11110000;
+    SLA(cpu, 0x27);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x02);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
 }
 
 void test_SLA_HL(void)
 {
-    CPU cpu;
-    cpu.registers.HL = 0x1234;
-    cpu.memory[cpu.registers.HL] = 0xff;
-    cpu.registers.F = 0;
-    SLA_HL(&cpu, 0x26);
-    CU_ASSERT_EQUAL(cpu.registers.HL, 0x1234);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0xfe);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    CPU *cpu = init_cpu();
+    cpu->registers.HL = 0x1234;
+    cpu->memory[cpu->registers.HL] = 0xff;
+    cpu->registers.F = 0;
+    SLA_HL(cpu, 0x26);
+    CU_ASSERT_EQUAL(cpu->registers.HL, 0x1234);
+    CU_ASSERT_EQUAL(cpu->memory[cpu->registers.HL], 0xfe);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 }
 
 void test_SRA_B(void)
 {
-    CPU cpu;
-    cpu.registers.B = 0x8a;
-    cpu.registers.F = 0;
-    SRA(&cpu, 0x28);
-    CU_ASSERT_EQUAL(cpu.registers.B, 0xc5);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.B = 0x8a;
+    cpu->registers.F = 0;
+    SRA(cpu, 0x28);
+    CU_ASSERT_EQUAL(cpu->registers.B, 0xc5);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRA_C(void)
 {
-    CPU cpu;
-    cpu.registers.C = 0x8a;
-    cpu.registers.F = 0;
-    SRA(&cpu, 0x29);
-    CU_ASSERT_EQUAL(cpu.registers.C, 0xc5);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.C = 0x8a;
+    cpu->registers.F = 0;
+    SRA(cpu, 0x29);
+    CU_ASSERT_EQUAL(cpu->registers.C, 0xc5);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRA_D(void)
 {
-    CPU cpu;
-    cpu.registers.D = 0x8a;
-    cpu.registers.F = 0;
-    SRA(&cpu, 0x2a);
-    CU_ASSERT_EQUAL(cpu.registers.D, 0xc5);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.D = 0x8a;
+    cpu->registers.F = 0;
+    SRA(cpu, 0x2a);
+    CU_ASSERT_EQUAL(cpu->registers.D, 0xc5);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRA_E(void)
 {
-    CPU cpu;
-    cpu.registers.E = 0x8a;
-    cpu.registers.F = 0;
-    SRA(&cpu, 0x2b);
-    CU_ASSERT_EQUAL(cpu.registers.E, 0xc5);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.E = 0x8a;
+    cpu->registers.F = 0;
+    SRA(cpu, 0x2b);
+    CU_ASSERT_EQUAL(cpu->registers.E, 0xc5);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRA_H(void)
 {
-    CPU cpu;
-    cpu.registers.H = 0x8a;
-    cpu.registers.F = 0;
-    SRA(&cpu, 0x2c);
-    CU_ASSERT_EQUAL(cpu.registers.H, 0xc5);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.H = 0x8a;
+    cpu->registers.F = 0;
+    SRA(cpu, 0x2c);
+    CU_ASSERT_EQUAL(cpu->registers.H, 0xc5);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRA_L(void)
 {
-    CPU cpu;
-    cpu.registers.L = 0x8a;
-    cpu.registers.F = 0;
-    SRA(&cpu, 0x2d);
-    CU_ASSERT_EQUAL(cpu.registers.L, 0xc5);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.L = 0x8a;
+    cpu->registers.F = 0;
+    SRA(cpu, 0x2d);
+    CU_ASSERT_EQUAL(cpu->registers.L, 0xc5);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRA_A(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x8a;
-    cpu.registers.F = 0;
-    SRA(&cpu, 0x2f);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0xc5);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x8a;
+    cpu->registers.F = 0;
+    SRA(cpu, 0x2f);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0xc5);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRA_HL(void)
 {
-    CPU cpu;
-    cpu.registers.HL = 0x2342;
-    cpu.memory[cpu.registers.HL] = 0x01;
-    cpu.registers.F = 0;
-    SRA_HL(&cpu, 0x2e);
-    CU_ASSERT_EQUAL(cpu.registers.HL, 0x2342);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    CPU *cpu = init_cpu();
+    cpu->registers.HL = 0x2342;
+    cpu->memory[cpu->registers.HL] = 0x01;
+    cpu->registers.F = 0;
+    SRA_HL(cpu, 0x2e);
+    CU_ASSERT_EQUAL(cpu->registers.HL, 0x2342);
+    CU_ASSERT_EQUAL(cpu->memory[cpu->registers.HL], 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 }
 
 void test_SRL_B(void)
 {
-    CPU cpu;
-    cpu.registers.B = 0x8a;
-    cpu.registers.F = 0;
-    SRL(&cpu, 0x38);
-    CU_ASSERT_EQUAL(cpu.registers.B, 0x45);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.B = 0x8a;
+    cpu->registers.F = 0;
+    SRL(cpu, 0x38);
+    CU_ASSERT_EQUAL(cpu->registers.B, 0x45);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRL_C(void)
 {
-    CPU cpu;
-    cpu.registers.C = 0x8a;
-    cpu.registers.F = 0;
-    SRL(&cpu, 0x39);
-    CU_ASSERT_EQUAL(cpu.registers.C, 0x45);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.C = 0x8a;
+    cpu->registers.F = 0;
+    SRL(cpu, 0x39);
+    CU_ASSERT_EQUAL(cpu->registers.C, 0x45);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRL_D(void)
 {
-    CPU cpu;
-    cpu.registers.D = 0x8a;
-    cpu.registers.F = 0;
-    SRL(&cpu, 0x3a);
-    CU_ASSERT_EQUAL(cpu.registers.D, 0x45);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.D = 0x8a;
+    cpu->registers.F = 0;
+    SRL(cpu, 0x3a);
+    CU_ASSERT_EQUAL(cpu->registers.D, 0x45);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRL_E(void)
 {
-    CPU cpu;
-    cpu.registers.E = 0x8a;
-    cpu.registers.F = 0;
-    SRL(&cpu, 0x3b);
-    CU_ASSERT_EQUAL(cpu.registers.E, 0x45);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.E = 0x8a;
+    cpu->registers.F = 0;
+    SRL(cpu, 0x3b);
+    CU_ASSERT_EQUAL(cpu->registers.E, 0x45);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRL_H(void)
 {
-    CPU cpu;
-    cpu.registers.H = 0x8a;
-    cpu.registers.F = 0;
-    SRL(&cpu, 0x3c);
-    CU_ASSERT_EQUAL(cpu.registers.H, 0x45);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.H = 0x8a;
+    cpu->registers.F = 0;
+    SRL(cpu, 0x3c);
+    CU_ASSERT_EQUAL(cpu->registers.H, 0x45);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRL_L(void)
 {
-    CPU cpu;
-    cpu.registers.L = 0x8a;
-    cpu.registers.F = 0;
-    SRL(&cpu, 0x3d);
-    CU_ASSERT_EQUAL(cpu.registers.L, 0x45);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.L = 0x8a;
+    cpu->registers.F = 0;
+    SRL(cpu, 0x3d);
+    CU_ASSERT_EQUAL(cpu->registers.L, 0x45);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRL_A(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x8a;
-    cpu.registers.F = 0;
-    SRL(&cpu, 0x3f);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x45);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x8a;
+    cpu->registers.F = 0;
+    SRL(cpu, 0x3f);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x45);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SRL_HL(void)
 {
-    CPU cpu;
-    cpu.registers.HL = 0x2341;
-    cpu.memory[cpu.registers.HL] = 0x01;
-    cpu.registers.F = 0;
-    SRL_HL(&cpu, 0x3e);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0x0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    CPU *cpu = init_cpu();
+    cpu->registers.HL = 0x2341;
+    cpu->memory[cpu->registers.HL] = 0x01;
+    cpu->registers.F = 0;
+    SRL_HL(cpu, 0x3e);
+    CU_ASSERT_EQUAL(cpu->memory[cpu->registers.HL], 0x0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 
-    cpu.memory[cpu.registers.HL] = 0xff;
-    SRL_HL(&cpu, 0x3e);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0x7f);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    cpu->memory[cpu->registers.HL] = 0xff;
+    SRL_HL(cpu, 0x3e);
+    CU_ASSERT_EQUAL(cpu->memory[cpu->registers.HL], 0x7f);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00010000);
 }
 
 int main()

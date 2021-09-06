@@ -4,111 +4,111 @@
 
 void test_SBC_A(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x05;
-    cpu.registers.F = 0;
-    SBC_r(&cpu, 0x9f);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b11000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x05;
+    cpu->registers.F = 0;
+    SBC_r(cpu, 0x9f);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b11000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SBC_B(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x08;
-    cpu.registers.B = 0x03;
-    cpu.registers.F = 0;
-    SBC_r(&cpu, 0x98);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x05);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x08;
+    cpu->registers.B = 0x03;
+    cpu->registers.F = 0;
+    SBC_r(cpu, 0x98);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x05);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SBC_C(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x10;
-    cpu.registers.C = 0x0a;
-    cpu.registers.F = 0;
-    SBC_r(&cpu, 0x99);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x06);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01100000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x10;
+    cpu->registers.C = 0x0a;
+    cpu->registers.F = 0;
+    SBC_r(cpu, 0x99);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x06);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01100000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SBC_D(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x2e;
-    cpu.registers.D = 0xfd;
-    cpu.registers.F = 0;
-    SBC_r(&cpu, 0x9a);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x31);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x2e;
+    cpu->registers.D = 0xfd;
+    cpu->registers.F = 0;
+    SBC_r(cpu, 0x9a);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x31);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SBC_E(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x22;
-    cpu.registers.E = 0x55;
-    cpu.registers.F = 0b11110000;
-    SBC_r(&cpu, 0x9b);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0xcc);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x22;
+    cpu->registers.E = 0x55;
+    cpu->registers.F = 0b11110000;
+    SBC_r(cpu, 0x9b);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0xcc);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SBC_H(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x3b;
-    cpu.registers.H = 0x2a;
-    cpu.registers.F = 0b00010000;
-    SBC_r(&cpu, 0x9c);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x10);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x3b;
+    cpu->registers.H = 0x2a;
+    cpu->registers.F = 0b00010000;
+    SBC_r(cpu, 0x9c);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x10);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SBC_L(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x10;
-    cpu.registers.L = 0x0a;
-    cpu.registers.F = 0;
-    SBC_r(&cpu, 0x9d);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x06);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01100000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x10;
+    cpu->registers.L = 0x0a;
+    cpu->registers.F = 0;
+    SBC_r(cpu, 0x9d);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x06);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01100000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_SBC_n(void)
 {
-    CPU cpu;
-    cpu.PC = 0x0100;
-    cpu.memory[0x0100] = 0x06;
-    cpu.registers.A = 0x12;
-    cpu.registers.F = 0;
-    SBC_n(&cpu, 0xde);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x0c);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01100000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->PC = 0x0100;
+    cpu->memory[0x0100] = 0x06;
+    cpu->registers.A = 0x12;
+    cpu->registers.F = 0;
+    SBC_n(cpu, 0xde);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x0c);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01100000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_SBC_HL(void)
 {
-    CPU cpu;
-    cpu.registers.HL = 0x0300;
-    cpu.memory[0x0300] = 0x4f;
-    cpu.registers.A = 0x3b;
-    cpu.registers.F = 0b11110000;
-    SBC_HL(&cpu, 0x9e);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0xeb);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.HL = 0x0300;
+    cpu->memory[0x0300] = 0x4f;
+    cpu->registers.A = 0x3b;
+    cpu->registers.F = 0b11110000;
+    SBC_HL(cpu, 0x9e);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0xeb);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 int main()

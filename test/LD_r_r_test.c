@@ -4,586 +4,586 @@
 
 void test_LD_B_B(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xa;
-    cpu.registers.B = test_value;
-    LD_r_r(&cpu, 0x40);
-    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.B = test_value;
+    LD_r_r(cpu, 0x40);
+    CU_ASSERT_EQUAL(cpu->registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_B_C(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xa;
-    cpu.registers.B = 0;
-    cpu.registers.C = test_value;
-    LD_r_r(&cpu, 0x41);
-    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.B = 0;
+    cpu->registers.C = test_value;
+    LD_r_r(cpu, 0x41);
+    CU_ASSERT_EQUAL(cpu->registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_B_D(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xa;
-    cpu.registers.B = 0;
-    cpu.registers.D = test_value;
-    LD_r_r(&cpu, 0x42);
-    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.B = 0;
+    cpu->registers.D = test_value;
+    LD_r_r(cpu, 0x42);
+    CU_ASSERT_EQUAL(cpu->registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_B_E(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xa;
-    cpu.registers.B = 0;
-    cpu.registers.E = test_value;
-    LD_r_r(&cpu, 0x43);
-    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.B = 0;
+    cpu->registers.E = test_value;
+    LD_r_r(cpu, 0x43);
+    CU_ASSERT_EQUAL(cpu->registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_B_H(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xa;
-    cpu.registers.B = 0;
-    cpu.registers.H = test_value;
-    LD_r_r(&cpu, 0x44);
-    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.B = 0;
+    cpu->registers.H = test_value;
+    LD_r_r(cpu, 0x44);
+    CU_ASSERT_EQUAL(cpu->registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_B_L(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xa;
-    cpu.registers.B = 0;
-    cpu.registers.L = test_value;
-    LD_r_r(&cpu, 0x45);
-    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.B = 0;
+    cpu->registers.L = test_value;
+    LD_r_r(cpu, 0x45);
+    CU_ASSERT_EQUAL(cpu->registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_B_A(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xa;
-    cpu.registers.B = 0;
-    cpu.registers.A = test_value;
-    LD_r_r(&cpu, 0x47);
-    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.B = 0;
+    cpu->registers.A = test_value;
+    LD_r_r(cpu, 0x47);
+    CU_ASSERT_EQUAL(cpu->registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_C_B(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x5c;
-    cpu.registers.C = 0;
-    cpu.registers.B = test_value;
-    LD_r_r(&cpu, 0x48);
-    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.C = 0;
+    cpu->registers.B = test_value;
+    LD_r_r(cpu, 0x48);
+    CU_ASSERT_EQUAL(cpu->registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_C_C(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x5c;
-    cpu.registers.C = test_value;
-    LD_r_r(&cpu, 0x49);
-    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.C = test_value;
+    LD_r_r(cpu, 0x49);
+    CU_ASSERT_EQUAL(cpu->registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_C_D(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x5c;
-    cpu.registers.C = 0;
-    cpu.registers.D = test_value;
-    LD_r_r(&cpu, 0x4a);
-    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.C = 0;
+    cpu->registers.D = test_value;
+    LD_r_r(cpu, 0x4a);
+    CU_ASSERT_EQUAL(cpu->registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_C_E(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x5c;
-    cpu.registers.C = 0;
-    cpu.registers.E = test_value;
-    LD_r_r(&cpu, 0x4b);
-    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.C = 0;
+    cpu->registers.E = test_value;
+    LD_r_r(cpu, 0x4b);
+    CU_ASSERT_EQUAL(cpu->registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_C_H(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x5c;
-    cpu.registers.C = 0;
-    cpu.registers.H = test_value;
-    LD_r_r(&cpu, 0x4c);
-    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.C = 0;
+    cpu->registers.H = test_value;
+    LD_r_r(cpu, 0x4c);
+    CU_ASSERT_EQUAL(cpu->registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_C_L(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x5c;
-    cpu.registers.C = 0;
-    cpu.registers.L = test_value;
-    LD_r_r(&cpu, 0x4d);
-    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.C = 0;
+    cpu->registers.L = test_value;
+    LD_r_r(cpu, 0x4d);
+    CU_ASSERT_EQUAL(cpu->registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_C_A(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x5c;
-    cpu.registers.C = 0;
-    cpu.registers.A = test_value;
-    LD_r_r(&cpu, 0x4f);
-    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.C = 0;
+    cpu->registers.A = test_value;
+    LD_r_r(cpu, 0x4f);
+    CU_ASSERT_EQUAL(cpu->registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_D_B(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x01;
-    cpu.registers.D = 0;
-    cpu.registers.B = test_value;
-    LD_r_r(&cpu, 0x50);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.D = 0;
+    cpu->registers.B = test_value;
+    LD_r_r(cpu, 0x50);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_D_C(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x01;
-    cpu.registers.D = 0;
-    cpu.registers.C = test_value;
-    LD_r_r(&cpu, 0x51);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.D = 0;
+    cpu->registers.C = test_value;
+    LD_r_r(cpu, 0x51);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_D_D(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x01;
-    cpu.registers.D = 0;
-    cpu.registers.D = test_value;
-    LD_r_r(&cpu, 0x52);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.D = 0;
+    cpu->registers.D = test_value;
+    LD_r_r(cpu, 0x52);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_D_E(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x01;
-    cpu.registers.D = 0;
-    cpu.registers.E = test_value;
-    LD_r_r(&cpu, 0x53);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.D = 0;
+    cpu->registers.E = test_value;
+    LD_r_r(cpu, 0x53);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_D_H(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x01;
-    cpu.registers.D = 0;
-    cpu.registers.H = test_value;
-    LD_r_r(&cpu, 0x54);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.D = 0;
+    cpu->registers.H = test_value;
+    LD_r_r(cpu, 0x54);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_D_L(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x01;
-    cpu.registers.D = 0;
-    cpu.registers.L = test_value;
-    LD_r_r(&cpu, 0x55);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.D = 0;
+    cpu->registers.L = test_value;
+    LD_r_r(cpu, 0x55);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_D_A(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x01;
-    cpu.registers.D = 0;
-    cpu.registers.A = test_value;
-    LD_r_r(&cpu, 0x57);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.D = 0;
+    cpu->registers.A = test_value;
+    LD_r_r(cpu, 0x57);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_E_B(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.E = 0;
-    cpu.registers.B = test_value;
-    LD_r_r(&cpu, 0x58);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.E = 0;
+    cpu->registers.B = test_value;
+    LD_r_r(cpu, 0x58);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_E_C(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.E = 0;
-    cpu.registers.C = test_value;
-    LD_r_r(&cpu, 0x59);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.E = 0;
+    cpu->registers.C = test_value;
+    LD_r_r(cpu, 0x59);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_E_D(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.E = 0;
-    cpu.registers.D = test_value;
-    LD_r_r(&cpu, 0x5a);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.E = 0;
+    cpu->registers.D = test_value;
+    LD_r_r(cpu, 0x5a);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_E_E(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.E = 0;
-    cpu.registers.E = test_value;
-    LD_r_r(&cpu, 0x5b);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.E = 0;
+    cpu->registers.E = test_value;
+    LD_r_r(cpu, 0x5b);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_E_H(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.E = 0;
-    cpu.registers.H = test_value;
-    LD_r_r(&cpu, 0x5c);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.E = 0;
+    cpu->registers.H = test_value;
+    LD_r_r(cpu, 0x5c);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_E_L(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.E = 0;
-    cpu.registers.L = test_value;
-    LD_r_r(&cpu, 0x5d);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.E = 0;
+    cpu->registers.L = test_value;
+    LD_r_r(cpu, 0x5d);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_E_A(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.E = 0;
-    cpu.registers.A = test_value;
-    LD_r_r(&cpu, 0x5f);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.E = 0;
+    cpu->registers.A = test_value;
+    LD_r_r(cpu, 0x5f);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_H_B(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.H = 0;
-    cpu.registers.B = test_value;
-    LD_r_r(&cpu, 0x60);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.H = 0;
+    cpu->registers.B = test_value;
+    LD_r_r(cpu, 0x60);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_H_C(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.H = 0;
-    cpu.registers.C = test_value;
-    LD_r_r(&cpu, 0x61);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.H = 0;
+    cpu->registers.C = test_value;
+    LD_r_r(cpu, 0x61);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_H_D(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.H = 0;
-    cpu.registers.D = test_value;
-    LD_r_r(&cpu, 0x62);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.H = 0;
+    cpu->registers.D = test_value;
+    LD_r_r(cpu, 0x62);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_H_E(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.H = 0;
-    cpu.registers.E = test_value;
-    LD_r_r(&cpu, 0x63);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.H = 0;
+    cpu->registers.E = test_value;
+    LD_r_r(cpu, 0x63);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_H_H(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.H = 0;
-    cpu.registers.H = test_value;
-    LD_r_r(&cpu, 0x64);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.H = 0;
+    cpu->registers.H = test_value;
+    LD_r_r(cpu, 0x64);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_H_L(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.H = 0;
-    cpu.registers.L = test_value;
-    LD_r_r(&cpu, 0x65);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.H = 0;
+    cpu->registers.L = test_value;
+    LD_r_r(cpu, 0x65);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_H_A(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.H = 0;
-    cpu.registers.A = test_value;
-    LD_r_r(&cpu, 0x67);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.H = 0;
+    cpu->registers.A = test_value;
+    LD_r_r(cpu, 0x67);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_L_B(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.L = 0;
-    cpu.registers.B = test_value;
-    LD_r_r(&cpu, 0x68);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.L = 0;
+    cpu->registers.B = test_value;
+    LD_r_r(cpu, 0x68);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_L_C(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.L = 0;
-    cpu.registers.C = test_value;
-    LD_r_r(&cpu, 0x69);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.L = 0;
+    cpu->registers.C = test_value;
+    LD_r_r(cpu, 0x69);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_L_D(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.L = 0;
-    cpu.registers.D = test_value;
-    LD_r_r(&cpu, 0x6a);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.L = 0;
+    cpu->registers.D = test_value;
+    LD_r_r(cpu, 0x6a);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_L_E(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.L = 0;
-    cpu.registers.E = test_value;
-    LD_r_r(&cpu, 0x6b);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.L = 0;
+    cpu->registers.E = test_value;
+    LD_r_r(cpu, 0x6b);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_L_H(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.L = 0;
-    cpu.registers.H = test_value;
-    LD_r_r(&cpu, 0x6c);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.L = 0;
+    cpu->registers.H = test_value;
+    LD_r_r(cpu, 0x6c);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_L_L(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.L = 0;
-    cpu.registers.L = test_value;
-    LD_r_r(&cpu, 0x6d);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.L = 0;
+    cpu->registers.L = test_value;
+    LD_r_r(cpu, 0x6d);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_L_A(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0xee;
-    cpu.registers.L = 0;
-    cpu.registers.A = test_value;
-    LD_r_r(&cpu, 0x6f);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.L = 0;
+    cpu->registers.A = test_value;
+    LD_r_r(cpu, 0x6f);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_A_B(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x23;
-    cpu.registers.A = 0;
-    cpu.registers.B = test_value;
-    LD_r_r(&cpu, 0x78);
-    CU_ASSERT_EQUAL(cpu.registers.B, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.A = 0;
+    cpu->registers.B = test_value;
+    LD_r_r(cpu, 0x78);
+    CU_ASSERT_EQUAL(cpu->registers.B, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_A_C(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x23;
-    cpu.registers.A = 0;
-    cpu.registers.C = test_value;
-    LD_r_r(&cpu, 0x78);
-    CU_ASSERT_EQUAL(cpu.registers.C, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.A = 0;
+    cpu->registers.C = test_value;
+    LD_r_r(cpu, 0x79);
+    CU_ASSERT_EQUAL(cpu->registers.C, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_A_D(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x23;
-    cpu.registers.A = 0;
-    cpu.registers.D = test_value;
-    LD_r_r(&cpu, 0x78);
-    CU_ASSERT_EQUAL(cpu.registers.D, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.A = 0;
+    cpu->registers.D = test_value;
+    LD_r_r(cpu, 0x7a);
+    CU_ASSERT_EQUAL(cpu->registers.D, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_A_E(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x23;
-    cpu.registers.A = 0;
-    cpu.registers.E = test_value;
-    LD_r_r(&cpu, 0x78);
-    CU_ASSERT_EQUAL(cpu.registers.E, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.A = 0;
+    cpu->registers.E = test_value;
+    LD_r_r(cpu, 0x7b);
+    CU_ASSERT_EQUAL(cpu->registers.E, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_A_H(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x23;
-    cpu.registers.A = 0;
-    cpu.registers.H = test_value;
-    LD_r_r(&cpu, 0x78);
-    CU_ASSERT_EQUAL(cpu.registers.H, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.A = 0;
+    cpu->registers.H = test_value;
+    LD_r_r(cpu, 0x7c);
+    CU_ASSERT_EQUAL(cpu->registers.H, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_A_L(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x23;
-    cpu.registers.A = 0;
-    cpu.registers.L = test_value;
-    LD_r_r(&cpu, 0x78);
-    CU_ASSERT_EQUAL(cpu.registers.L, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.A = 0;
+    cpu->registers.L = test_value;
+    LD_r_r(cpu, 0x7d);
+    CU_ASSERT_EQUAL(cpu->registers.L, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_LD_A_A(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t test_value = 0x23;
-    cpu.registers.A = 0;
-    cpu.registers.A = test_value;
-    LD_r_r(&cpu, 0x78);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.registers.A, test_value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.A = 0;
+    cpu->registers.A = test_value;
+    LD_r_r(cpu, 0x7f);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->registers.A, test_value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 int main(void)

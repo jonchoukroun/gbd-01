@@ -4,54 +4,54 @@
 
 void test_LD_A_HLI(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t HL = 0x1234;
     uint8_t value = 0xab;
-    cpu.registers.HL = HL;
-    cpu.memory[HL] = value;
-    LD_A_HLI(&cpu, 0x2a);
-    CU_ASSERT_EQUAL(cpu.registers.A, value);
-    CU_ASSERT_EQUAL(cpu.registers.HL, HL + 1);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    cpu->registers.HL = HL;
+    cpu->memory[HL] = value;
+    LD_A_HLI(cpu, 0x2a);
+    CU_ASSERT_EQUAL(cpu->registers.A, value);
+    CU_ASSERT_EQUAL(cpu->registers.HL, HL + 1);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_LD_A_HLD(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t HL = 0x1234;
     uint8_t value = 0xab;
-    cpu.registers.HL = HL;
-    cpu.memory[HL] = value;
-    LD_A_HLD(&cpu, 0x3a);
-    CU_ASSERT_EQUAL(cpu.registers.A, value);
-    CU_ASSERT_EQUAL(cpu.registers.HL, HL - 1);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    cpu->registers.HL = HL;
+    cpu->memory[HL] = value;
+    LD_A_HLD(cpu, 0x3a);
+    CU_ASSERT_EQUAL(cpu->registers.A, value);
+    CU_ASSERT_EQUAL(cpu->registers.HL, HL - 1);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_LD_HLI_A(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t HL = 0x1234;
     uint8_t value = 0xdd;
-    cpu.registers.HL = HL;
-    cpu.registers.A = value;
-    LD_HLI_A(&cpu, 0x22);
-    CU_ASSERT_EQUAL(cpu.memory[HL], value);
-    CU_ASSERT_EQUAL(cpu.registers.HL, HL + 1);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    cpu->registers.HL = HL;
+    cpu->registers.A = value;
+    LD_HLI_A(cpu, 0x22);
+    CU_ASSERT_EQUAL(cpu->memory[HL], value);
+    CU_ASSERT_EQUAL(cpu->registers.HL, HL + 1);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_LD_HLD_A(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t HL = 0x1234;
     uint8_t value = 0xcc;
-    cpu.registers.HL = HL;
-    cpu.registers.A = value;
-    LD_HLD_A(&cpu, 0x32);
-    CU_ASSERT_EQUAL(cpu.memory[HL], value);
-    CU_ASSERT_EQUAL(cpu.registers.HL, HL - 1);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    cpu->registers.HL = HL;
+    cpu->registers.A = value;
+    LD_HLD_A(cpu, 0x32);
+    CU_ASSERT_EQUAL(cpu->memory[HL], value);
+    CU_ASSERT_EQUAL(cpu->registers.HL, HL - 1);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 int main(void)

@@ -4,104 +4,104 @@
 
 void test_XOR_A(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x23;
-    XOR_r(&cpu, 0xaf);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x23);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x23;
+    XOR_r(cpu, 0xaf);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x23);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_XOR_B(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0xaa;
-    cpu.registers.B = 0x11;
-    XOR_r(&cpu, 0xa8);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0xaa;
+    cpu->registers.B = 0x11;
+    XOR_r(cpu, 0xa8);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0xbb);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_XOR_C(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0xaa;
-    cpu.registers.C = 0x11;
-    XOR_r(&cpu, 0xa9);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0xaa;
+    cpu->registers.C = 0x11;
+    XOR_r(cpu, 0xa9);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0xbb);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_XOR_D(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0xaa;
-    cpu.registers.D = 0x11;
-    XOR_r(&cpu, 0xaa);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0xaa;
+    cpu->registers.D = 0x11;
+    XOR_r(cpu, 0xaa);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0xbb);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_XOR_E(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0xaa;
-    cpu.registers.E = 0x11;
-    XOR_r(&cpu, 0xab);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0xaa;
+    cpu->registers.E = 0x11;
+    XOR_r(cpu, 0xab);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0xbb);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_XOR_H(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0xaa;
-    cpu.registers.H = 0x11;
-    XOR_r(&cpu, 0xac);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0xaa;
+    cpu->registers.H = 0x11;
+    XOR_r(cpu, 0xac);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0xbb);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_XOR_L(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0xaa;
-    cpu.registers.L = 0x11;
-    XOR_r(&cpu, 0xad);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0xbb);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0xaa;
+    cpu->registers.L = 0x11;
+    XOR_r(cpu, 0xad);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0xbb);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_XOR_n(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x0;
-    cpu.PC = 0x500;
-    cpu.memory[cpu.PC] = 0x5;
-    XOR_n(&cpu, 0xee);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x5);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x0;
+    cpu->PC = 0x500;
+    cpu->memory[cpu->PC] = 0x5;
+    XOR_n(cpu, 0xee);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x5);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_XOR_HL(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t value = 0x5a;
     uint16_t address = 0x1200;
-    cpu.registers.HL = address;
-    cpu.memory[address] = value;
-    cpu.registers.A = 0x12;
-    XOR_HL(&cpu, 0xae);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x5a)
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    cpu->registers.HL = address;
+    cpu->memory[address] = value;
+    cpu->registers.A = 0x12;
+    XOR_HL(cpu, 0xae);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x5a)
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 int main()

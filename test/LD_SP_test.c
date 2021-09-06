@@ -4,39 +4,39 @@
 
 void LD_HL_SPe_test()
 {
-    CPU cpu;
-    cpu.SP = 0xfff8;
-    cpu.PC = 0x1000;
-    cpu.memory[cpu.PC] = 0x02;
-    LD_HL_SPe(&cpu, 0xf8);
-    CU_ASSERT_EQUAL(cpu.registers.HL, 0xfffa);
-    CU_ASSERT_EQUAL(cpu.SP, 0xfff8);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+    CPU *cpu = init_cpu();
+    cpu->SP = 0xfff8;
+    cpu->PC = 0x1000;
+    cpu->memory[cpu->PC] = 0x02;
+    LD_HL_SPe(cpu, 0xf8);
+    CU_ASSERT_EQUAL(cpu->registers.HL, 0xfffa);
+    CU_ASSERT_EQUAL(cpu->SP, 0xfff8);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
 
     // -0x7c, -124
-    cpu.memory[cpu.PC] = 0b10000100;
-    cpu.SP = 0xff55;
-    LD_HL_SPe(&cpu, 0xf8);
-    CU_ASSERT_EQUAL(cpu.registers.HL, 0xfed9);
-    CU_ASSERT_EQUAL(cpu.SP, 0xff55);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+    cpu->memory[cpu->PC] = 0b10000100;
+    cpu->SP = 0xff55;
+    LD_HL_SPe(cpu, 0xf8);
+    CU_ASSERT_EQUAL(cpu->registers.HL, 0xfed9);
+    CU_ASSERT_EQUAL(cpu->SP, 0xff55);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
 }
 
 void LD_nn_SP_test()
 {
-    CPU cpu;
-    cpu.SP = 0xfff8;
-    cpu.PC = 0x10aa;
-    cpu.memory[cpu.PC] = 0xc1;
-    cpu.memory[cpu.PC + 1] = 0x00;
-    LD_nn_SP(&cpu, 0x08);
-    CU_ASSERT_EQUAL(cpu.memory[0xc100], 0xf8);
-    CU_ASSERT_EQUAL(cpu.memory[0xc101], 0xff);
-    CU_ASSERT_EQUAL(cpu.SP, 0xfff8);
-    CU_ASSERT_EQUAL(cpu.PC, 0x10ac);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 20);
+    CPU *cpu = init_cpu();
+    cpu->SP = 0xfff8;
+    cpu->PC = 0x10aa;
+    cpu->memory[cpu->PC] = 0xc1;
+    cpu->memory[cpu->PC + 1] = 0x00;
+    LD_nn_SP(cpu, 0x08);
+    CU_ASSERT_EQUAL(cpu->memory[0xc100], 0xf8);
+    CU_ASSERT_EQUAL(cpu->memory[0xc101], 0xff);
+    CU_ASSERT_EQUAL(cpu->SP, 0xfff8);
+    CU_ASSERT_EQUAL(cpu->PC, 0x10ac);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 20);
 }
 
 int main(void)

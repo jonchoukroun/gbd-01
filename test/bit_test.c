@@ -4,143 +4,143 @@
 
 void BIT_tester(uint8_t opcode)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t r = opcode & 0b111;
     uint8_t bit = (opcode & 0b111000) >> 3;
     RegSet_8 set_R = R_TABLE_8[r];
 
-    set_R(&cpu, 0);
-    cpu.registers.F = 0;
-    BIT(&cpu, opcode);
-    CU_ASSERT_EQUAL(fetch_r8(&cpu, r), 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10100000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    set_R(cpu, 0);
+    cpu->registers.F = 0;
+    BIT(cpu, opcode);
+    CU_ASSERT_EQUAL(fetch_r8(cpu, r), 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10100000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    set_R(&cpu, 0xff);
-    cpu.registers.F = 0b11110000;
-    BIT(&cpu, opcode);
-    CU_ASSERT_EQUAL(fetch_r8(&cpu, r), 0xff);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    set_R(cpu, 0xff);
+    cpu->registers.F = 0b11110000;
+    BIT(cpu, opcode);
+    CU_ASSERT_EQUAL(fetch_r8(cpu, r), 0xff);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
     // Set only the bit to check
-    set_R(&cpu, (1 << bit));
-    cpu.registers.F = 0;
-    BIT(&cpu, opcode);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    set_R(cpu, (1 << bit));
+    cpu->registers.F = 0;
+    BIT(cpu, opcode);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00100000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
     // Clear only the bit to check
-    set_R(&cpu, ~(1 << bit));
-    cpu.registers.F = 0b11110000;
-    BIT(&cpu, opcode);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    set_R(cpu, ~(1 << bit));
+    cpu->registers.F = 0b11110000;
+    BIT(cpu, opcode);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void BIT_HL_tester(uint8_t opcode)
 {
-    CPU cpu;
-    cpu.registers.HL = 0x1234;
+    CPU *cpu = init_cpu();
+    cpu->registers.HL = 0x1234;
     uint8_t bit = (opcode & 0b111000) >> 3;
 
-    cpu.memory[cpu.registers.HL] = 0;
-    cpu.registers.F = 0;
-    BIT_HL(&cpu, opcode);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10100000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+    cpu->memory[cpu->registers.HL] = 0;
+    cpu->registers.F = 0;
+    BIT_HL(cpu, opcode);
+    CU_ASSERT_EQUAL(cpu->memory[cpu->registers.HL], 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10100000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
 
-    cpu.memory[cpu.registers.HL] = 0xff;
-    cpu.registers.F = 0b11110000;
-    BIT_HL(&cpu, opcode);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0xff);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+    cpu->memory[cpu->registers.HL] = 0xff;
+    cpu->registers.F = 0b11110000;
+    BIT_HL(cpu, opcode);
+    CU_ASSERT_EQUAL(cpu->memory[cpu->registers.HL], 0xff);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
 
     // Set only the bit to check
-    cpu.memory[cpu.registers.HL] = 1 << bit;
-    cpu.registers.F = 0;
-    BIT_HL(&cpu, opcode);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+    cpu->memory[cpu->registers.HL] = 1 << bit;
+    cpu->registers.F = 0;
+    BIT_HL(cpu, opcode);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00100000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
 
     // Clear only the bit to check
-    cpu.memory[cpu.registers.HL] = ~(1 << bit);
-    cpu.registers.F = 0b11110000;
-    BIT_HL(&cpu, opcode);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+    cpu->memory[cpu->registers.HL] = ~(1 << bit);
+    cpu->registers.F = 0b11110000;
+    BIT_HL(cpu, opcode);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
 }
 
 void SET_tester(uint8_t opcode)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t r = opcode & 0b111;
     uint8_t bit = (opcode & 0b111000) >> 3;
     RegSet_8 set_R = R_TABLE_8[r];
 
-    set_R(&cpu, 0);
-    cpu.registers.F = 0;
-    SET(&cpu, opcode);
-    CU_ASSERT_EQUAL(fetch_r8(&cpu, r), 1 << bit);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    set_R(cpu, 0);
+    cpu->registers.F = 0;
+    SET(cpu, opcode);
+    CU_ASSERT_EQUAL(fetch_r8(cpu, r), 1 << bit);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    set_R(&cpu, 0xff);
-    cpu.registers.F = 0b11110000;
-    SET(&cpu, opcode);
-    CU_ASSERT_EQUAL(fetch_r8(&cpu, r), 0xff);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b11110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    set_R(cpu, 0xff);
+    cpu->registers.F = 0b11110000;
+    SET(cpu, opcode);
+    CU_ASSERT_EQUAL(fetch_r8(cpu, r), 0xff);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b11110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    set_R(&cpu, 0xff ^ (1 << bit));
-    cpu.registers.F = 0;
-    SET(&cpu, opcode);
-    CU_ASSERT_EQUAL(fetch_r8(&cpu, r), 0xff);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    set_R(cpu, 0xff ^ (1 << bit));
+    cpu->registers.F = 0;
+    SET(cpu, opcode);
+    CU_ASSERT_EQUAL(fetch_r8(cpu, r), 0xff);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void SET_HL_tester(uint8_t opcode)
 {
-    CPU cpu;
-    cpu.registers.HL = 0x0721;
+    CPU *cpu = init_cpu();
+    cpu->registers.HL = 0x0721;
     uint8_t bit = (opcode & 0b111000) >> 3;
 
-    cpu.memory[cpu.registers.HL] = 0;
-    cpu.registers.F = 0b10100000;
-    SET_HL(&cpu, opcode);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 1 << bit);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10100000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    cpu->memory[cpu->registers.HL] = 0;
+    cpu->registers.F = 0b10100000;
+    SET_HL(cpu, opcode);
+    CU_ASSERT_EQUAL(cpu->memory[cpu->registers.HL], 1 << bit);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10100000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 }
 
 void RES_tester(uint8_t opcode)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t r = opcode & 0b111;
     uint8_t bit = (opcode & 0b111000) >> 3;
     RegSet_8 set_R = R_TABLE_8[r];
 
-    set_R(&cpu, 0);
-    cpu.registers.F = 0;
-    RES(&cpu, opcode);
-    CU_ASSERT_EQUAL(fetch_r8(&cpu, r), 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    set_R(cpu, 0);
+    cpu->registers.F = 0;
+    RES(cpu, opcode);
+    CU_ASSERT_EQUAL(fetch_r8(cpu, r), 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void RES_HL_tester(uint8_t opcode)
 {
-    CPU cpu;
-    cpu.registers.HL = 0x2121;
-    cpu.memory[cpu.registers.HL] = 0;
-    cpu.registers.F = 0b10100000;
-    RES_HL(&cpu, opcode);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.registers.HL], 0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10100000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    CPU *cpu = init_cpu();
+    cpu->registers.HL = 0x2121;
+    cpu->memory[cpu->registers.HL] = 0;
+    cpu->registers.F = 0b10100000;
+    RES_HL(cpu, opcode);
+    CU_ASSERT_EQUAL(cpu->memory[cpu->registers.HL], 0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10100000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 }
 
 void test_BIT(void)

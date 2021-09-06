@@ -4,138 +4,138 @@
 
 void test_ADC_B(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0x0a;
-    cpu.registers.B = 0xfa;
-    cpu.registers.F = 0b00010000;
-    ADC_r(&cpu, 0x88);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x05);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x0a;
+    cpu->registers.B = 0xfa;
+    cpu->registers.F = 0b00010000;
+    ADC_r(cpu, 0x88);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x05);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_ADC_C(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0xfe;
-    cpu.registers.C = 0x01;
-    cpu.registers.F = 0b00010000;
-    ADC_r(&cpu, 0x89);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0xfe;
+    cpu->registers.C = 0x01;
+    cpu->registers.F = 0b00010000;
+    ADC_r(cpu, 0x89);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_ADC_D(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0xdd;
-    cpu.registers.D = 0x23;
-    cpu.registers.F = 0b00000000;
-    ADC_r(&cpu, 0x8a);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0xdd;
+    cpu->registers.D = 0x23;
+    cpu->registers.F = 0b00000000;
+    ADC_r(cpu, 0x8a);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_ADC_E(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0xdd;
-    cpu.registers.E = 0x23;
-    cpu.registers.F = 0b00000000;
-    ADC_r(&cpu, 0x8b);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0xdd;
+    cpu->registers.E = 0x23;
+    cpu->registers.F = 0b00000000;
+    ADC_r(cpu, 0x8b);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_ADC_H(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0xdd;
-    cpu.registers.H = 0x23;
-    cpu.registers.F = 0b00000000;
-    ADC_r(&cpu, 0x8c);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0xdd;
+    cpu->registers.H = 0x23;
+    cpu->registers.F = 0b00000000;
+    ADC_r(cpu, 0x8c);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_ADC_L(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0xdd;
-    cpu.registers.L = 0x23;
-    cpu.registers.F = 0b00000000;
-    ADC_r(&cpu, 0x8d);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0xdd;
+    cpu->registers.L = 0x23;
+    cpu->registers.F = 0b00000000;
+    ADC_r(cpu, 0x8d);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_ADC_A(void)
 {
     // Doubles A when carry flag is cleared
-    CPU cpu;
-    cpu.registers.A = 0x01;
-    cpu.registers.F = 0b00000000;
-    ADC_r(&cpu, 0x8f);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x02);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0x01;
+    cpu->registers.F = 0b00000000;
+    ADC_r(cpu, 0x8f);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x02);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 
     // Doubles A then adds 1 when carry flag is set
-    cpu.registers.A = 0x03;
-    cpu.registers.F = 0b00010000;
-    ADC_r(&cpu, 0x8f);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x07);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.A = 0x03;
+    cpu->registers.F = 0b00010000;
+    ADC_r(cpu, 0x8f);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x07);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 
     // Sets carry flag and result is masked to 0xff when greater than 8bits
-    cpu.registers.A = 0xf0;
-    cpu.registers.F = 0b00000000;
-    ADC_r(&cpu, 0x8f);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0xe0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.A = 0xf0;
+    cpu->registers.F = 0b00000000;
+    ADC_r(cpu, 0x8f);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0xe0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 
     // Sets zero flag when result is 0
-    cpu.registers.A = 0x80;
-    cpu.registers.F = 0b00000000;
-    ADC_r(&cpu, 0x8f);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10010000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 4);
+    cpu->registers.A = 0x80;
+    cpu->registers.F = 0b00000000;
+    ADC_r(cpu, 0x8f);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10010000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 4);
 }
 
 void test_ADC_n(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t PC = 0x0100;
-    cpu.PC = PC;
-    cpu.memory[PC] = 0xdc;
-    cpu.registers.A = 0x23;
-    cpu.registers.F = 0b00010000;
-    ADC_n(&cpu, 0xce);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
-    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
+    cpu->PC = PC;
+    cpu->memory[PC] = 0xdc;
+    cpu->registers.A = 0x23;
+    cpu->registers.F = 0b00010000;
+    ADC_n(cpu, 0xce);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
+    CU_ASSERT_EQUAL(cpu->PC, PC + 1);
 }
 
 void test_ADC_HL(void)
 {
-    CPU cpu;
-    cpu.registers.A = 0xdc;
-    cpu.registers.HL = 0x1000;
-    cpu.memory[cpu.registers.HL] = 0x23;
-    cpu.registers.F = 0b00010000;
-    ADC_HL(&cpu, 0x8e);
-    CU_ASSERT_EQUAL(cpu.registers.A, 0x0);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10110000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    CPU *cpu = init_cpu();
+    cpu->registers.A = 0xdc;
+    cpu->registers.HL = 0x1000;
+    cpu->memory[cpu->registers.HL] = 0x23;
+    cpu->registers.F = 0b00010000;
+    ADC_HL(cpu, 0x8e);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x0);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10110000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 int main()

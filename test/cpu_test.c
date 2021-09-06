@@ -4,109 +4,109 @@
 
 void test_fetch_opcode(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t PC_start = 0x1000;
     uint8_t opcode = 0xab;
-    cpu.memory[PC_start] = opcode;
-    cpu.memory[PC_start + 1] = 0xcd;
-    cpu.PC = PC_start;
-    CU_ASSERT_EQUAL(fetch_opcode(&cpu), opcode);
-    CU_ASSERT_EQUAL(cpu.PC, PC_start + 1);
+    cpu->memory[PC_start] = opcode;
+    cpu->memory[PC_start + 1] = 0xcd;
+    cpu->PC = PC_start;
+    CU_ASSERT_EQUAL(fetch_opcode(cpu), opcode);
+    CU_ASSERT_EQUAL(cpu->PC, PC_start + 1);
 }
 
 void test_read_byte(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t byte = 0xf1;
     uint16_t address = 0x1005;
-    cpu.memory[address] = byte;
-    CU_ASSERT_EQUAL(read_byte(&cpu, address), byte);
+    cpu->memory[address] = byte;
+    CU_ASSERT_EQUAL(read_byte(cpu, address), byte);
 }
 
 void test_read_word(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t word = 0xabcd;
     uint16_t address = 0x3003;
-    cpu.memory[address] = 0xab;
-    cpu.memory[address + 1] = 0xcd;
-    CU_ASSERT_EQUAL(read_word(&cpu, address), word);
+    cpu->memory[address] = 0xab;
+    cpu->memory[address + 1] = 0xcd;
+    CU_ASSERT_EQUAL(read_word(cpu, address), word);
 }
 
 void test_write_byte(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t byte = 0x16;
     uint16_t address = 0x4000;
-    cpu.memory[address] = 0;
-    write_byte(&cpu, byte, address);
-    CU_ASSERT_EQUAL(read_byte(&cpu, address), byte);
+    cpu->memory[address] = 0;
+    write_byte(cpu, byte, address);
+    CU_ASSERT_EQUAL(read_byte(cpu, address), byte);
 }
 
 void test_write_word(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t word = 0x3456;
     uint16_t address = 0x1110;
-    cpu.memory[address] = 0;
-    cpu.memory[address + 1] = 0;
-    write_word(&cpu, word, address);
-    CU_ASSERT_EQUAL(cpu.memory[address], 0x34);
-    CU_ASSERT_EQUAL(cpu.memory[address + 1], 0x56);
+    cpu->memory[address] = 0;
+    cpu->memory[address + 1] = 0;
+    write_word(cpu, word, address);
+    CU_ASSERT_EQUAL(cpu->memory[address], 0x34);
+    CU_ASSERT_EQUAL(cpu->memory[address + 1], 0x56);
 }
 
 void test_set_flag(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
 
     // Set cleared flags
-    cpu.registers.F = 0;
-    set_flag(&cpu, Z_FLAG);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
+    cpu->registers.F = 0;
+    set_flag(cpu, Z_FLAG);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10000000);
 
-    cpu.registers.F = 0;
-    set_flag(&cpu, N_FLAG);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
+    cpu->registers.F = 0;
+    set_flag(cpu, N_FLAG);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01000000);
 
-    cpu.registers.F = 0;
-    set_flag(&cpu, H_FLAG);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+    cpu->registers.F = 0;
+    set_flag(cpu, H_FLAG);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00100000);
 
-    cpu.registers.F = 0;
-    set_flag(&cpu, C_FLAG);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    cpu->registers.F = 0;
+    set_flag(cpu, C_FLAG);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00010000);
 
     // Set existing flags
-    cpu.registers.F = 0b10000000;
-    set_flag(&cpu, Z_FLAG);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
+    cpu->registers.F = 0b10000000;
+    set_flag(cpu, Z_FLAG);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10000000);
 
-    cpu.registers.F = 0b01000000;
-    set_flag(&cpu, N_FLAG);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b01000000);
+    cpu->registers.F = 0b01000000;
+    set_flag(cpu, N_FLAG);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b01000000);
 
-    cpu.registers.F = 0b00100000;
-    set_flag(&cpu, H_FLAG);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00100000);
+    cpu->registers.F = 0b00100000;
+    set_flag(cpu, H_FLAG);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00100000);
 
-    cpu.registers.F = 0;
-    set_flag(&cpu, C_FLAG);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
+    cpu->registers.F = 0;
+    set_flag(cpu, C_FLAG);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00010000);
 
     // Ignore other flags
-    cpu.registers.F = 0b10110000;
-    set_flag(&cpu, N_FLAG);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b11110000);
+    cpu->registers.F = 0b10110000;
+    set_flag(cpu, N_FLAG);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b11110000);
 }
 
 void test_IME_flag(void)
 {
-    CPU cpu;
-    cpu.memory[IME_FLAG] = 0;
-    set_IME(&cpu);
-    CU_ASSERT_EQUAL(cpu.memory[IME_FLAG], 1);
-    reset_IME(&cpu);
-    CU_ASSERT_EQUAL(cpu.memory[IME_FLAG], 0);
+    CPU *cpu = init_cpu();
+    cpu->memory[IME_FLAG] = 0;
+    set_IME(cpu);
+    CU_ASSERT_EQUAL(cpu->memory[IME_FLAG], 1);
+    reset_IME(cpu);
+    CU_ASSERT_EQUAL(cpu->memory[IME_FLAG], 0);
 }
 
 int main()

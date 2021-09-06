@@ -4,111 +4,111 @@
 
 void test_PUSH_BC(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t SP = 0x5fff;
-    cpu.SP = SP;
-    cpu.registers.BC = 0xabcd;
-    PUSH_rr(&cpu, 0xc5);
-    CU_ASSERT_EQUAL(cpu.memory[SP - 1], 0xcd);
-    CU_ASSERT_EQUAL(cpu.memory[SP - 2], 0xab);
-    CU_ASSERT_EQUAL(cpu.SP, SP - 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    cpu->SP = SP;
+    cpu->registers.BC = 0xabcd;
+    PUSH_rr(cpu, 0xc5);
+    CU_ASSERT_EQUAL(cpu->memory[SP - 1], 0xcd);
+    CU_ASSERT_EQUAL(cpu->memory[SP - 2], 0xab);
+    CU_ASSERT_EQUAL(cpu->SP, SP - 2);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 }
 
 void test_PUSH_DE(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t SP = 0x5fff;
     uint16_t value = 0xabcd;
-    cpu.SP = SP;
-    cpu.registers.DE = value;
-    PUSH_rr(&cpu, 0xd5);
-    CU_ASSERT_EQUAL(cpu.memory[SP - 1], 0xcd);
-    CU_ASSERT_EQUAL(cpu.memory[SP - 2], 0xab);
-    CU_ASSERT_EQUAL(cpu.SP, SP - 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    cpu->SP = SP;
+    cpu->registers.DE = value;
+    PUSH_rr(cpu, 0xd5);
+    CU_ASSERT_EQUAL(cpu->memory[SP - 1], 0xcd);
+    CU_ASSERT_EQUAL(cpu->memory[SP - 2], 0xab);
+    CU_ASSERT_EQUAL(cpu->SP, SP - 2);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 }
 
 void test_PUSH_HL(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t SP = 0x5fff;
     uint16_t value = 0xabcd;
-    cpu.SP = SP;
-    cpu.registers.HL = value;
-    PUSH_rr(&cpu, 0xe5);
-    CU_ASSERT_EQUAL(cpu.memory[SP - 1], 0xcd);
-    CU_ASSERT_EQUAL(cpu.memory[SP - 2], 0xab);
-    CU_ASSERT_EQUAL(cpu.SP, SP - 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    cpu->SP = SP;
+    cpu->registers.HL = value;
+    PUSH_rr(cpu, 0xe5);
+    CU_ASSERT_EQUAL(cpu->memory[SP - 1], 0xcd);
+    CU_ASSERT_EQUAL(cpu->memory[SP - 2], 0xab);
+    CU_ASSERT_EQUAL(cpu->SP, SP - 2);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 }
 
 void test_PUSH_AF(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t SP = 0x5fff;
     uint16_t value = 0xabcd;
-    cpu.SP = SP;
-    cpu.registers.AF = value;
-    PUSH_rr(&cpu, 0xf5);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.SP], 0xab);
-    CU_ASSERT_EQUAL(cpu.memory[cpu.SP + 1], 0xcd);
-    CU_ASSERT_EQUAL(cpu.SP, SP - 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    cpu->SP = SP;
+    cpu->registers.AF = value;
+    PUSH_rr(cpu, 0xf5);
+    CU_ASSERT_EQUAL(cpu->memory[cpu->SP], 0xab);
+    CU_ASSERT_EQUAL(cpu->memory[cpu->SP + 1], 0xcd);
+    CU_ASSERT_EQUAL(cpu->SP, SP - 2);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 }
 
 void test_POP_BC(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t SP = 0xfffc;
-    cpu.SP = SP;
-    cpu.memory[SP] = 0x5f;
-    cpu.memory[SP + 1] = 0x3c;
-    POP_rr(&cpu, 0xc1);
-    CU_ASSERT_EQUAL(cpu.registers.B, 0x3c);
-    CU_ASSERT_EQUAL(cpu.registers.C, 0x5f);
-    CU_ASSERT_EQUAL(cpu.SP, SP + 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+    cpu->SP = SP;
+    cpu->memory[SP] = 0x5f;
+    cpu->memory[SP + 1] = 0x3c;
+    POP_rr(cpu, 0xc1);
+    CU_ASSERT_EQUAL(cpu->registers.B, 0x3c);
+    CU_ASSERT_EQUAL(cpu->registers.C, 0x5f);
+    CU_ASSERT_EQUAL(cpu->SP, SP + 2);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
 }
 
 void test_POP_DE(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t SP = 0xfffc;
-    cpu.SP = SP;
-    cpu.memory[SP] = 0x5f;
-    cpu.memory[SP + 1] = 0x3c;
-    POP_rr(&cpu, 0xd1);
-    CU_ASSERT_EQUAL(cpu.registers.B, 0x3c);
-    CU_ASSERT_EQUAL(cpu.registers.C, 0x5f);
-    CU_ASSERT_EQUAL(cpu.SP, SP + 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+    cpu->SP = SP;
+    cpu->memory[SP] = 0x5f;
+    cpu->memory[SP + 1] = 0x3c;
+    POP_rr(cpu, 0xd1);
+    CU_ASSERT_EQUAL(cpu->registers.D, 0x3c);
+    CU_ASSERT_EQUAL(cpu->registers.E, 0x5f);
+    CU_ASSERT_EQUAL(cpu->SP, SP + 2);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
 }
 
 void test_POP_HL(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t SP = 0xfffc;
-    cpu.SP = SP;
-    cpu.memory[SP] = 0x5f;
-    cpu.memory[SP + 1] = 0x3c;
-    POP_rr(&cpu, 0xe1);
-    CU_ASSERT_EQUAL(cpu.registers.B, 0x3c);
-    CU_ASSERT_EQUAL(cpu.registers.C, 0x5f);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+    cpu->SP = SP;
+    cpu->memory[SP] = 0x5f;
+    cpu->memory[SP + 1] = 0x3c;
+    POP_rr(cpu, 0xe1);
+    CU_ASSERT_EQUAL(cpu->registers.H, 0x3c);
+    CU_ASSERT_EQUAL(cpu->registers.L, 0x5f);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
 }
 
 void test_POP_AF(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t SP = 0xfffc;
-    cpu.SP = SP;
-    cpu.memory[SP] = 0x5f;
-    cpu.memory[SP + 1] = 0x3c;
-    POP_rr(&cpu, 0xf1);
-    CU_ASSERT_EQUAL(cpu.registers.B, 0x3c);
-    CU_ASSERT_EQUAL(cpu.registers.C, 0x5f);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+    cpu->SP = SP;
+    cpu->memory[SP] = 0x5f;
+    cpu->memory[SP + 1] = 0x3c;
+    POP_rr(cpu, 0xf1);
+    CU_ASSERT_EQUAL(cpu->registers.A, 0x3c);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0x5f);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
 }
 
 int main(void)

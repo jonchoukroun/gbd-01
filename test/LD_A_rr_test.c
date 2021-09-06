@@ -4,70 +4,70 @@
 
 void test_LD_A_BC(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t address = 0xabcd;
     uint8_t value = 0x0f;
-    cpu.registers.BC = address;
-    cpu.memory[address] = value;
-    LD_A_rr(&cpu, 0x0a);
-    CU_ASSERT_EQUAL(cpu.registers.A, value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    cpu->registers.BC = address;
+    cpu->memory[address] = value;
+    LD_A_rr(cpu, 0x0a);
+    CU_ASSERT_EQUAL(cpu->registers.A, value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_LD_A_DE(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t address = 0xabcd;
     uint8_t value = 0x0f;
-    cpu.registers.A = 0;
-    cpu.memory[address] = value;
-    cpu.registers.DE = address;
-    LD_A_rr(&cpu, 0x1a);
-    CU_ASSERT_EQUAL(cpu.registers.A, value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    cpu->registers.A = 0;
+    cpu->memory[address] = value;
+    cpu->registers.DE = address;
+    LD_A_rr(cpu, 0x1a);
+    CU_ASSERT_EQUAL(cpu->registers.A, value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_LDH_A_C(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint8_t low_bit = 0x43;
     uint16_t address = 0xff43;
     uint8_t value = 0x1a;
-    cpu.registers.C = low_bit;
-    cpu.memory[address] = value;
-    cpu.registers.A = 0;
-    LD_A_rr(&cpu, 0xf2);
-    CU_ASSERT_EQUAL(cpu.registers.A, value);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    cpu->registers.C = low_bit;
+    cpu->memory[address] = value;
+    cpu->registers.A = 0;
+    LD_A_rr(cpu, 0xf2);
+    CU_ASSERT_EQUAL(cpu->registers.A, value);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 }
 
 void test_LDH_A_n(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t PC = 0x2020;
     uint8_t value = 0x69;
-    cpu.PC = PC;
-    cpu.memory[PC] = 0x12;
-    cpu.memory[0xff12] = value;
-    LD_A_rr(&cpu, 0xf0);
-    CU_ASSERT_EQUAL(cpu.registers.A, value);
-    CU_ASSERT_EQUAL(cpu.PC, PC + 1);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
+    cpu->PC = PC;
+    cpu->memory[PC] = 0x12;
+    cpu->memory[0xff12] = value;
+    LD_A_rr(cpu, 0xf0);
+    CU_ASSERT_EQUAL(cpu->registers.A, value);
+    CU_ASSERT_EQUAL(cpu->PC, PC + 1);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
 }
 
 void test_LD_A_nn(void)
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     uint16_t PC = 0x1001;
-    cpu.PC = PC;
+    cpu->PC = PC;
     uint8_t value = 0x23;
-    cpu.memory[PC] = 0xab;
-    cpu.memory[PC + 1] = 0xcd;
-    cpu.memory[0xabcd] = value;
-    LD_A_rr(&cpu, 0xfa);
-    CU_ASSERT_EQUAL(cpu.registers.A, value);
-    CU_ASSERT_EQUAL(cpu.PC, PC + 2);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    cpu->memory[PC] = 0xab;
+    cpu->memory[PC + 1] = 0xcd;
+    cpu->memory[0xabcd] = value;
+    LD_A_rr(cpu, 0xfa);
+    CU_ASSERT_EQUAL(cpu->registers.A, value);
+    CU_ASSERT_EQUAL(cpu->PC, PC + 2);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 }
 
 int main(void)

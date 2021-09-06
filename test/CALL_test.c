@@ -4,311 +4,311 @@
 
 void CALL_test()
 {
-    CPU cpu;
+    CPU *cpu = init_cpu();
     // Assume PC incremented when fetching CALL instruction
-    cpu.PC = 0x8001;
-    cpu.memory[cpu.PC] = 0x12;
-    cpu.memory[cpu.PC + 1] = 0x34;
-    cpu.SP = 0xfffe;
-    CALL(&cpu, 0xcd);
-    CU_ASSERT_EQUAL(cpu.PC, 0x1234);
-    CU_ASSERT_EQUAL(cpu.memory[0xfffd], 0x80);
-    CU_ASSERT_EQUAL(cpu.memory[0xfffc], 0x03);
-    CU_ASSERT_EQUAL(cpu.SP, 0xfffc);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 24);
+    cpu->PC = 0x8001;
+    cpu->memory[cpu->PC] = 0x12;
+    cpu->memory[cpu->PC + 1] = 0x34;
+    cpu->SP = 0xfffe;
+    CALL(cpu, 0xcd);
+    CU_ASSERT_EQUAL(cpu->PC, 0x1234);
+    CU_ASSERT_EQUAL(cpu->memory[0xfffd], 0x80);
+    CU_ASSERT_EQUAL(cpu->memory[0xfffc], 0x03);
+    CU_ASSERT_EQUAL(cpu->SP, 0xfffc);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 24);
 }
 
 void CALLC_NZ_test()
 {
-    CPU cpu;
-    cpu.PC = 0x7ffd;
-    cpu.memory[0x8001] = 0x12;
-    cpu.memory[0x8002] = 0x34;
-    cpu.SP = 0xfffe;
-    cpu.registers.F = 0b10000000;
+    CPU *cpu = init_cpu();
+    cpu->PC = 0x7ffd;
+    cpu->memory[0x8001] = 0x12;
+    cpu->memory[0x8002] = 0x34;
+    cpu->SP = 0xfffe;
+    cpu->registers.F = 0b10000000;
     // NZ is false
-    CALLC(&cpu, 0xc4);
-    CU_ASSERT_EQUAL(cpu.PC, 0x7ffd);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
-    CU_ASSERT_EQUAL(cpu.SP, 0xfffe);
+    CALLC(cpu, 0xc4);
+    CU_ASSERT_EQUAL(cpu->PC, 0x7ffd);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10000000);
+    CU_ASSERT_EQUAL(cpu->SP, 0xfffe);
 
     // Mock opcode fetch for CALLC instruction
-    cpu.PC += 4;
-    CU_ASSERT_EQUAL(cpu.PC, 0x8001);
-    cpu.registers.F = 0;
-    CALLC(&cpu, 0xc4);
-    CU_ASSERT_EQUAL(cpu.PC, 0x1234);
-    CU_ASSERT_EQUAL(cpu.memory[0xfffd], 0x80);
-    CU_ASSERT_EQUAL(cpu.memory[0xfffc], 0x03);
-    CU_ASSERT_EQUAL(cpu.SP, 0xfffc);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 24);
+    cpu->PC += 4;
+    CU_ASSERT_EQUAL(cpu->PC, 0x8001);
+    cpu->registers.F = 0;
+    CALLC(cpu, 0xc4);
+    CU_ASSERT_EQUAL(cpu->PC, 0x1234);
+    CU_ASSERT_EQUAL(cpu->memory[0xfffd], 0x80);
+    CU_ASSERT_EQUAL(cpu->memory[0xfffc], 0x03);
+    CU_ASSERT_EQUAL(cpu->SP, 0xfffc);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 24);
 }
 
 void CALLC_Z_test()
 {
-    CPU cpu;
-    cpu.PC = 0x7ffd;
-    cpu.memory[0x8001] = 0x12;
-    cpu.memory[0x8002] = 0x34;
-    cpu.SP = 0xfffe;
-    cpu.registers.F = 0;
+    CPU *cpu = init_cpu();
+    cpu->PC = 0x7ffd;
+    cpu->memory[0x8001] = 0x12;
+    cpu->memory[0x8002] = 0x34;
+    cpu->SP = 0xfffe;
+    cpu->registers.F = 0;
     // Z is false
-    CALLC(&cpu, 0xcc);
-    CU_ASSERT_EQUAL(cpu.PC, 0x7ffd);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.SP, 0xfffe);
+    CALLC(cpu, 0xcc);
+    CU_ASSERT_EQUAL(cpu->PC, 0x7ffd);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->SP, 0xfffe);
 
     // Mock opcode fetch for CALLC instruction
-    cpu.PC += 4;
-    CU_ASSERT_EQUAL(cpu.PC, 0x8001);
-    cpu.registers.F = 0b10000000;
-    CALLC(&cpu, 0xcc);
-    CU_ASSERT_EQUAL(cpu.PC, 0x1234);
-    CU_ASSERT_EQUAL(cpu.memory[0xfffd], 0x80);
-    CU_ASSERT_EQUAL(cpu.memory[0xfffc], 0x03);
-    CU_ASSERT_EQUAL(cpu.SP, 0xfffc);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b10000000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 24);
+    cpu->PC += 4;
+    CU_ASSERT_EQUAL(cpu->PC, 0x8001);
+    cpu->registers.F = 0b10000000;
+    CALLC(cpu, 0xcc);
+    CU_ASSERT_EQUAL(cpu->PC, 0x1234);
+    CU_ASSERT_EQUAL(cpu->memory[0xfffd], 0x80);
+    CU_ASSERT_EQUAL(cpu->memory[0xfffc], 0x03);
+    CU_ASSERT_EQUAL(cpu->SP, 0xfffc);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b10000000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 24);
 }
 
 void CALLC_NC_test()
 {
-    CPU cpu;
-    cpu.PC = 0x7ffd;
-    cpu.memory[0x8001] = 0x12;
-    cpu.memory[0x8002] = 0x34;
-    cpu.SP = 0xfffe;
-    cpu.registers.F = 0b00010000;
+    CPU *cpu = init_cpu();
+    cpu->PC = 0x7ffd;
+    cpu->memory[0x8001] = 0x12;
+    cpu->memory[0x8002] = 0x34;
+    cpu->SP = 0xfffe;
+    cpu->registers.F = 0b00010000;
     // NC is false
-    CALLC(&cpu, 0xd4);
-    CU_ASSERT_EQUAL(cpu.PC, 0x7ffd);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0b00010000);
-    CU_ASSERT_EQUAL(cpu.SP, 0xfffe);
+    CALLC(cpu, 0xd4);
+    CU_ASSERT_EQUAL(cpu->PC, 0x7ffd);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0b00010000);
+    CU_ASSERT_EQUAL(cpu->SP, 0xfffe);
 
     // Mock opcode fetch for CALLC instruction
-    cpu.PC += 4;
-    CU_ASSERT_EQUAL(cpu.PC, 0x8001);
-    cpu.registers.F = 0;
-    CALLC(&cpu, 0xd4);
-    CU_ASSERT_EQUAL(cpu.PC, 0x1234);
-    CU_ASSERT_EQUAL(cpu.memory[0xfffd], 0x80);
-    CU_ASSERT_EQUAL(cpu.memory[0xfffc], 0x03);
-    CU_ASSERT_EQUAL(cpu.SP, 0xfffc);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 24);
+    cpu->PC += 4;
+    CU_ASSERT_EQUAL(cpu->PC, 0x8001);
+    cpu->registers.F = 0;
+    CALLC(cpu, 0xd4);
+    CU_ASSERT_EQUAL(cpu->PC, 0x1234);
+    CU_ASSERT_EQUAL(cpu->memory[0xfffd], 0x80);
+    CU_ASSERT_EQUAL(cpu->memory[0xfffc], 0x03);
+    CU_ASSERT_EQUAL(cpu->SP, 0xfffc);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 24);
 }
 
 void CALLC_C_test()
 {
-    CPU cpu;
-    cpu.PC = 0x7ffd;
-    cpu.memory[0x8001] = 0x12;
-    cpu.memory[0x8002] = 0x34;
-    cpu.SP = 0xfffe;
-    cpu.registers.F = 0;
+    CPU *cpu = init_cpu();
+    cpu->PC = 0x7ffd;
+    cpu->memory[0x8001] = 0x12;
+    cpu->memory[0x8002] = 0x34;
+    cpu->SP = 0xfffe;
+    cpu->registers.F = 0;
     // C is false
-    CALLC(&cpu, 0xdc);
-    CU_ASSERT_EQUAL(cpu.PC, 0x7ffd);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 12);
-    CU_ASSERT_EQUAL(cpu.registers.F, 0);
-    CU_ASSERT_EQUAL(cpu.SP, 0xfffe);
+    CALLC(cpu, 0xdc);
+    CU_ASSERT_EQUAL(cpu->PC, 0x7ffd);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 12);
+    CU_ASSERT_EQUAL(cpu->registers.F, 0);
+    CU_ASSERT_EQUAL(cpu->SP, 0xfffe);
 
     // Mock opcode fetch for CALLC instruction
-    cpu.PC += 4;
-    CU_ASSERT_EQUAL(cpu.PC, 0x8001);
-    cpu.registers.F = 0b00010000;
-    CALLC(&cpu, 0xdc);
-    CU_ASSERT_EQUAL(cpu.PC, 0x1234);
-    CU_ASSERT_EQUAL(cpu.memory[0xfffd], 0x80);
-    CU_ASSERT_EQUAL(cpu.memory[0xfffc], 0x03);
-    CU_ASSERT_EQUAL(cpu.SP, 0xfffc);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 24);
+    cpu->PC += 4;
+    CU_ASSERT_EQUAL(cpu->PC, 0x8001);
+    cpu->registers.F = 0b00010000;
+    CALLC(cpu, 0xdc);
+    CU_ASSERT_EQUAL(cpu->PC, 0x1234);
+    CU_ASSERT_EQUAL(cpu->memory[0xfffd], 0x80);
+    CU_ASSERT_EQUAL(cpu->memory[0xfffc], 0x03);
+    CU_ASSERT_EQUAL(cpu->SP, 0xfffc);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 24);
 }
 
 void RET_test()
 {
-    CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.SP = 0x8000;
-    cpu.memory[0x8000] = 0x80;
-    cpu.memory[0x8001] = 0x03;
-    RET(&cpu, 0xc9);
-    CU_ASSERT_EQUAL(cpu.PC, 0x8003);
-    CU_ASSERT_EQUAL(cpu.SP, 0x8002);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    CPU *cpu = init_cpu();
+    cpu->PC = 0x1000;
+    cpu->SP = 0x8000;
+    cpu->memory[0x8000] = 0x80;
+    cpu->memory[0x8001] = 0x03;
+    RET(cpu, 0xc9);
+    CU_ASSERT_EQUAL(cpu->PC, 0x8003);
+    CU_ASSERT_EQUAL(cpu->SP, 0x8002);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 }
 
 void RETI_test()
 {
-    CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.SP = 0x8000;
-    cpu.memory[0x8000] = 0x80;
-    cpu.memory[0x8001] = 0x03;
-    cpu.memory[IME_FLAG] = 0;
-    RETI(&cpu, 0xc9);
-    CU_ASSERT_EQUAL(cpu.PC, 0x8003);
-    CU_ASSERT_EQUAL(cpu.SP, 0x8002);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
-    CU_ASSERT_EQUAL(cpu.memory[IME_FLAG], 1);
+    CPU *cpu = init_cpu();
+    cpu->PC = 0x1000;
+    cpu->SP = 0x8000;
+    cpu->memory[0x8000] = 0x80;
+    cpu->memory[0x8001] = 0x03;
+    cpu->memory[IME_FLAG] = 0;
+    RETI(cpu, 0xc9);
+    CU_ASSERT_EQUAL(cpu->PC, 0x8003);
+    CU_ASSERT_EQUAL(cpu->SP, 0x8002);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
+    CU_ASSERT_EQUAL(cpu->memory[IME_FLAG], 1);
 }
 
 void RETC_NZ_test()
 {
-    CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.SP = 0x8000;
-    cpu.memory[0x8000] = 0x80;
-    cpu.memory[0x8001] = 0x03;
+    CPU *cpu = init_cpu();
+    cpu->PC = 0x1000;
+    cpu->SP = 0x8000;
+    cpu->memory[0x8000] = 0x80;
+    cpu->memory[0x8001] = 0x03;
     // NZ if false
-    cpu.registers.F = 0b10000000;
-    RETC(&cpu, 0xc0);
-    CU_ASSERT_EQUAL(cpu.PC, 0x1000);
-    CU_ASSERT_EQUAL(cpu.SP, 0x8000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    cpu->registers.F = 0b10000000;
+    RETC(cpu, 0xc0);
+    CU_ASSERT_EQUAL(cpu->PC, 0x1000);
+    CU_ASSERT_EQUAL(cpu->SP, 0x8000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    cpu.registers.F = 0;
-    RETC(&cpu, 0xc0);
-    CU_ASSERT_EQUAL(cpu.PC, 0x8003);
-    CU_ASSERT_EQUAL(cpu.SP, 0x8002);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 20);
+    cpu->registers.F = 0;
+    RETC(cpu, 0xc0);
+    CU_ASSERT_EQUAL(cpu->PC, 0x8003);
+    CU_ASSERT_EQUAL(cpu->SP, 0x8002);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 20);
 }
 
 void RETC_Z_test()
 {
-    CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.SP = 0x8000;
-    cpu.memory[0x8000] = 0x80;
-    cpu.memory[0x8001] = 0x03;
+    CPU *cpu = init_cpu();
+    cpu->PC = 0x1000;
+    cpu->SP = 0x8000;
+    cpu->memory[0x8000] = 0x80;
+    cpu->memory[0x8001] = 0x03;
     // Z if false
-    cpu.registers.F = 0;
-    RETC(&cpu, 0xc8);
-    CU_ASSERT_EQUAL(cpu.PC, 0x1000);
-    CU_ASSERT_EQUAL(cpu.SP, 0x8000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    cpu->registers.F = 0;
+    RETC(cpu, 0xc8);
+    CU_ASSERT_EQUAL(cpu->PC, 0x1000);
+    CU_ASSERT_EQUAL(cpu->SP, 0x8000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    cpu.registers.F = 0b10000000;
-    RETC(&cpu, 0xc8);
-    CU_ASSERT_EQUAL(cpu.PC, 0x8003);
-    CU_ASSERT_EQUAL(cpu.SP, 0x8002);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 20);
+    cpu->registers.F = 0b10000000;
+    RETC(cpu, 0xc8);
+    CU_ASSERT_EQUAL(cpu->PC, 0x8003);
+    CU_ASSERT_EQUAL(cpu->SP, 0x8002);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 20);
 }
 
 void RETC_NC_test()
 {
-    CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.SP = 0x8000;
-    cpu.memory[0x8000] = 0x80;
-    cpu.memory[0x8001] = 0x03;
+    CPU *cpu = init_cpu();
+    cpu->PC = 0x1000;
+    cpu->SP = 0x8000;
+    cpu->memory[0x8000] = 0x80;
+    cpu->memory[0x8001] = 0x03;
     // NC if false
-    cpu.registers.F = 0b00010000;
-    RETC(&cpu, 0xd0);
-    CU_ASSERT_EQUAL(cpu.PC, 0x1000);
-    CU_ASSERT_EQUAL(cpu.SP, 0x8000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    cpu->registers.F = 0b00010000;
+    RETC(cpu, 0xd0);
+    CU_ASSERT_EQUAL(cpu->PC, 0x1000);
+    CU_ASSERT_EQUAL(cpu->SP, 0x8000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    cpu.registers.F = 0;
-    RETC(&cpu, 0xd0);
-    CU_ASSERT_EQUAL(cpu.PC, 0x8003);
-    CU_ASSERT_EQUAL(cpu.SP, 0x8002);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 20);
+    cpu->registers.F = 0;
+    RETC(cpu, 0xd0);
+    CU_ASSERT_EQUAL(cpu->PC, 0x8003);
+    CU_ASSERT_EQUAL(cpu->SP, 0x8002);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 20);
 }
 
 void RETC_C_test()
 {
-    CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.SP = 0x8000;
-    cpu.memory[0x8000] = 0x80;
-    cpu.memory[0x8001] = 0x03;
+    CPU *cpu = init_cpu();
+    cpu->PC = 0x1000;
+    cpu->SP = 0x8000;
+    cpu->memory[0x8000] = 0x80;
+    cpu->memory[0x8001] = 0x03;
     // C if false
-    cpu.registers.F = 0;
-    RETC(&cpu, 0xd8);
-    CU_ASSERT_EQUAL(cpu.PC, 0x1000);
-    CU_ASSERT_EQUAL(cpu.SP, 0x8000);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 8);
+    cpu->registers.F = 0;
+    RETC(cpu, 0xd8);
+    CU_ASSERT_EQUAL(cpu->PC, 0x1000);
+    CU_ASSERT_EQUAL(cpu->SP, 0x8000);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 8);
 
-    cpu.registers.F = 0b00010000;
-    RETC(&cpu, 0xd8);
-    CU_ASSERT_EQUAL(cpu.PC, 0x8003);
-    CU_ASSERT_EQUAL(cpu.SP, 0x8002);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 20);
+    cpu->registers.F = 0b00010000;
+    RETC(cpu, 0xd8);
+    CU_ASSERT_EQUAL(cpu->PC, 0x8003);
+    CU_ASSERT_EQUAL(cpu->SP, 0x8002);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 20);
 }
 
 void RST_test()
 {
-    CPU cpu;
-    cpu.PC = 0x1000;
-    cpu.SP = 0x8000;
+    CPU *cpu = init_cpu();
+    cpu->PC = 0x1000;
+    cpu->SP = 0x8000;
 
     // t = 0
-    RST(&cpu, 0xc7);
-    CU_ASSERT_EQUAL(cpu.SP, 0x7ffe);
-    CU_ASSERT_EQUAL(cpu.memory[0x7fff], 0x10);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ffe], 0x00);
-    CU_ASSERT_EQUAL(cpu.PC, 0);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    RST(cpu, 0xc7);
+    CU_ASSERT_EQUAL(cpu->SP, 0x7ffe);
+    CU_ASSERT_EQUAL(cpu->memory[0x7fff], 0x10);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ffe], 0x00);
+    CU_ASSERT_EQUAL(cpu->PC, 0);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 
     // t = 1
-    RST(&cpu, 0xcf);
-    CU_ASSERT_EQUAL(cpu.SP, 0x7ffc);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ffd], 0);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ffc], 0);
-    CU_ASSERT_EQUAL(cpu.PC, 0x0008);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    RST(cpu, 0xcf);
+    CU_ASSERT_EQUAL(cpu->SP, 0x7ffc);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ffd], 0);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ffc], 0);
+    CU_ASSERT_EQUAL(cpu->PC, 0x0008);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 
     // t = 2
-    RST(&cpu, 0xd7);
-    CU_ASSERT_EQUAL(cpu.SP, 0x7ffa);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ffb], 0);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ffa], 0x08);
-    CU_ASSERT_EQUAL(cpu.PC, 0x0010);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    RST(cpu, 0xd7);
+    CU_ASSERT_EQUAL(cpu->SP, 0x7ffa);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ffb], 0);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ffa], 0x08);
+    CU_ASSERT_EQUAL(cpu->PC, 0x0010);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 
     // t = 3
-    RST(&cpu, 0xdf);
-    CU_ASSERT_EQUAL(cpu.SP, 0x7ff8);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ff9], 0);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ff8], 0x10);
-    CU_ASSERT_EQUAL(cpu.PC, 0x18);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    RST(cpu, 0xdf);
+    CU_ASSERT_EQUAL(cpu->SP, 0x7ff8);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ff9], 0);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ff8], 0x10);
+    CU_ASSERT_EQUAL(cpu->PC, 0x18);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 
     // t = 4
-    RST(&cpu, 0xe7);
-    CU_ASSERT_EQUAL(cpu.SP, 0x7ff6);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ff7], 0);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ff6], 0x18);
-    CU_ASSERT_EQUAL(cpu.PC, 0x20);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    RST(cpu, 0xe7);
+    CU_ASSERT_EQUAL(cpu->SP, 0x7ff6);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ff7], 0);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ff6], 0x18);
+    CU_ASSERT_EQUAL(cpu->PC, 0x20);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 
     // t = 5
-    RST(&cpu, 0xef);
-    CU_ASSERT_EQUAL(cpu.SP, 0x7ff4);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ff5], 0);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ff4], 0x20);
-    CU_ASSERT_EQUAL(cpu.PC, 0x28);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    RST(cpu, 0xef);
+    CU_ASSERT_EQUAL(cpu->SP, 0x7ff4);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ff5], 0);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ff4], 0x20);
+    CU_ASSERT_EQUAL(cpu->PC, 0x28);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 
     // t = 6
-    RST(&cpu, 0xf7);
-    CU_ASSERT_EQUAL(cpu.SP, 0x7ff2);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ff3], 0);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ff2], 0x28);
-    CU_ASSERT_EQUAL(cpu.PC, 0x30);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    RST(cpu, 0xf7);
+    CU_ASSERT_EQUAL(cpu->SP, 0x7ff2);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ff3], 0);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ff2], 0x28);
+    CU_ASSERT_EQUAL(cpu->PC, 0x30);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 
     // t = 7
-    RST(&cpu, 0xff);
-    CU_ASSERT_EQUAL(cpu.SP, 0x7ff0);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ff1], 0);
-    CU_ASSERT_EQUAL(cpu.memory[0x7ff0], 0x30);
-    CU_ASSERT_EQUAL(cpu.PC, 0x38);
-    CU_ASSERT_EQUAL(cpu.t_cycles, 16);
+    RST(cpu, 0xff);
+    CU_ASSERT_EQUAL(cpu->SP, 0x7ff0);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ff1], 0);
+    CU_ASSERT_EQUAL(cpu->memory[0x7ff0], 0x30);
+    CU_ASSERT_EQUAL(cpu->PC, 0x38);
+    CU_ASSERT_EQUAL(cpu->t_cycles, 16);
 }
 
 int main()
